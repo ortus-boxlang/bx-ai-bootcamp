@@ -1,0 +1,259 @@
+/**
+ * BoxLang AI Bootcamp Setup Script
+ *
+ * Usage:
+ *   boxlang Setup.bx           - Run the default setup wizard
+ *   boxlang Setup.bx --help    - Show help information
+ *   boxlang Setup.bx --reset   - Reset the bootcamp folder to original state
+ */
+class {
+
+	function main() {
+		var parsed = CLIGetArgs()
+		// parsed.options  → struct of --flag / --key=value pairs
+		// parsed.positionals → array of bare positional arguments
+
+		// Check for --help or -h flag
+		if ( parsed.options.keyExists( "help" ) || parsed.options.keyExists( "h" ) ) {
+			showHelp()
+			return
+		}
+
+		// Check for --reset flag
+		if ( parsed.options.keyExists( "reset" ) ) {
+			resetBootcamp()
+			return
+		}
+
+		// Default setup flow
+		defaultSetup()
+	}
+
+	// =========================================================================
+	// COMMANDS
+	// =========================================================================
+
+	/**
+	 * Print help information
+	 */
+	private function showHelp() {
+		println( "" )
+		println( "╔══════════════════════════════════════════════════════════╗" )
+		println( "║          🚀  BoxLang AI Bootcamp Setup                    ║" )
+		println( "╚══════════════════════════════════════════════════════════╝" )
+		println( "" )
+		println( "Usage: boxlang Setup.bx [command]" )
+		println( "" )
+		println( "Commands:" )
+		println( "  (none)    Run the default setup wizard" )
+		println( "  --help    Show this help message" )
+		println( "  --reset   Reset the bootcamp folder to its original state" )
+		println( "" )
+		println( "Default Setup:" )
+		println( "  1. Copies .env.example → .env  (if not already present)" )
+		println( "  2. Installs the bx-ai module locally via install-bx-module" )
+		println( "  3. Asks for your preferred language (English or Spanish)" )
+		println( "  4. Creates the 'bootcamp' folder with your chosen language content" )
+		println( "" )
+		println( "Examples:" )
+		println( "  boxlang Setup.bx            ## Run the setup wizard" )
+		println( "  boxlang Setup.bx --help     ## Show this help" )
+		println( "  boxlang Setup.bx --reset    ## Reset bootcamp to original state" )
+		println( "" )
+	}
+
+	/**
+	 * Default setup flow:
+	 * 1. Setup .env
+	 * 2. Install bx-ai module
+	 * 3. Choose language
+	 * 4. Copy language assets to bootcamp/
+	 */
+	private function defaultSetup() {
+		println( "" )
+		println( "╔══════════════════════════════════════════════════════════╗" )
+		println( "║          🚀  BoxLang AI Bootcamp Setup                   ║" )
+		println( "╚══════════════════════════════════════════════════════════╝" )
+		println( "" )
+
+		// 1. Setup .env file
+		setupEnv()
+
+		// 2. Install bx-ai module locally
+		installModule()
+
+		// 3. If bootcamp folder already exists, ask whether to overwrite
+		if ( directoryExists( "bootcamp" ) ) {
+			println( "" )
+			println( "⚠️  A 'bootcamp' folder already exists." )
+			var answer = cliRead( "   Do you want to start fresh? This will overwrite it. (y/N): " ).trim()
+			if ( !answer.equalsIgnoreCase( "y" ) && !answer.equalsIgnoreCase( "yes" ) ) {
+				println( "" )
+				println( "✅ Setup complete. Your existing 'bootcamp' folder is unchanged." )
+				println( "" )
+				return
+			}
+		}
+
+		// 4. Ask for language preference
+		var lang = askLanguage()
+
+		// 5. Copy language assets into bootcamp/
+		copyLanguageAssets( lang )
+
+		println( "✅ Setup complete! Your bootcamp is ready." )
+		println( "   📂 Open: bootcamp/README.md to get started." )
+		println( "" )
+	}
+
+	/**
+	 * Reset the existing bootcamp folder back to the original content.
+	 * Prompts for confirmation before proceeding.
+	 */
+	private function resetBootcamp() {
+		println( "" )
+		println( "╔══════════════════════════════════════════════════════════╗" )
+		println( "║          🔄  BoxLang AI Bootcamp Reset                   ║" )
+		println( "╚══════════════════════════════════════════════════════════╝" )
+		println( "" )
+
+		if ( !directoryExists( "bootcamp" ) ) {
+			println( "⚠️  No 'bootcamp' folder found. Nothing to reset." )
+			println( "   Run 'boxlang Setup.bx' to set up the bootcamp first." )
+			println( "" )
+			return
+		}
+
+		println( "⚠️  This will RESET the 'bootcamp' folder to its original state." )
+		println( "   ALL YOUR CHANGES INSIDE 'bootcamp' WILL BE PERMANENTLY LOST!" )
+		println( "" )
+		var answer = cliRead( "   Are you sure you want to continue? (y/N): " ).trim()
+		if ( !answer.equalsIgnoreCase( "y" ) && !answer.equalsIgnoreCase( "yes" ) ) {
+			println( "" )
+			println( "✅ Reset cancelled. Your bootcamp is unchanged." )
+			println( "" )
+			return
+		}
+
+		var lang = askLanguage()
+		copyLanguageAssets( lang )
+
+		println( "" )
+		println( "✅ Bootcamp has been reset successfully!" )
+		println( "   📂 Open: bootcamp/README.md to get started." )
+		println( "" )
+	}
+
+	// =========================================================================
+	// HELPERS
+	// =========================================================================
+
+	/**
+	 * Copy .env.example to .env if .env does not already exist.
+	 */
+	private function setupEnv() {
+		if ( !fileExists( ".env" ) ) {
+			fileCopy( ".env.example", ".env" )
+			println( "✅ Created .env from .env.example" )
+			println( "   📝 Remember to add your API keys to .env!" )
+		} else {
+			println( "✅ .env already exists — skipping copy." )
+		}
+	}
+
+	/**
+	 * Install the bx-ai module locally using the install-bx-module binary.
+	 */
+	/**
+	 * Install the bx-ai module locally using the install-bx-module binary.
+	 * Skips installation if boxlang_modules/bx-ai already exists.
+	 */
+	private function installModule() {
+		println( "" )
+		if ( directoryExists( "boxlang_modules/bx-ai" ) ) {
+			println( "✅ bx-ai module already installed — skipping." )
+			return
+		}
+		println( "📦 Installing bx-ai module locally..." )
+		var exitCode = runCommand( "install-bx-module", [ "bx-ai", "--local" ] )
+		if ( exitCode == 0 ) {
+			println( "✅ bx-ai module installed successfully." )
+		} else {
+			println( "⚠️  Module installation exited with code #exitCode#." )
+			println( "   You can try manually: install-bx-module bx-ai --local" )
+		}
+	}
+
+	/**
+	 * Interactively ask the user to select a language.
+	 *
+	 * @return string "en" or "es"
+	 */
+	private function askLanguage() {
+		println( "" )
+		println( "🌍 Select your bootcamp language / Selecciona tu idioma:" )
+		println( "" )
+		println( "   1. 🇺🇸 English (en)" )
+		println( "   2. 🇪🇸 Español / Spanish (es)" )
+		println( "" )
+
+		while ( true ) {
+			var choice = cliRead( "   Enter 1 or 2: " ).trim()
+
+			if ( choice == "1" || choice.equalsIgnoreCase( "en" ) || choice.equalsIgnoreCase( "english" ) ) {
+				return "en"
+			}
+
+			if ( choice == "2" || choice.equalsIgnoreCase( "es" ) || choice.equalsIgnoreCase( "spanish" ) || choice.equalsIgnoreCase( "español" ) ) {
+				return "es"
+			}
+
+			println( "   ❌ Invalid choice. Please enter 1 (English) or 2 (Español)." )
+		}
+	}
+
+	/**
+	 * Copy the chosen language folder into the bootcamp/ directory.
+	 * Deletes any existing bootcamp folder first.
+	 *
+	 * @lang string "en" or "es"
+	 */
+	private function copyLanguageAssets( required string lang ) {
+		var langLabel = ( lang == "en" ) ? "English" : "Español (Spanish)"
+		println( "" )
+		println( "📂 Setting up 'bootcamp' folder with #langLabel# content..." )
+
+		// Remove existing bootcamp folder if present
+		if ( directoryExists( "bootcamp" ) ) {
+			directoryDelete( "bootcamp", true )
+		}
+
+		// Create destination and copy contents
+		directoryCreate( "bootcamp" )
+		directoryCopy( lang, "bootcamp", true )
+
+		println( "✅ 'bootcamp' folder created successfully." )
+	}
+
+	/**
+	 * Run an external command using Java's ProcessBuilder.
+	 * Output is inherited from the parent process (printed to console).
+	 *
+	 * @command string  The executable to run
+	 * @args    array   Arguments to pass to the command
+	 * @return  numeric Exit code (0 = success)
+	 */
+	private function runCommand( required string command, required array args = [] ) {
+		var commandList = createObject( "java", "java.util.ArrayList" ).init()
+		commandList.add( command )
+		for ( var arg in args ) {
+			commandList.add( arg )
+		}
+
+		var pb = createObject( "java", "java.lang.ProcessBuilder" ).init( commandList )
+		pb.inheritIO()
+		var process = pb.start()
+		return process.waitFor()
+	}
+
+}

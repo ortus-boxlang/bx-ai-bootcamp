@@ -10,6 +10,9 @@ bin/**
 ### Mac OS ###
 .DS_Store
 
+### BOOTCAMP ###
+bootcamp/
+
 ### BOXLANG ###
 .env
 /libs/
