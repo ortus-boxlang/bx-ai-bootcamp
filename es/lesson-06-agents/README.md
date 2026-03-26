@@ -97,7 +97,7 @@ agente = aiAgent(
     description: "Qué hace este agente",
     instructions: "Cómo debe comportarse el agente",
     tools: [ herramienta1, herramienta2 ],
-    memory: aiMemory( "windowed" )
+    memory: aiMemory( "window" )
 )
 
 // Ejecutar el agente
@@ -192,7 +192,7 @@ function createUserAgent( userId, conversationId ) {
         name: "UserAssistant",
         description: "Asistente personal que recuerda preferencias",
         instructions: "Recuerda preferencias y conversaciones pasadas del usuario.",
-        memory: aiMemory( "windowed",
+        memory: aiMemory( "window",
             key: "chat",
             userId: userId,                    // 🔑 Aísla por usuario
             conversationId: conversationId,    // 🔑 Múltiples chats por usuario
@@ -474,10 +474,10 @@ support.chat( "¿Puedo cambiar la dirección de envío?" )
 | **userId** | Aísla memoria por usuario - **SIEMPRE requerido en producción** |
 | **conversationId** | Permite múltiples chats por usuario |
 | **tenantId** | Aislamiento de nivel empresarial en `config.additionalColumns` |
-| **Tipos de Memoria** | `cache`/`jdbc` mejores para multi-tenant; `windowed` solo desarrollo |
+| **Tipos de Memoria** | `cache`/`jdbc` mejores para multi-tenant; `window` solo desarrollo |
 | **Seguridad** | Siempre obtener userId del servidor, nunca confiar en el cliente |
 
-> 💡 **Nota de Producción**: Para aplicaciones web de producción, usa siempre `cache` o `jdbc` memoria con parámetros `userId` y `conversationId`. ¡Nunca uses memoria simple `windowed` sin estos parámetros en entornos multi-usuario!
+> 💡 **Nota de Producción**: Para aplicaciones web de producción, usa siempre `cache` o `jdbc` memoria con parámetros `userId` y `conversationId`. ¡Nunca uses memoria simple `window` sin estos parámetros en entornos multi-usuario!
 
 ---
 
@@ -557,7 +557,7 @@ La memoria funciona perfectamente con streaming:
 agente = aiAgent(
     name: "Assistant",
     instructions: "Asistente útil que recuerda conversaciones.",
-    memory: aiMemory( "windowed", { maxMessages: 10 } )
+    memory: aiMemory( "window", config: { maxMessages: 10 } )
 )
 
 // Primera interacción
@@ -742,7 +742,7 @@ supportAgent = aiAgent(
         Always ask if there's anything else you can help with.
     ",
     tools: [ orderTool, productTool, ticketTool ],
-    memory: aiMemory( "windowed", { maxMessages: 10 } )
+    memory: aiMemory( "window", config: { maxMessages: 10 } )
 )
 
 // Bucle de chat
@@ -875,7 +875,7 @@ researchAgent = aiAgent(
         - Remember what the user has asked about
     ",
     tools: [ searchTool, summarizeTool ],
-    memory: aiMemory( "windowed", { maxMessages: 10 } )
+    memory: aiMemory( "window", config: { maxMessages: 10 } )
 )
 
 // Bucle de chat
@@ -929,7 +929,7 @@ while( running ) {
 4. **¿Qué método ejecuta un agente?**
    - [ ] agent.chat()
    - [x] agent.run()
-   - [ ] agent.execute()
+    - [ ] agent.process()
    - [ ] agent.start()
 
 ---
@@ -958,7 +958,7 @@ agente = aiAgent(
     description: "Qué hace",
     instructions: "Cómo comportarse",
     tools: [ herramienta1, herramienta2 ],
-    memory: aiMemory( "windowed" )
+    memory: aiMemory( "window" )
 )
 
 // Usar agente

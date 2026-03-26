@@ -52,7 +52,7 @@ researchAgent = aiAgent(
         - Remember what the user has asked about
     ",
     tools: [ searchTool, summarizeTool ],
-    memory: aiMemory( "windowed", { maxMessages: 10 } )
+    memory: aiMemory( "window", config: { maxMessages: 10 } )
 )
 
 // Bucle de chat

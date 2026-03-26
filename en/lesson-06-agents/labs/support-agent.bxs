@@ -77,7 +77,7 @@ supportAgent = aiAgent(
         Always ask if there's anything else you can help with.
     ",
     tools: [ orderTool, productTool, ticketTool ],
-    memory: aiMemory( "windowed", { maxMessages: 10 } )
+    memory: aiMemory( "window", config: { maxMessages: 10 } )
 )
 
 // Chat loop

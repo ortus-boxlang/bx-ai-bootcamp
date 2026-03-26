@@ -108,8 +108,9 @@ println( "Fuente: #doc.metadata.source#" )
 
 // Usar con IA
 result = aiChat(
-    message: "Basado en este contexto: #doc.content#\n\n¿Qué es BoxLang?",
-    provider: "openai"
+    "Basado en este contexto: #doc.content#\n\n¿Qué es BoxLang?",
+    {},
+    { provider: "openai" }
 )
 
 println( "\nRespuesta de IA:" )
@@ -214,8 +215,9 @@ for ( doc in docs ) {
 todoContenido = docs.map( d => d.content ).toList( "\n\n" )
 
 result = aiChat(
-    message: "Basado en esta base de conocimiento:\n\n#todoContenido#\n\n¿Qué productos ofrecemos?",
-    provider: "openai"
+    "Basado en esta base de conocimiento:\n\n#todoContenido#\n\n¿Qué productos ofrecemos?",
+    {},
+    { provider: "openai" }
 )
 
 println( "\n" & result )
@@ -424,9 +426,9 @@ function preguntarRAG( pregunta ) {
 
     // Preguntar a IA con contexto
     return aiChat(
-        message: "Contexto:\n#contexto#\n\nPregunta: #pregunta#",
-        provider: "ollama",
-        model: "qwen2.5:0.5b-instruct"
+        "Contexto:\n#contexto#\n\nPregunta: #pregunta#",
+        { model: "qwen2.5:0.5b-instruct" },
+        { provider: "ollama" }
     )
 }
 

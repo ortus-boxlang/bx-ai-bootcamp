@@ -174,35 +174,35 @@ aiChat( "mensaje", {}, { provider: "grok" } )
 
 ```java
 // OpenAI
-aiEmbeddings(
+aiEmbed(
     text: "texto a codificar",
     provider: "openai",
     model: "text-embedding-3-small"  // o text-embedding-3-large
 )
 
 // Voyage (mejor para RAG)
-aiEmbeddings(
+aiEmbed(
     text: "texto a codificar",
     provider: "voyage",
     model: "voyage-3"  // o voyage-code-3 para código
 )
 
 // Cohere
-aiEmbeddings(
+aiEmbed(
     text: "texto a codificar",
     provider: "cohere",
     model: "embed-english-v3.0"
 )
 
 // Ollama (local)
-aiEmbeddings(
+aiEmbed(
     text: "texto a codificar",
     provider: "ollama",
     model: "nomic-embed-text"  // o mxbai-embed-large
 )
 
 // Gemini
-aiEmbeddings(
+aiEmbed(
     text: "texto a codificar",
     provider: "gemini",
     model: "gemini-embedding-001"

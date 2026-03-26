@@ -97,7 +97,7 @@ agent = aiAgent(
     description: "What this agent does",
     instructions: "How the agent should behave",
     tools: [ tool1, tool2 ],
-    memory: aiMemory( "windowed" )
+    memory: aiMemory( "window" )
 )
 
 // Run the agent
@@ -168,7 +168,7 @@ Memory lets agents remember the conversation:
 
 | Type | Description | Best For |
 |------|-------------|----------|
-| `windowed` | Keeps last N messages | Most use cases |
+| `window` | Keeps last N messages | Most use cases |
 | `summary` | Summarizes old messages | Long conversations |
 | `session` | Persists in web session | Web applications |
 | `cache` | Distributed cache storage | Multi-server apps |
@@ -215,7 +215,7 @@ function createUserAgent( userId, conversationId = "default" ) {
         description: "A personal AI assistant",
         instructions: "Be helpful and remember user preferences",
         memory: aiMemory(
-            "windowed",
+            "window",
             key: createUUID(),
             userId: userId,                // Isolates by user
             conversationId: conversationId, // Multiple chats per user
@@ -589,7 +589,7 @@ agent = aiAgent(
     name: "MemoryBot",
     description: "Remembers conversation",
     instructions: "Be friendly and remember context",
-    memory: aiMemory( "windowed", { maxMessages: 20 } )
+    memory: aiMemory( "window", config: { maxMessages: 20 } )
 )
 
 // First message
@@ -729,7 +729,7 @@ agent = aiAgent(
     name: "PersonalAssistant",
     description: "A personal assistant that remembers your preferences",
     instructions: "Remember user preferences and past conversations.",
-    memory: aiMemory( "windowed", { maxMessages: 20 } )
+    memory: aiMemory( "window", config: { maxMessages: 20 } )
 )
 
 // Tell the agent things
@@ -858,7 +858,7 @@ supportAgent = aiAgent(
         Always ask if there's anything else you can help with.
     ",
     tools: [ orderTool, productTool, ticketTool ],
-    memory: aiMemory( "windowed", { maxMessages: 10 } )
+    memory: aiMemory( "window", config: { maxMessages: 10 } )
 )
 
 // Chat loop
@@ -991,7 +991,7 @@ researchAgent = aiAgent(
         - Remember what the user has asked about
     ",
     tools: [ searchTool, summarizeTool ],
-    memory: aiMemory( "windowed", { maxMessages: 10 } )
+    memory: aiMemory( "window", config: { maxMessages: 10 } )
 )
 
 // Chat loop
@@ -1045,7 +1045,7 @@ while( running ) {
 4. **What method executes an agent?**
    - [ ] agent.chat()
    - [x] agent.run()
-   - [ ] agent.execute()
+    - [ ] agent.process()
    - [ ] agent.start()
 
 ---
@@ -1071,7 +1071,7 @@ agent = aiAgent(
     description: "What it does",
     instructions: "How to behave",
     tools: [ tool1, tool2 ],
-    memory: aiMemory( "windowed" )
+    memory: aiMemory( "window" )
 )
 
 // Use agent
@@ -1091,7 +1091,7 @@ Without isolation:
 ```java
 // ❌ BAD: All users share the same memory!
 agent = aiAgent(
-    memory: aiMemory( "windowed" )
+    memory: aiMemory( "window" )
 )
 // User Alice's data leaks to User Bob!
 ```

@@ -6,7 +6,7 @@ agent = aiAgent(
     name: "PersonalAssistant",
     description: "A personal assistant that remembers your preferences",
     instructions: "Remember user preferences and past conversations.",
-    memory: aiMemory( "windowed", { maxMessages: 20 } )
+    memory: aiMemory( "window", config: { maxMessages: 20 } )
 )
 
 // Dile cosas al agente

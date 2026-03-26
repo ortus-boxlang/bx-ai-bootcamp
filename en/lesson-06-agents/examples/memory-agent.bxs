@@ -6,12 +6,12 @@ println( "🧠 Memory Agent Demo" )
 println( "═".repeat( 40 ) )
 println()
 
-// Create agent with windowed memory
+// Create agent with window memory
 agent = aiAgent(
     name: "PersonalAssistant",
     description: "A personal assistant that remembers your preferences",
     instructions: "Remember user preferences and past conversations. Be helpful and recall info when relevant.",
-    memory: aiMemory( "windowed", { maxMessages: 20 } )
+    memory: aiMemory( "window", config: { maxMessages: 20 } )
 )
 
 // Share some information
