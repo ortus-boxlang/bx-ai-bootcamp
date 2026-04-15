@@ -95,7 +95,13 @@ textoOriginal = "BoxLang hace el desarrollo con IA rápido, expresivo y divertid
 respuestaVoz = aiSpeak( textoOriginal )
 
 // Paso 2 — pasar los bytes directamente a aiTranscribe()
-idaVuelta = aiTranscribe( respuestaVoz.getAudioData() )
+// params.inputFormat indica al proveedor el formato del contenedor de bytes.
+// Se auto-asigna desde audio.defaultOutputFormat en la config (ej. "mp3"),
+// pero puedes pasarlo explícitamente si tus bytes están en otro formato.
+idaVuelta = aiTranscribe(
+    audio  : respuestaVoz.getAudioData(),
+    params : { inputFormat: "mp3" }   // coincide con audio.defaultOutputFormat en config
+)
 
 println( "Original   : #textoOriginal#" )
 println( "Ida-vuelta : #idaVuelta#" )
@@ -112,3 +118,5 @@ println( "2. audio puede ser una ruta de archivo, URL o byte[] de aiSpeak()" )
 println( "3. params.language da un indicador al modelo y mejora la precisión" )
 println( "4. Cambia de proveedor con options.provider (ej. 'groq' para Whisper)" )
 println( "5. Pasa aiSpeak().getAudioData() directamente a aiTranscribe() — sin archivo" )
+println( "6. Usa params.inputFormat cuando los bytes estén en un formato de audio no predeterminado" )
+println( "6. Usa params.inputFormat cuando los bytes estén en un formato de audio no predeterminado" )

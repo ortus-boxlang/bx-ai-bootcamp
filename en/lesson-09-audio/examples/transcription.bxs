@@ -95,7 +95,13 @@ original = "BoxLang makes AI development fast, expressive, and fun."
 speechResponse = aiSpeak( original )
 
 // Step 2 — pass the raw bytes directly to aiTranscribe()
-roundTrip = aiTranscribe( speechResponse.getAudioData() )
+// params.inputFormat tells the provider what container format the bytes are in.
+// It is auto-seeded from audio.defaultOutputFormat in config (e.g. "mp3"),
+// but you can pass it explicitly when your binary is in a different format.
+roundTrip = aiTranscribe(
+    audio  : speechResponse.getAudioData(),
+    params : { inputFormat: "mp3" }   // matches audio.defaultOutputFormat in config
+)
 
 println( "Original   : #original#" )
 println( "Round-trip : #roundTrip#" )
@@ -112,3 +118,4 @@ println( "2. audio can be a file path, URL, or raw byte[] from aiSpeak()" )
 println( "3. params.language hints the model and improves accuracy" )
 println( "4. Switch providers with options.provider (e.g. 'groq' for Whisper)" )
 println( "5. Pipe aiSpeak().getAudioData() directly into aiTranscribe() — no file needed" )
+println( "6. Use params.inputFormat when passing binary data in a non-default audio format" )
