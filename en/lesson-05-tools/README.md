@@ -74,7 +74,7 @@ AI knowledge is frozen at training time. It can't:
 ### The aiTool() Function
 
 ```java
-tool = aiTool( 
+tool = aiTool(
     "tool_name",           // Name AI will use to call it
     "Tool description",    // Explains when to use it
     ( args ) => {          // Function to execute
@@ -100,7 +100,7 @@ calculatorTool = aiTool(
 ).describeExpression( "The math expression to calculate, e.g. '2 + 2' or '100 * 0.15'" )
 
 // Use the tool
-answer = aiChat( 
+answer = aiChat(
     "What is 15% of 200?",
     { tools: [ calculatorTool ] }
 )
@@ -118,25 +118,25 @@ weatherTool = aiTool(
     "Get current weather for a city. Use when asked about weather.",
     ( args ) => {
         city = args.city
-        
+
         // Simulated weather data (in real app, call weather API)
         weatherData = {
             "Boston": { temp: 72, condition: "Sunny" },
             "New York": { temp: 68, condition: "Cloudy" },
             "Miami": { temp: 85, condition: "Hot and humid" }
         }
-        
+
         if( weatherData.keyExists( city ) ) {
             data = weatherData[ city ]
             return "Weather in #city#: #data.temp#°F, #data.condition#"
         }
-        
+
         return "Weather data not available for #city#"
     }
 ).describeCity( "The city name to get weather for" )
 
 // Use the tool
-answer = aiChat( 
+answer = aiChat(
     "What's the weather like in Boston today?",
     { tools: [ weatherTool ] }
 )
@@ -222,19 +222,19 @@ timeTool = aiTool(
 )
 
 // AI can use any of these tools!
-println( aiChat( 
+println( aiChat(
     "What's the weather in Miami?",
     { tools: [ weatherTool, calcTool, timeTool ] }
 ) )
 // Uses weather tool
 
-println( aiChat( 
+println( aiChat(
     "What's 25% of 400?",
     { tools: [ weatherTool, calcTool, timeTool ] }
 ) )
 // Uses calculator tool
 
-println( aiChat( 
+println( aiChat(
     "What day is it?",
     { tools: [ weatherTool, calcTool, timeTool ] }
 ) )
@@ -251,11 +251,11 @@ AI automatically chooses the right tool based on the question:
 └─────────────────────────────────────────────────────────────────┘
 
   "Weather in Boston?"    ──▶  get_weather( city="Boston" )
-  
+
   "Calculate 15% tip"     ──▶  calculate( expression="0.15*50" )
-  
+
   "What time is it?"      ──▶  get_time()
-  
+
   "Tell me a joke"        ──▶  (no tool needed, AI answers directly)
 ```
 
@@ -294,12 +294,12 @@ weatherTool = aiTool(
     "Get current weather for a city. Returns temperature in Fahrenheit.",
     ( args ) => {
         city = args.city
-        
+
         if( weatherData.keyExists( city ) ) {
             data = weatherData[ city ]
             return "Weather in #city#: #data.temp#°F, #data.condition#, Humidity: #data.humidity#%"
         }
-        
+
         return "No weather data for #city#. Available cities: #weatherData.keyList()#"
     }
 ).describeCity( "City name exactly as: Boston, New York, Miami, San Francisco, or Denver" )
@@ -311,7 +311,7 @@ convertTool = aiTool(
     ( args ) => {
         temp = args.temperature
         from = args.fromUnit.uCase()
-        
+
         if( from == "F" || from == "FAHRENHEIT" ) {
             celsius = ( temp - 32 ) * 5/9
             return "#temp#°F = #numberFormat( celsius, '0.0' )#°C"
@@ -331,15 +331,15 @@ compareTool = aiTool(
     ( args ) => {
         city1 = args.city1
         city2 = args.city2
-        
+
         if( !weatherData.keyExists( city1 ) || !weatherData.keyExists( city2 ) ) {
             return "Can't compare - need valid cities"
         }
-        
+
         data1 = weatherData[ city1 ]
         data2 = weatherData[ city2 ]
         diff = data1.temp - data2.temp
-        
+
         if( diff > 0 ) {
             return "#city1# is #abs(diff)#°F warmer than #city2#"
         } else if( diff < 0 ) {
@@ -363,7 +363,7 @@ println()
 running = true
 while( running ) {
         question = cliRead( "You: " )
-    
+
     if( question.trim() == "quit" ) {
         running = false
         println( "☀️ Goodbye!" )
