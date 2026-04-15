@@ -1,0 +1,134 @@
+import bxModules.bxai.models.middleware.core.LoggingMiddleware
+import bxModules.bxai.models.middleware.core.FlightRecorderMiddleware
+import bxModules.bxai.models.middleware.core.GuardrailMiddleware
+
+// agente-middleware.bxs
+// Middleware de Agentes — intercepta ganchos del ciclo de vida para observabilidad y seguridad
+// Ejecutar con: boxlang agente-middleware.bxs
+
+println( "🛡️  Demo de Middleware de Agentes" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// ¿Qué es el Middleware?
+// ───────────────────────────────────────────────────────────────
+// El middleware intercepta ganchos del ciclo de vida del agente
+// sin cambiar su lógica central.  Úsalo para:
+//   • Registro / observabilidad
+//   • Grabación de vuelo (capturar + reproducir)
+//   • Barreras de seguridad (bloquear herramientas peligrosas)
+//   • Aprobación humana en el bucle
+//
+// Se adjunta con: aiAgent( ..., middleware: [ mw1, mw2 ] )
+// La cadena se ejecuta en orden — ¡pon el registro primero!
+
+// ───────────────────────────────────────────────────────────────
+// Herramientas Compartidas
+// ───────────────────────────────────────────────────────────────
+estadoPedido = aiTool(
+    "getOrderStatus",
+    "Consulta el estado actual de un número de pedido.",
+    ( orderId ) => "El pedido ##orderId## está empacado y se enviará hoy."
+).describeOrderId( "El número de pedido a consultar, p. ej. 10042." )
+
+ejecutarSql = aiTool(
+    "runSql",
+    "Ejecuta una consulta SQL contra la base de datos de reportes.",
+    ( query ) => "Consulta ejecutada de forma segura: ##query##"
+).describeQuery( "La consulta SQL a ejecutar." )
+
+eliminarCliente = aiTool(
+    "deleteCustomer",
+    "Elimina un registro de cliente por ID — operación PELIGROSA.",
+    ( customerId ) => "Cliente ##customerId## eliminado."
+).describeCustomerId( "El ID del cliente a eliminar." )
+
+// ───────────────────────────────────────────────────────────────
+// Parte 1: Registro + Grabación de Vuelo
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 1: Registro + Grabación de Vuelo ---" )
+println()
+
+registrador = new LoggingMiddleware(
+    logToFile   : true,
+    logToConsole: true,
+    logLevel    : "info",
+    prefix      : "[Agente Pedidos]"
+)
+
+grabadorVuelo = new FlightRecorderMiddleware(
+    mode       : "record",
+    fixturePath: "/.ai/flight-recorder/agente-middleware.json"
+)
+
+agentePedidos = aiAgent(
+    name        : "agente-pedidos",
+    instructions: "Ayudas a los usuarios con consultas de pedidos. Usa getOrderStatus cuando se proporcione un número de pedido.",
+    model       : aiModel(),
+    tools       : [ estadoPedido ],
+    middleware  : [ registrador, grabadorVuelo ]
+)
+
+consulta1 = "Usa la herramienta getOrderStatus para verificar el pedido 10042 y resume en una oración."
+println( "👤 Usuario: " & consulta1 )
+println()
+println( "🤖 Agente: " & agentePedidos.run( consulta1 ) )
+println()
+println( "Middleware registrado: " & agentePedidos.listMiddleware().toString() )
+println( "Interacciones grabadas: " & grabadorVuelo.getTape().interactions.len() )
+println()
+
+cliRead( "Presiona Enter para continuar..." )
+
+// ───────────────────────────────────────────────────────────────
+// Parte 2: Barreras de Seguridad (Guardrails)
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 2: Barreras de Seguridad ---" )
+println()
+
+barreraSeguridad = new GuardrailMiddleware(
+    blockedTools: [ "deleteCustomer" ],
+    argPatterns : {
+        "runSql": [
+            { "query": "(?i)drop|truncate|delete" }
+        ]
+    }
+)
+
+agenteSeguro = aiAgent(
+    name        : "agente-operaciones-seguras",
+    instructions: "Eres un asistente de operaciones.
+        Usa las herramientas disponibles cuando el usuario solicite operaciones de base de datos o clientes.
+        Si una herramienta está bloqueada, explica que la solicitud fue bloqueada por las reglas de seguridad.",
+    model       : aiModel(),
+    tools       : [ ejecutarSql, eliminarCliente ],
+    middleware  : [
+        new LoggingMiddleware( logToConsole: true, prefix: "[Ops Seguras]" ),
+        barreraSeguridad
+    ]
+)
+
+// Esta llamada debe bloquearse — deleteCustomer está en blockedTools
+consulta2 = "Usa la herramienta deleteCustomer para eliminar al cliente 42."
+println( "👤 Usuario: " & consulta2 )
+println( "🤖 Agente: " & agenteSeguro.run( consulta2 ) )
+println()
+
+// Esta llamada debe bloquearse — la consulta coincide con el patrón DELETE
+consulta3 = "Ejecuta con runSql exactamente: DELETE FROM clientes WHERE id = 42"
+println( "👤 Usuario: " & consulta3 )
+println( "🤖 Agente: " & agenteSeguro.run( consulta3 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Conclusiones Clave
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Conclusiones Clave:" )
+println( "  • Adjunta middleware con: aiAgent( ..., middleware: [ mw1, mw2 ] )" )
+println( "  • LoggingMiddleware         — visibilidad del ciclo de vida en consola o logs" )
+println( "  • FlightRecorderMiddleware  — captura una traza de ejecución reproducible" )
+println( "  • GuardrailMiddleware       — bloquea herramientas inseguras o patrones de argumentos" )
+println( "  • El orden importa: pon LoggingMiddleware primero para observar toda la cadena" )
+println( "  • agent.listMiddleware()    — inspecciona el stack de middleware registrado" )

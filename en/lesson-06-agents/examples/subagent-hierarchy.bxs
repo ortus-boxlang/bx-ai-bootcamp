@@ -1,0 +1,104 @@
+// subagent-hierarchy.bxs
+// Sub-Agent Hierarchy — delegate to specialized agents automatically wrapped as tools
+// Run with: boxlang subagent-hierarchy.bxs
+
+println( "🤝 Sub-Agent Hierarchy Demo" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// How Sub-Agents Work
+// ───────────────────────────────────────────────────────────────
+// Sub-agents are automatically wrapped as callable tools on the
+// coordinator agent.  The coordinator delegates tasks without any
+// manual tool wiring.
+//
+// Pattern:
+//   coordinator = aiAgent( ..., subAgents: [ agent1, agent2 ] )
+//   coordinator.run( "..." )   — coordinator decides which agent to call
+
+// ───────────────────────────────────────────────────────────────
+// Part 1: Create Specialist Sub-Agents
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 1: Specialist Sub-Agents ---" )
+println()
+
+researchAgent = aiAgent(
+    name        : "researcher",
+    description : "Researches topics and summarises key facts from reliable sources.",
+    instructions: "You are a research specialist. When asked to research a topic, provide
+        concise, accurate facts.  Focus on publicly known information only."
+)
+
+writerAgent = aiAgent(
+    name        : "writer",
+    description : "Writes engaging, well-structured prose on given topics.",
+    instructions: "You are a writing specialist. Turn bullet points or research notes into
+        clear, engaging paragraphs suitable for a general audience."
+)
+
+println( "✓ Sub-agents created:" )
+println( "  • researcher — " & researchAgent.getDescription() )
+println( "  • writer     — " & writerAgent.getDescription() )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Part 2: Coordinator Agent
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 2: Coordinator Agent ---" )
+println()
+
+coordinator = aiAgent(
+    name        : "content-coordinator",
+    description : "Coordinates research and writing tasks through specialist sub-agents.",
+    instructions: "You are a content coordinator.
+        - Use the 'researcher' agent to gather facts on a topic.
+        - Use the 'writer' agent to turn those facts into well-written content.
+        Delegate clearly and combine the results into a final response.",
+    model       : aiModel(),
+    subAgents   : [ researchAgent, writerAgent ]
+)
+
+println( "✓ Coordinator created with " & coordinator.getConfig().name & " sub-agents" )
+println( "  Sub-agents are automatically available as tools" )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Part 3: Delegation in Action
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 3: Delegation in Action ---" )
+println()
+
+prompt1 = "Research BoxLang and write a short two-paragraph introduction for a blog post."
+println( "👤 User: " & prompt1 )
+println()
+println( "🤖 Coordinator: " & coordinator.run( prompt1 ) )
+println()
+
+cliRead( "Press Enter to continue..." )
+
+// ───────────────────────────────────────────────────────────────
+// Part 4: Agent Metadata
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 4: Agent Metadata ---" )
+println()
+
+config    = coordinator.getConfig()
+messages  = coordinator.getMemoryMessages()
+
+println( "Coordinator config name : " & config.name )
+println( "Coordinator description : " & config.description )
+println( "Memory messages so far  : " & messages.len() )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Key Takeaways
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Key Takeaways:" )
+println( "  • subAgents: [ ... ] auto-wraps each agent as a callable tool" )
+println( "  • The coordinator decides when and which sub-agent to call" )
+println( "  • Each agent has independent memory and instructions" )
+println( "  • coordinator.getConfig()         — inspect agent configuration" )
+println( "  • coordinator.getMemoryMessages() — view full conversation history" )
+println( "  • Hierarchy scales: sub-agents can themselves have sub-agents" )

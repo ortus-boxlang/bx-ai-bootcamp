@@ -1,0 +1,116 @@
+// parallel-agents.bxs
+// Parallel Agent Execution — fan-out one input to multiple agents concurrently
+// Run with: boxlang parallel-agents.bxs
+
+println( "⚡ Parallel Agents Demo" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// How aiParallel() Works
+// ───────────────────────────────────────────────────────────────
+// aiParallel({ name1: runnable1, name2: runnable2 })
+//   • Fans out ONE input to ALL runnables concurrently
+//   • Returns a struct with the same keys containing each result
+//   • Any IAiRunnable works: models, agents, pipelines, transforms
+//   • Implements IAiRunnable — compose it into larger pipelines
+
+// ───────────────────────────────────────────────────────────────
+// Part 1: Multi-Model Comparison
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 1: Multi-Model Comparison ---" )
+println()
+
+// Ask the same question to multiple models simultaneously
+parallel = aiParallel({
+    openai  : aiModel( provider: "openai" ),
+    claude  : aiModel( provider: "claude" ),
+    groq    : aiModel( provider: "groq" )
+})
+
+question = "Explain recursion in one sentence."
+println( "👤 Question: " & question )
+println()
+
+results = parallel.run( question )
+
+println( "📦 OpenAI : " & results.openai )
+println( "📦 Claude : " & results.claude )
+println( "📦 Groq   : " & results.groq )
+println()
+
+cliRead( "Press Enter to continue..." )
+
+// ───────────────────────────────────────────────────────────────
+// Part 2: Parallel Specialist Agents
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 2: Parallel Specialist Agents ---" )
+println()
+
+summaryAgent = aiAgent(
+    name        : "summarizer",
+    instructions: "Summarise the given text in exactly two sentences.",
+    model       : aiModel()
+)
+
+sentimentAgent = aiAgent(
+    name        : "sentiment-analyst",
+    instructions: "Respond with ONLY one of: positive, neutral, or negative — then one sentence why.",
+    model       : aiModel()
+)
+
+keywordsAgent = aiAgent(
+    name        : "keyword-extractor",
+    instructions: "Extract the 5 most important keywords from the text, return as a comma-separated list.",
+    model       : aiModel()
+)
+
+analysisParallel = aiParallel({
+    summary  : summaryAgent,
+    sentiment: sentimentAgent,
+    keywords : keywordsAgent
+})
+
+articleSnippet = "BoxLang 3.0 ships with a powerful AI module that makes it trivially easy to chat
+with large language models, build autonomous agents, and run retrieval-augmented generation pipelines.
+The community response has been overwhelmingly positive, with hundreds of developers already building
+production applications in weeks rather than months."
+
+println( "📄 Article snippet provided..." )
+println()
+
+analysis = analysisParallel.run( articleSnippet )
+
+println( "📝 Summary   : " & analysis.summary )
+println( "💭 Sentiment : " & analysis.sentiment )
+println( "🔑 Keywords  : " & analysis.keywords )
+println()
+
+cliRead( "Press Enter to continue..." )
+
+// ───────────────────────────────────────────────────────────────
+// Part 3: aiParallel() in a Pipeline
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 3: Parallel Inside a Pipeline ---" )
+println()
+
+// Because aiParallel() implements IAiRunnable it chains with .transform()
+pipeline = aiParallel({
+    summary  : summaryAgent,
+    sentiment: sentimentAgent
+}).transform( r => "Summary: #r.summary# | Sentiment: #r.sentiment#" )
+
+combined = pipeline.run( articleSnippet )
+println( "🔗 Combined: " & combined )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Key Takeaways
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Key Takeaways:" )
+println( "  • aiParallel({ name: runnable }) fans-out ONE input to all runnables at once" )
+println( "  • Results are returned as a struct with the same keys you defined" )
+println( "  • Works with any IAiRunnable: models, agents, pipelines, transforms" )
+println( "  • aiParallel() implements IAiRunnable — chain it with .transform()" )
+println( "  • Use for: multi-model comparison, parallel analysis, concurrent agent tasks" )

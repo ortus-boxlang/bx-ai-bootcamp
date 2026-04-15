@@ -10,6 +10,10 @@ In this final lesson, we bring everything together to build **autonomous AI agen
 - Create agents with `aiAgent()`
 - Add memory so agents remember context
 - Give agents tools to interact with the world
+- Inject reusable knowledge with **Skills** (`aiSkill()`)
+- Observe and protect agents with **Middleware**
+- Delegate tasks through **Sub-Agent hierarchies**
+- Run multiple agents simultaneously with **`aiParallel()`**
 - Build a complete assistant that handles complex tasks
 
 ---
@@ -399,15 +403,27 @@ class {
                 }
             ),
             tools: getAuthorizedTools( permissions )
-        ).setContext({
-            userId: userId,
-            tenantId: tenantId,
-            permissions: permissions,
-            accessLevel: getUserAccessLevel( userId )
-        })
+        )
+
+        // v3: pass per-call identity via options — agents are stateless
+        return agent.run(
+            message,
+            {},
+            {
+                userId: userId,
+                conversationId: conversationId,
+                context: {
+                    tenantId    : tenantId,
+                    permissions : permissions,
+                    accessLevel : getUserAccessLevel( userId )
+                }
+            }
+        )
     }
 }
 ```
+
+> 💡 **v3 Note — Stateless Agents:** `AiAgent` does not store `userId`/`conversationId` on the instance. Pass them per-call through the `options` argument so the same agent instance can serve multiple users safely.
 
 #### Memory Isolation Visualization
 
@@ -468,16 +484,22 @@ class {
                 checkAccountTool,
                 createTicketTool
             ]
-        ).setContext({
-            customerId: customerId,
-            customerName: getCustomerName( customerId ),
-            accountStatus: getAccountStatus( customerId ),
-            ticketId: ticketId,
-            ticketPriority: getTicketPriority( ticketId )
-        })
+        )
 
-        // Process with full context
-        return agent.run( message )
+        // v3: identity and context are passed per-call via options
+        return agent.run(
+            message,
+            {},
+            {
+                userId        : customerId,
+                conversationId: ticketId,
+                context: {
+                    customerName  : getCustomerName( customerId ),
+                    accountStatus : getAccountStatus( customerId ),
+                    ticketPriority: getTicketPriority( ticketId )
+                }
+            }
+        )
     }
 
     // Get conversation history for ticket
@@ -496,7 +518,7 @@ class {
    - `session` - Single-server web apps
    - `cache` - Multi-server web apps
    - `jdbc` - Long-term persistence
-4. **Add security context** via `setContext()` for permissions/roles
+4. **Pass security context** via `options.context` in `.run()` for permissions/roles
 5. **Tenant isolation** via table partitioning or separate DBs
 
 ---
@@ -1080,6 +1102,235 @@ response = agent.run( "User request" )
 
 ---
 
+## 🔬 Part 5: Agent Skills — Reusable Knowledge (15 mins)
+
+Skills are blocks of reusable domain knowledge you inject into an agent's system context. They keep your agents modular: define once, compose into many agents.
+
+### Two Injection Modes
+
+| Mode | Parameter | Behaviour |
+|---|---|---|
+| Always-on | `skills: [ ... ]` | Full content injected into every interaction |
+| Lazy-loaded | `availableSkills: [ ... ]` | The AI fetches full content only when needed |
+
+### Creating Skills
+
+```javascript
+// Inline skill — no files needed
+toneSkill = aiSkill(
+    name       : "professional-tone",
+    description: "Defines communication style.",
+    content    : "Always use a professional, friendly tone. Keep responses concise."
+)
+
+// File-based skill — reads SKILL.md at load time
+boxlangSkill = aiSkill( "/.ai/skills/boxlang-expert/SKILL.md" )
+
+// Directory scan — loads all skills in a folder
+allSkills = aiSkill( "/.ai/skills" )
+```
+
+### Using Skills on Agents
+
+```javascript
+// Always-on: skill injected for every message
+assistant = aiAgent(
+    name  : "ProfessionalAssistant",
+    model : aiModel(),
+    skills: [ toneSkill ]
+)
+
+// Lazy-loaded: AI pulls the skill content only when it determines it is needed
+reviewer = aiAgent(
+    name           : "CodeReviewer",
+    model          : aiModel(),
+    availableSkills: [
+        aiSkill( name: "boxlang-style",    description: "BoxLang style guide ...", content: "..." ),
+        aiSkill( name: "security-review",  description: "Security checklist ...", content: "..." )
+    ]
+)
+
+// Combined: some always-on + some lazy
+platformAssistant = aiAgent(
+    name           : "PlatformAssistant",
+    model          : aiModel(),
+    skills         : [ toneSkill ],                   // always
+    availableSkills: [ boxlangSkill, securitySkill ]  // on-demand
+)
+```
+
+📂 **Example file:** `examples/skills-agent.bxs`
+
+---
+
+## 🛡️ Part 6: Agent Middleware — Observe & Protect (15 mins)
+
+Middleware intercepts agent lifecycle hooks without altering the agent's core logic. Attach it via `middleware: [ mw1, mw2 ]`.
+
+### Built-in Middleware
+
+| Class | Purpose |
+|---|---|
+| `LoggingMiddleware` | Print/log each lifecycle event |
+| `FlightRecorderMiddleware` | Capture a replayable execution trace |
+| `GuardrailMiddleware` | Block unsafe tools or argument patterns |
+| `HumanInTheLoopMiddleware` | Pause execution for human approval |
+
+### Importing
+
+```javascript
+import bxModules.bxai.models.middleware.core.LoggingMiddleware
+import bxModules.bxai.models.middleware.core.FlightRecorderMiddleware
+import bxModules.bxai.models.middleware.core.GuardrailMiddleware
+```
+
+### Example: Logging + Flight Recorder
+
+```javascript
+requestLogger = new LoggingMiddleware(
+    logToFile   : true,
+    logToConsole: true,
+    logLevel    : "info",
+    prefix      : "[Support Agent]"
+)
+
+recorder = new FlightRecorderMiddleware(
+    mode       : "record",
+    fixturePath: "/.ai/flight-recorder/session.json"
+)
+
+agent = aiAgent(
+    name      : "support-agent",
+    model     : aiModel(),
+    tools     : [ lookupOrder ],
+    middleware: [ requestLogger, recorder ]  // logging first!
+)
+
+agent.run( "Check order 10042" )
+println( agent.listMiddleware() )                    // inspect stack
+println( recorder.getTape().interactions.len() )    // recorded calls
+```
+
+### Example: Guardrails
+
+```javascript
+guardrails = new GuardrailMiddleware(
+    blockedTools: [ "deleteCustomer" ],
+    argPatterns : {
+        "runSql": [ { "query": "(?i)drop|truncate|delete" } ]
+    }
+)
+
+agent = aiAgent(
+    name      : "safe-ops",
+    model     : aiModel(),
+    tools     : [ runSql, deleteCustomer ],
+    middleware: [ new LoggingMiddleware( logToConsole: true ), guardrails ]
+)
+```
+
+> ⚠️ **Order matters** — place `LoggingMiddleware` first so it observes the entire chain.
+
+📂 **Example file:** `examples/middleware-agent.bxs`
+
+---
+
+## 🤝 Part 7: Sub-Agent Hierarchies (10 mins)
+
+Sub-agents let a coordinator delegate tasks to specialist agents. Each sub-agent is **automatically wrapped as a callable tool** — no manual wiring needed.
+
+```javascript
+// Specialist agents (no model needed for sub-agents)
+researchAgent = aiAgent(
+    name        : "researcher",
+    description : "Researches topics and returns key facts.",
+    instructions: "Provide concise, accurate factual summaries."
+)
+
+writerAgent = aiAgent(
+    name        : "writer",
+    description : "Writes engaging prose from research notes.",
+    instructions: "Turn bullet points into clear paragraphs."
+)
+
+// Coordinator — sub-agents become tools automatically
+coordinator = aiAgent(
+    name        : "content-coordinator",
+    instructions: "Use 'researcher' then 'writer' to produce polished content.",
+    model       : aiModel(),
+    subAgents   : [ researchAgent, writerAgent ]
+)
+
+result = coordinator.run( "Write a short intro to BoxLang for a blog." )
+
+// Inspect hierarchy
+config = coordinator.getConfig()
+println( coordinator.getMemoryMessages().len() )  // full history
+```
+
+### Multi-Level Hierarchies
+
+Sub-agents can themselves have `subAgents`, creating unlimited depth. The coordinator at each level decides which specialist to call.
+
+📂 **Example file:** `examples/subagent-hierarchy.bxs`
+
+---
+
+## ⚡ Part 8: Parallel Agent Execution (10 mins)
+
+`aiParallel()` fans out ONE input to multiple runnables **concurrently** and returns results as a named struct. It implements `IAiRunnable`, so it composes into any pipeline.
+
+### Signature
+
+```javascript
+results = aiParallel({ name1: runnable1, name2: runnable2 }).run( input )
+//                    ↑ result keys                           ↑ shared input
+```
+
+### Multi-Model Comparison
+
+```javascript
+parallel = aiParallel({
+    openai: aiModel( provider: "openai" ),
+    claude: aiModel( provider: "claude" ),
+    groq  : aiModel( provider: "groq" )
+})
+
+results = parallel.run( "Explain recursion in one sentence." )
+
+println( results.openai )   // OpenAI's answer
+println( results.claude )   // Claude's answer
+println( results.groq   )   // Groq's answer
+```
+
+### Parallel Specialist Agents
+
+```javascript
+analysis = aiParallel({
+    summary  : summaryAgent,
+    sentiment: sentimentAgent,
+    keywords : keywordsAgent
+}).run( articleText )
+
+println( analysis.summary   )
+println( analysis.sentiment )
+println( analysis.keywords  )
+```
+
+### In a Pipeline
+
+```javascript
+// Chain aiParallel() with .transform() because it implements IAiRunnable
+pipeline = aiParallel({ summary: summaryAgent, sentiment: sentimentAgent })
+    .transform( r => "Summary: #r.summary# | Sentiment: #r.sentiment#" )
+
+combined = pipeline.run( articleText )
+```
+
+📂 **Example file:** `examples/parallel-agents.bxs`
+
+---
+
 ## 🌐 Bonus: Multi-Tenant Agents for Web Apps
 
 **For web applications with multiple users**, you'll want to isolate each user's conversation:
@@ -1194,9 +1445,13 @@ The best way to learn is by doing. Try building:
 lesson-06-agents/
 ├── README.md (this file)
 ├── examples/
-│   ├── basic-agent.bxs
-│   ├── tool-agent.bxs
-│   └── memory-agent.bxs
+│   ├── basic-agent.bxs           # First agent, basic memory demo
+│   ├── tool-agent.bxs            # Agent with function-calling tools
+│   ├── memory-agent.bxs          # Multi-turn memory isolation
+│   ├── skills-agent.bxs          # aiSkill() — always-on + lazy-loaded
+│   ├── middleware-agent.bxs      # LoggingMiddleware + GuardrailMiddleware
+│   ├── subagent-hierarchy.bxs    # Coordinator + specialist sub-agents
+│   └── parallel-agents.bxs      # aiParallel() multi-model + specialist agents
 └── labs/
     ├── support-agent.bxs
     └── research-agent.bxs

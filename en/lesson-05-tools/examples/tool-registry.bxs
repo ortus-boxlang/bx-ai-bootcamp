@@ -1,0 +1,133 @@
+// tool-registry.bxs
+// Global Tool Registry — register once, use anywhere
+// Run with: boxlang tool-registry.bxs
+
+println( "🗂️ Tool Registry Demo" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Part 1: The Problem Without a Registry
+// ───────────────────────────────────────────────────────────────
+// Without a registry you pass tool *instances* to every aiChat() call.
+// This gets messy when you have dozens of tools shared across many calls.
+
+// ───────────────────────────────────────────────────────────────
+// Part 2: Register Tools Once
+// ───────────────────────────────────────────────────────────────
+println( "📋 Registering tools in the global registry..." )
+println()
+
+// Get (or create) the singleton registry
+registry = aiToolRegistry()
+
+// Register a calculator tool
+registry.register(
+    name       : "calculator",
+    description: "Performs basic math: +, -, *, /. Pass the expression as a string.",
+    module     : "bootcamp",
+    callback   : ( args ) => {
+        result = evaluate( args.expression ?: "0" )
+        return "Result: " & result
+    }
+)
+
+// Register a weather tool
+registry.register(
+    name       : "get_weather",
+    description: "Returns current weather for a city.",
+    module     : "bootcamp",
+    callback   : ( args ) => {
+        data = {
+            Boston: "68°F, Partly Cloudy",
+            Miami : "85°F, Sunny",
+            Denver: "55°F, Windy"
+        }
+        city = args.city ?: "Boston"
+        return data[ city ] ?: "No data for #city#"
+    }
+)
+
+println( "✓ Registered: calculator@bootcamp" )
+println( "✓ Registered: get_weather@bootcamp" )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Part 3: Inspect the Registry
+// ───────────────────────────────────────────────────────────────
+println( "🔍 Registry contents:" )
+tools = registry.getAll()
+tools.each( ( key, tool ) => {
+    println( "  • #key# → #tool.getDescription().left( 50 )#..." )
+} )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Part 4: Reference Tools by Name in aiChat()
+// ───────────────────────────────────────────────────────────────
+println( "💬 Using registry tools by name in aiChat()..." )
+println()
+
+// Pass tool names as strings — the registry resolves them automatically
+response1 = aiChat(
+    "What is 25% of 200?",
+    { tools: [ "calculator@bootcamp" ] }
+)
+println( "Q: What is 25% of 200?" )
+println( "A: " & response1 )
+println()
+
+response2 = aiChat(
+    "What's the weather in Miami?",
+    { tools: [ "get_weather@bootcamp" ] }
+)
+println( "Q: What's the weather in Miami?" )
+println( "A: " & response2 )
+println()
+
+// Mix string references with inline tool instances
+inlineTool = aiTool(
+    "get_date",
+    "Returns today's date.",
+    ( args ) => now().format( "MMMM d, yyyy" )
+)
+
+response3 = aiChat(
+    "What is 42 * 7 and what is today's date?",
+    { tools: [ "calculator@bootcamp", inlineTool ] }
+)
+println( "Q: What is 42 * 7 and what is today's date?" )
+println( "A: " & response3 )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Part 5: Built-in Tools
+// ───────────────────────────────────────────────────────────────
+println( "⚙️  Built-in tools (provided by bx-ai):" )
+println()
+
+// bx-ai ships a 'now' tool pre-registered as now@bx-ai
+if( registry.has( "now@bx-ai" ) ) {
+    println( "  ✓ now@bx-ai is available" )
+
+    dateResponse = aiChat(
+        "What is today's date?",
+        { tools: [ "now@bx-ai" ] }
+    )
+    println( "  Q: What is today's date?" )
+    println( "  A: " & dateResponse )
+} else {
+    println( "  ℹ️  now@bx-ai not available in this environment" )
+}
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Key Takeaways
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Key Takeaways:" )
+println( "  • aiToolRegistry() returns a singleton — register once at startup" )
+println( "  • Use name@module keys (e.g. 'calculator@bootcamp')" )
+println( "  • Pass strings OR tool instances in params.tools — both work" )
+println( "  • registry.getAll() lists every registered tool" )
+println( "  • Built-in 'now@bx-ai' is provided by the module" )

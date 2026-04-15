@@ -1,0 +1,107 @@
+/**
+* Lección 9 — Parte 3: Traducción de audio con aiTranslate()
+*
+* aiTranslate() toma audio en CUALQUIER idioma compatible y retorna
+* texto en inglés. Es el BIF de "reconocimiento de voz internacional".
+*
+* Distinción clave:
+*   aiTranscribe() → conserva el idioma original
+*   aiTranslate()  → SIEMPRE produce inglés
+*
+* Firma del BIF:
+*   aiTranslate( audio, params, options )
+*     - audio   : string | byte[] — ruta de archivo, URL o bytes
+*     - params  : struct          — model
+*     - options : struct          — provider
+*   Retorna: string — transcripción en inglés del audio
+*
+* Archivos necesarios:
+*   ./assets/sample-es.mp3  (archivo de audio en español)
+*
+* Ejecutar:
+*   boxlang examples/traduccion-audio.bxs
+*/
+
+println( "========================================" )
+println( "Lección 9 — Parte 3: Traducción de Audio" )
+println( "========================================" )
+println( "" )
+
+archivoEspanol = expandPath( "./assets/sample-es.mp3" )
+
+// ============================================================================
+// Parte 1: Traducir audio en español directamente al inglés
+// ============================================================================
+println( "--- Parte 1: Audio en español → texto en inglés ---" )
+println( "" )
+
+textoIngles = aiTranslate( archivoEspanol )
+
+println( "Traducción al inglés:" )
+println( textoIngles )
+println( "" )
+
+// ============================================================================
+// Parte 2: Proveedor y modelo explícitos
+// ============================================================================
+println( "--- Parte 2: Proveedor y modelo explícito ---" )
+println( "" )
+
+traduccion = aiTranslate(
+    audio  : archivoEspanol,
+    params : { model: "whisper-1" },
+    options: { provider: "openai" }
+)
+
+println( "Traducción OpenAI Whisper:" )
+println( traduccion )
+println( "" )
+
+// ============================================================================
+// Parte 3: Transcribir vs Traducir — comparación lado a lado
+// ============================================================================
+println( "--- Parte 3: aiTranscribe() vs aiTranslate() ---" )
+println( "" )
+
+// aiTranscribe con indicador de idioma → retorna texto en español
+idiomaOriginal = aiTranscribe(
+    audio  : archivoEspanol,
+    params : { language: "es" }
+)
+
+// aiTranslate → siempre retorna texto en inglés
+traducidoIngles = aiTranslate( archivoEspanol )
+
+println( "aiTranscribe (español original) : #idiomaOriginal#" )
+println( "aiTranslate  (inglés)           : #traducidoIngles#" )
+println( "" )
+
+// ============================================================================
+// Parte 4: Traducir audio → luego procesar con aiChat()
+// ============================================================================
+println( "--- Parte 4: Traducción + resumen con aiChat() ---" )
+println( "" )
+
+// Paso 1 — obtener texto en inglés del audio
+inglesDeAudio = aiTranslate( archivoEspanol )
+
+// Paso 2 — enviarlo a aiChat() para mayor procesamiento
+resumen = aiChat(
+    "Resume lo siguiente en una oración e identifica el tema principal: #inglesDeAudio#"
+)
+
+println( "Audio traducido : #inglesDeAudio#" )
+println( "Resumen de IA   : #resumen#" )
+println( "" )
+
+// ============================================================================
+// Conclusiones clave
+// ============================================================================
+println( "========================================" )
+println( "CONCLUSIONES CLAVE:" )
+println( "========================================" )
+println( "1. aiTranslate( audio, params, options ) — traduce cualquier idioma hablado al inglés" )
+println( "2. audio puede ser una ruta de archivo, URL o byte[]" )
+println( "3. aiTranscribe() conserva el idioma original; aiTranslate() siempre genera inglés" )
+println( "4. Encadena aiTranslate() + aiChat() para flujos multilingüe más ricos" )
+println( "5. Usa aiChat() para traducción texto-a-texto entre idiomas arbitrarios" )

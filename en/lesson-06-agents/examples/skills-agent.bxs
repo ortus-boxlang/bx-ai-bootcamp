@@ -1,0 +1,161 @@
+// skills-agent.bxs
+// Agent Skills — inject reusable domain knowledge
+// Run with: boxlang skills-agent.bxs
+
+println( "🧠 Agent Skills Demo" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// What are Skills?
+// ───────────────────────────────────────────────────────────────
+// Skills are reusable blocks of domain knowledge injected into an
+// agent's system context. Instead of duplicating long instructions,
+// define them once and mix-and-match across agents.
+//
+// Two injection modes:
+//   skills:          Always-on  — full content present every interaction
+//   availableSkills: Lazy-load  — the AI pulls skill content only when needed
+
+// ───────────────────────────────────────────────────────────────
+// Part 1: Inline Skill (no file needed)
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 1: Inline Skill ---" )
+println()
+
+toneSkill = aiSkill(
+    name       : "professional-tone",
+    description: "Defines the communication style for all responses.",
+    content    : "
+        Always use a professional yet friendly tone.
+        Keep responses concise — three paragraphs maximum.
+        Avoid jargon unless the user is clearly technical.
+        End every answer with a short encouraging sentence.
+    "
+)
+
+println( "✓ Inline skill created: " & toneSkill.getName() )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Part 2: Always-On Skills (injected into every interaction)
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 2: Always-On Skills Agent ---" )
+println()
+
+assistant = aiAgent(
+    name        : "ProfessionalAssistant",
+    description : "A helpful assistant that always uses consistent style and BoxLang knowledge.",
+    instructions: "Answer user questions helpfully and accurately.",
+    model       : aiModel(),
+    skills      : [ toneSkill ]
+)
+
+println( "✓ Agent created with always-on skills" )
+print( "👤 User: What is BoxLang and why should I use it?" )
+println()
+print( "🤖 Agent: " )
+println( assistant.run( "What is BoxLang and why should I use it?" ) )
+println()
+
+cliRead( "Press Enter to continue..." )
+
+// ───────────────────────────────────────────────────────────────
+// Part 3: Lazy-Loaded Skills (full content pulled on demand)
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 3: Lazy-Loaded Skills Agent ---" )
+println()
+
+// availableSkills shows only name+description up front.
+// The AI calls loadSkill() internally to pull full content when needed.
+reviewAgent = aiAgent(
+    name           : "CodeReviewer",
+    description    : "A BoxLang code reviewer.",
+    instructions   : "Review BoxLang code for correctness, style, and potential issues.",
+    model          : aiModel(),
+    availableSkills: [
+        aiSkill(
+            name       : "boxlang-style",
+            description: "BoxLang coding style guide: spacing, naming, patterns.",
+            content    : "
+                - Use camelCase for variables and functions.
+                - Always add spacing around operators: a + b, not a+b.
+                - Prefer array.each() over for loops.
+                - Use the Elvis operator ?: for default values.
+                - Prefer descriptive names over abbreviated ones.
+            "
+        ),
+        aiSkill(
+            name       : "security-review",
+            description: "Security checklist: SQL injection, XSS, sensitive data exposure.",
+            content    : "
+                - Never concatenate user input into SQL strings. Use queryExecute() with params.
+                - Always validate and sanitize user input at system boundaries.
+                - Never log or return API keys, passwords, or secrets.
+                - Use HTTPS URLs in production configurations.
+            "
+        )
+    ]
+)
+
+println( "✓ Code reviewer agent with 2 lazy-loaded skills" )
+println( "  (the AI loads each skill only when the query requires it)" )
+println()
+
+sampleCode = "
+result = queryExecute( 'SELECT * FROM users WHERE id=' & url.userId )
+println( result )
+"
+
+print( "👤 User: Review this code for issues: " & sampleCode )
+println()
+print( "🤖 ReviewAgent: " )
+println( reviewAgent.run( "Review this code for issues: " & sampleCode ) )
+println()
+
+cliRead( "Press Enter to continue..." )
+
+// ───────────────────────────────────────────────────────────────
+// Part 4: Combining Always-On + Lazy Skills
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 4: Combined Always-On + Lazy Skills ---" )
+println()
+
+platformAssistant = aiAgent(
+    name           : "PlatformAssistant",
+    description    : "A versatile BoxLang platform assistant.",
+    instructions   : "
+        You help developers with BoxLang questions.
+        For code reviews, use your code-style skill.
+        For security concerns, use your security skill.
+    ",
+    model          : aiModel(),
+    skills         : [ toneSkill ],                           // always injected
+    availableSkills: [                                         // lazy-loaded on demand
+        aiSkill(
+            name       : "code-style",
+            description: "BoxLang style guidelines.",
+            content    : "Use camelCase, spacing around operators, prefer .each() over loops."
+        )
+    ]
+)
+
+println( "✓ Combined agent: 1 always-on skill + 1 lazy skill" )
+println()
+
+print( "👤 User: Write a simple BoxLang example that loops over an array." )
+println()
+print( "🤖 Platform Assistant: " )
+println( platformAssistant.run( "Write a simple BoxLang example that loops over an array." ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Key Takeaways
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Key Takeaways:" )
+println( "  • aiSkill( name, description, content ) — create an inline skill" )
+println( "  • skills: [ ... ]           — always injected into every system message" )
+println( "  • availableSkills: [ ... ]  — lazy-loaded only when the AI needs them" )
+println( "  • Combine both: always-on for core knowledge, lazy for specialty topics" )
+println( "  • Skills keep agents modular — define once, reuse across many agents" )

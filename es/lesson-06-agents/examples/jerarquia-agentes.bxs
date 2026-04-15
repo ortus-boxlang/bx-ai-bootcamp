@@ -1,0 +1,104 @@
+// jerarquia-agentes.bxs
+// Jerarquía de Sub-Agentes — delega a agentes especializados envueltos automáticamente como herramientas
+// Ejecutar con: boxlang jerarquia-agentes.bxs
+
+println( "🤝 Demo de Jerarquía de Sub-Agentes" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// ¿Cómo Funcionan los Sub-Agentes?
+// ───────────────────────────────────────────────────────────────
+// Los sub-agentes se envuelven automáticamente como herramientas
+// invocables en el agente coordinador.  El coordinador delega
+// tareas sin ninguna conexión manual de herramientas.
+//
+// Patrón:
+//   coordinador = aiAgent( ..., subAgents: [ agente1, agente2 ] )
+//   coordinador.run( "..." )  — el coordinador decide qué agente llamar
+
+// ───────────────────────────────────────────────────────────────
+// Parte 1: Sub-Agentes Especializados
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 1: Sub-Agentes Especializados ---" )
+println()
+
+agenteInvestigacion = aiAgent(
+    name        : "investigador",
+    description : "Investiga temas y resume los hechos clave de fuentes confiables.",
+    instructions: "Eres un especialista en investigación. Cuando se te pida investigar un tema,
+        proporciona datos concisos y precisos. Enfócate solo en información de conocimiento público."
+)
+
+agenteEscritor = aiAgent(
+    name        : "escritor",
+    description : "Escribe prosa atractiva y bien estructurada sobre temas dados.",
+    instructions: "Eres un especialista en escritura. Convierte puntos clave o notas de investigación
+        en párrafos claros y atractivos para un público general."
+)
+
+println( "✓ Sub-agentes creados:" )
+println( "  • investigador — " & agenteInvestigacion.getDescription() )
+println( "  • escritor     — " & agenteEscritor.getDescription() )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Parte 2: Agente Coordinador
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 2: Agente Coordinador ---" )
+println()
+
+coordinador = aiAgent(
+    name        : "coordinador-contenido",
+    description : "Coordina tareas de investigación y escritura a través de sub-agentes especializados.",
+    instructions: "Eres un coordinador de contenido.
+        - Usa el agente 'investigador' para recopilar datos sobre un tema.
+        - Usa el agente 'escritor' para convertir esos datos en contenido bien redactado.
+        Delega claramente y combina los resultados en una respuesta final.",
+    model       : aiModel(),
+    subAgents   : [ agenteInvestigacion, agenteEscritor ]
+)
+
+println( "✓ Coordinador creado con sub-agentes de " & coordinador.getConfig().name )
+println( "  Los sub-agentes están disponibles automáticamente como herramientas" )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Parte 3: Delegación en Acción
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 3: Delegación en Acción ---" )
+println()
+
+consulta1 = "Investiga BoxLang y escribe una breve introducción de dos párrafos para una entrada de blog."
+println( "👤 Usuario: " & consulta1 )
+println()
+println( "🤖 Coordinador: " & coordinador.run( consulta1 ) )
+println()
+
+cliRead( "Presiona Enter para continuar..." )
+
+// ───────────────────────────────────────────────────────────────
+// Parte 4: Metadatos del Agente
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 4: Metadatos del Agente ---" )
+println()
+
+config   = coordinador.getConfig()
+mensajes = coordinador.getMemoryMessages()
+
+println( "Nombre del coordinador : " & config.name )
+println( "Descripción            : " & config.description )
+println( "Mensajes en memoria    : " & mensajes.len() )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Conclusiones Clave
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Conclusiones Clave:" )
+println( "  • subAgents: [ ... ] envuelve cada agente automáticamente como herramienta" )
+println( "  • El coordinador decide cuándo y qué sub-agente llamar" )
+println( "  • Cada agente tiene memoria e instrucciones independientes" )
+println( "  • coordinador.getConfig()         — inspecciona la configuración del agente" )
+println( "  • coordinador.getMemoryMessages() — ve el historial completo de conversación" )
+println( "  • La jerarquía escala: los sub-agentes pueden tener sus propios sub-agentes" )

@@ -1,0 +1,134 @@
+import bxModules.bxai.models.middleware.core.LoggingMiddleware
+import bxModules.bxai.models.middleware.core.FlightRecorderMiddleware
+import bxModules.bxai.models.middleware.core.GuardrailMiddleware
+
+// middleware-agent.bxs
+// Agent Middleware — intercept lifecycle hooks for observability and safety
+// Run with: boxlang middleware-agent.bxs
+
+println( "🛡️  Agent Middleware Demo" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// What is Middleware?
+// ───────────────────────────────────────────────────────────────
+// Middleware intercepts agent lifecycle hooks without changing the
+// agent's core logic.  Use it for:
+//   • Logging / observability
+//   • Flight recording (capture + replay)
+//   • Guardrails (block unsafe tool calls)
+//   • Human-in-the-loop approvals
+//
+// Attach via: aiAgent( ..., middleware: [ mw1, mw2 ] )
+// The chain executes in order — put logging first!
+
+// ───────────────────────────────────────────────────────────────
+// Shared Tools
+// ───────────────────────────────────────────────────────────────
+getOrderStatus = aiTool(
+    "getOrderStatus",
+    "Look up the current status for an order number.",
+    ( orderId ) => "Order ##orderId## is packed and will ship today."
+).describeOrderId( "The order number to look up, e.g. 10042." )
+
+runSql = aiTool(
+    "runSql",
+    "Execute a SQL query against the reporting database.",
+    ( query ) => "Executed query safely: ##query##"
+).describeQuery( "The SQL query to execute." )
+
+deleteCustomer = aiTool(
+    "deleteCustomer",
+    "Delete a customer record by ID — DANGEROUS operation.",
+    ( customerId ) => "Customer ##customerId## deleted."
+).describeCustomerId( "The customer ID to delete." )
+
+// ───────────────────────────────────────────────────────────────
+// Part 1: Logging + Flight Recorder
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 1: Logging + Flight Recorder ---" )
+println()
+
+requestLogger = new LoggingMiddleware(
+    logToFile   : true,
+    logToConsole: true,
+    logLevel    : "info",
+    prefix      : "[Order Agent]"
+)
+
+flightRecorder = new FlightRecorderMiddleware(
+    mode       : "record",
+    fixturePath: "/.ai/flight-recorder/middleware-agent.json"
+)
+
+orderAgent = aiAgent(
+    name        : "order-agent",
+    instructions: "You help users with order lookups. Use getOrderStatus when an order number is provided.",
+    model       : aiModel(),
+    tools       : [ getOrderStatus ],
+    middleware  : [ requestLogger, flightRecorder ]
+)
+
+prompt1 = "Use the getOrderStatus tool to check order 10042 and summarise in one sentence."
+println( "👤 User: " & prompt1 )
+println()
+println( "🤖 Agent: " & orderAgent.run( prompt1 ) )
+println()
+println( "Middleware stack : " & orderAgent.listMiddleware().toString() )
+println( "Tape interactions: " & flightRecorder.getTape().interactions.len() )
+println()
+
+cliRead( "Press Enter to continue..." )
+
+// ───────────────────────────────────────────────────────────────
+// Part 2: Guardrails for Tool Safety
+// ───────────────────────────────────────────────────────────────
+println( "--- Part 2: Guardrails ---" )
+println()
+
+guardrails = new GuardrailMiddleware(
+    blockedTools: [ "deleteCustomer" ],
+    argPatterns : {
+        "runSql": [
+            { "query": "(?i)drop|truncate|delete" }
+        ]
+    }
+)
+
+safeOpsAgent = aiAgent(
+    name        : "safe-ops-agent",
+    instructions: "You are an operations assistant.
+        Use the available tools when the user asks for a database or customer operation.
+        If a tool is blocked, explain that the request was blocked by safety rules.",
+    model       : aiModel(),
+    tools       : [ runSql, deleteCustomer ],
+    middleware  : [
+        new LoggingMiddleware( logToConsole: true, prefix: "[Safe Ops]" ),
+        guardrails
+    ]
+)
+
+// This call should be blocked — deleteCustomer is in blockedTools
+prompt2 = "Use the deleteCustomer tool to remove customer 42."
+println( "👤 User: " & prompt2 )
+println( "🤖 Agent: " & safeOpsAgent.run( prompt2 ) )
+println()
+
+// This call should be blocked — query matches DROP/DELETE pattern
+prompt3 = "Use runSql to execute exactly: DELETE FROM customers WHERE id = 42"
+println( "👤 User: " & prompt3 )
+println( "🤖 Agent: " & safeOpsAgent.run( prompt3 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Key Takeaways
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Key Takeaways:" )
+println( "  • Attach middleware with: aiAgent( ..., middleware: [ mw1, mw2 ] )" )
+println( "  • LoggingMiddleware      — lifecycle visibility in console or log files" )
+println( "  • FlightRecorderMiddleware — captures replayable execution trace" )
+println( "  • GuardrailMiddleware    — blocks unsafe tools or argument patterns" )
+println( "  • Order matters: put LoggingMiddleware first to observe the full chain" )
+println( "  • agent.listMiddleware() — inspect the registered middleware stack" )

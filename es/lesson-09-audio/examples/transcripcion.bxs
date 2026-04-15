@@ -1,0 +1,114 @@
+/**
+* Lección 9 — Parte 2: Voz a texto con aiTranscribe()
+*
+* aiTranscribe() convierte un archivo de audio hablado en texto.
+* Puedes pasar una ruta de archivo, una URL o bytes binarios crudos.
+* Los indicadores de idioma mejoran la velocidad y la precisión.
+* El endpoint Whisper de Groq es rápido y generoso en su capa gratuita.
+*
+* Firma del BIF:
+*   aiTranscribe( audio, params, options )
+*     - audio   : string | byte[] — ruta de archivo, URL o bytes de audio
+*     - params  : struct          — language, model
+*     - options : struct          — provider
+*   Retorna: string — el texto transcrito
+*
+* Archivos de audio necesarios:
+*   Coloca un audio de muestra en:     ./assets/sample.mp3
+*   Y uno en español en:               ./assets/sample-es.mp3
+*
+* Ejecutar:
+*   boxlang examples/transcripcion.bxs
+*/
+
+println( "========================================" )
+println( "Lección 9 — Parte 2: Voz a Texto" )
+println( "========================================" )
+println( "" )
+
+archivoMuestra  = expandPath( "./assets/sample.mp3"    )
+archivoEspanol  = expandPath( "./assets/sample-es.mp3" )
+
+// ============================================================================
+// Parte 1: Transcripción simple — archivo local a texto
+// ============================================================================
+println( "--- Parte 1: Transcripción simple ---" )
+println( "" )
+
+// Pasar una ruta de archivo — aiTranscribe() retorna un string plano
+texto = aiTranscribe( archivoMuestra )
+
+println( "Transcripción:" )
+println( texto )
+println( "" )
+
+// ============================================================================
+// Parte 2: Indicador de idioma para mayor precisión
+// ============================================================================
+println( "--- Parte 2: Indicador de idioma ---" )
+println( "" )
+
+// Proporcionar params.language omite la auto-detección y mejora velocidad + precisión.
+// Usa códigos ISO 639-1: "es" (español), "fr" (francés), "de" (alemán), etc.
+
+textoEspanol = aiTranscribe(
+    audio  : archivoEspanol,
+    params : { language: "es" }
+)
+
+println( "Transcripción en español:" )
+println( textoEspanol )
+println( "" )
+
+// ============================================================================
+// Parte 3: Groq Whisper (más rápido, capa gratuita generosa)
+// ============================================================================
+println( "--- Parte 3: Groq Whisper ---" )
+println( "" )
+
+// Groq aloja Whisper y puede ser significativamente más rápido que OpenAI.
+// Requiere GROQ_API_KEY en tu archivo .env
+
+textoGroq = aiTranscribe(
+    audio  : archivoMuestra,
+    params : { model: "whisper-large-v3" },
+    options: { provider: "groq" }
+)
+
+println( "Transcripción Groq Whisper:" )
+println( textoGroq )
+println( "" )
+
+// ============================================================================
+// Parte 4: Ida y vuelta TTS → STT (sin archivo en disco)
+// ============================================================================
+println( "--- Parte 4: Ida y vuelta TTS → STT ---" )
+println( "" )
+
+// Sintetiza voz en memoria, luego transcribe los bytes crudos.
+// Útil para pruebas, pipelines de procesamiento de audio
+// o cuando no quieres escribir archivos intermedios en disco.
+
+textoOriginal = "BoxLang hace el desarrollo con IA rápido, expresivo y divertido."
+
+// Paso 1 — generar audio (sin outputFile → retorna AiSpeechResponse)
+respuestaVoz = aiSpeak( textoOriginal )
+
+// Paso 2 — pasar los bytes directamente a aiTranscribe()
+idaVuelta = aiTranscribe( respuestaVoz.getAudioData() )
+
+println( "Original   : #textoOriginal#" )
+println( "Ida-vuelta : #idaVuelta#" )
+println( "" )
+
+// ============================================================================
+// Conclusiones clave
+// ============================================================================
+println( "========================================" )
+println( "CONCLUSIONES CLAVE:" )
+println( "========================================" )
+println( "1. aiTranscribe( audio, params, options ) — convierte voz en texto" )
+println( "2. audio puede ser una ruta de archivo, URL o byte[] de aiSpeak()" )
+println( "3. params.language da un indicador al modelo y mejora la precisión" )
+println( "4. Cambia de proveedor con options.provider (ej. 'groq' para Whisper)" )
+println( "5. Pasa aiSpeak().getAudioData() directamente a aiTranscribe() — sin archivo" )

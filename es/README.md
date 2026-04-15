@@ -39,6 +39,7 @@ Al final de este bootcamp, podrás:
 - ✅ Construir un agente de IA autónomo
 - ✅ Cargar y procesar documentos para sistemas RAG
 - ✅ Crear servidores y clientes MCP para distribución de herramientas
+- ✅ Agregar voz — texto a voz, transcripción y traducción de audio
 
 ### Lo que Construirás
 
@@ -100,6 +101,7 @@ A lo largo de este bootcamp, crearás:
 | **6** | [Construyendo Agentes](lesson-06-agents/) | 90 mins | IA autónoma, memoria, tareas de múltiples pasos |
 | **7** | [Cargadores y Documentos](lesson-07-loaders-documents/) | 60 mins | Carga de documentos, fragmentación, sistemas RAG, memoria vectorial |
 | **8** | [Servidores y Clientes MCP](lesson-08-mcp-servers-clients/) | 60 mins | Protocolo MCP, servidores, clientes, herramientas distribuidas |
+| **9** | [Audio con IA](lesson-09-audio/) | 60 mins | Texto a voz, voz a texto, traducción de audio |
 
 ---
 
@@ -192,7 +194,11 @@ bootcamp/es/
 │   ├── README.md
 │   ├── examples/
 │   └── labs/
-└── lesson-08-mcp-servers-clients/ # Servidores y clientes MCP
+├── lesson-08-mcp-servers-clients/ # Servidores y clientes MCP
+│   ├── README.md
+│   ├── examples/
+│   └── labs/
+└── lesson-09-audio/               # Audio con IA (nuevo en v3.1)
     ├── README.md
     ├── examples/
     └── labs/

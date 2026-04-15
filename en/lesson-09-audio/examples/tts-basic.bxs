@@ -1,0 +1,145 @@
+/**
+* Lesson 9 — Part 1: Text-to-Speech with aiSpeak()
+*
+* aiSpeak() converts text into synthesized audio using an AI provider.
+* You can capture the audio binary, save it to a file, choose different
+* voices, models, output formats, and even control the voice style via
+* style instructions.
+*
+* BIF signature:
+*   aiSpeak( text, params, options )
+*     - text    : string  — text to synthesise
+*     - params  : struct  — provider params: model, voice, instructions
+*     - options : struct  — module options:  outputFile, provider
+*   Returns: AiSpeechResponse — getAudioData(), getContentType(), saveToFile(path)
+*
+* Run:
+*   mkdir -p data
+*   boxlang examples/tts-basic.bxs
+*/
+
+println( "========================================" )
+println( "Lesson 9 — Part 1: Text-to-Speech" )
+println( "========================================" )
+println( "" )
+
+// Ensure the output directory exists
+if ( !directoryExists( expandPath( "./data" ) ) ) {
+    directoryCreate( expandPath( "./data" ) )
+}
+
+// ============================================================================
+// Part 1: Simple TTS — save directly to file
+// ============================================================================
+println( "--- Part 1: Simple TTS (save to file) ---" )
+println( "" )
+
+outputFile = expandPath( "./data/hello.mp3" )
+
+aiSpeak(
+    text   : "Hello! Welcome to BoxLang AI. This is your first text-to-speech example.",
+    options: { outputFile: outputFile }
+)
+
+println( "✅ Audio saved to: #outputFile#" )
+println( "" )
+
+// ============================================================================
+// Part 2: Choose a voice and use the HD model
+// ============================================================================
+println( "--- Part 2: Custom voice and HD model ---" )
+println( "" )
+
+// OpenAI TTS voices: alloy, echo, fable, onyx, nova, shimmer, ash
+// Models: tts-1 (fast), tts-1-hd (higher quality), gpt-4o-mini-tts (expressive)
+
+outputHD = expandPath( "./data/nova-hd.mp3" )
+
+aiSpeak(
+    text   : "BoxLang makes AI integration simple, elegant, and fun for every developer.",
+    params : { model: "tts-1-hd", voice: "nova" },
+    options: { outputFile: outputHD, provider: "openai" }
+)
+
+println( "✅ HD audio (nova voice) saved to: #outputHD#" )
+println( "" )
+
+// ============================================================================
+// Part 3: Work with the AiSpeechResponse object
+// ============================================================================
+println( "--- Part 3: Using the AiSpeechResponse object ---" )
+println( "" )
+
+// When you don't pass outputFile, aiSpeak() returns an AiSpeechResponse object.
+// Use it to inspect the audio, process it in memory, or save it later.
+
+response = aiSpeak(
+    text   : "The quick brown fox jumps over the lazy dog.",
+    params : { voice: "alloy" },
+    options: { provider: "openai" }
+)
+
+println( "Content type : #response.getContentType()#" )    // "audio/mpeg"
+println( "Audio size   : #response.getAudioData().length# bytes" )
+
+// Save via the response object
+responseSavePath = expandPath( "./data/alloy.mp3" )
+response.saveToFile( responseSavePath )
+println( "✅ Audio saved to: #responseSavePath#" )
+println( "" )
+
+// You can also pass the raw bytes directly to aiTranscribe()
+// (see transcription.bxs Part 4 for the round-trip example)
+
+// ============================================================================
+// Part 4: Voice style instructions (gpt-4o-mini-tts only)
+// ============================================================================
+println( "--- Part 4: Voice style instructions ---" )
+println( "" )
+
+// The `instructions` param controls tone, accent, and personality.
+// ⚠️  ONLY supported by gpt-4o-mini-tts — will be ignored by tts-1 / tts-1-hd.
+
+pirateFile = expandPath( "./data/pirate.mp3" )
+
+aiSpeak(
+    text    : "Ahoy! Welcome to BoxLang AI, the finest treasure on the seven seas!",
+    params  : { model: "gpt-4o-mini-tts", voice: "ash" },
+    options : {
+        outputFile  : pirateFile,
+        instructions: "Speak like a dramatic pirate. Use 'Arrr!' and seafaring vocabulary."
+    }
+)
+
+println( "✅ Pirate audio saved to: #pirateFile#" )
+println( "" )
+
+// instructions can also be nested inside params instead of options — both work
+calmFile = expandPath( "./data/calm-narrator.mp3" )
+
+aiSpeak(
+    text  : "BoxLang makes AI feel natural and effortless.",
+    params: {
+        model       : "gpt-4o-mini-tts",
+        voice       : "nova",
+        instructions: "Speak in a calm, slow, soothing narrator voice."
+    },
+    options: { outputFile: calmFile }
+)
+
+println( "✅ Calm narrator audio saved to: #calmFile#" )
+println( "" )
+
+// ============================================================================
+// Key Takeaways
+// ============================================================================
+println( "========================================" )
+println( "KEY TAKEAWAYS:" )
+println( "========================================" )
+println( "1. aiSpeak( text, params, options ) — converts text to speech" )
+println( "2. options.outputFile saves the audio to disk directly" )
+println( "3. Without outputFile, returns an AiSpeechResponse object" )
+println( "4. AiSpeechResponse: getAudioData() → byte[], saveToFile(path)" )
+println( "5. voices: alloy, echo, fable, onyx, nova, shimmer, ash" )
+println( "6. models: tts-1 (fast), tts-1-hd (quality), gpt-4o-mini-tts (expressive)" )
+println( "7. instructions are only honoured by gpt-4o-mini-tts" )

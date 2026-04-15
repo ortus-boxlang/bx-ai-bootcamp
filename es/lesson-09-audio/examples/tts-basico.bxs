@@ -1,0 +1,145 @@
+/**
+* Lección 9 — Parte 1: Texto a voz con aiSpeak()
+*
+* aiSpeak() convierte texto en audio sintetizado usando un proveedor de IA.
+* Puedes capturar el binario de audio, guardarlo en archivo, elegir diferentes
+* voces, modelos, formatos de salida e incluso controlar el estilo de voz
+* con instrucciones.
+*
+* Firma del BIF:
+*   aiSpeak( text, params, options )
+*     - text    : string  — texto a sintetizar
+*     - params  : struct  — parámetros del proveedor: model, voice, instructions
+*     - options : struct  — opciones del módulo: outputFile, provider
+*   Retorna: AiSpeechResponse — getAudioData(), getContentType(), saveToFile(path)
+*
+* Ejecutar:
+*   mkdir -p data
+*   boxlang examples/tts-basico.bxs
+*/
+
+println( "========================================" )
+println( "Lección 9 — Parte 1: Texto a Voz" )
+println( "========================================" )
+println( "" )
+
+// Asegurar que el directorio de salida exista
+if ( !directoryExists( expandPath( "./data" ) ) ) {
+    directoryCreate( expandPath( "./data" ) )
+}
+
+// ============================================================================
+// Parte 1: TTS simple — guardar directamente en archivo
+// ============================================================================
+println( "--- Parte 1: TTS simple (guardar en archivo) ---" )
+println( "" )
+
+archivoSalida = expandPath( "./data/hola.mp3" )
+
+aiSpeak(
+    text   : "¡Hola! Bienvenido a BoxLang AI. Este es tu primer ejemplo de texto a voz.",
+    options: { outputFile: archivoSalida }
+)
+
+println( "✅ Audio guardado en: #archivoSalida#" )
+println( "" )
+
+// ============================================================================
+// Parte 2: Elegir una voz y usar el modelo HD
+// ============================================================================
+println( "--- Parte 2: Voz personalizada y modelo HD ---" )
+println( "" )
+
+// Voces de OpenAI TTS: alloy, echo, fable, onyx, nova, shimmer, ash
+// Modelos: tts-1 (rápido), tts-1-hd (mayor calidad), gpt-4o-mini-tts (expresivo)
+
+salidaHD = expandPath( "./data/nova-hd.mp3" )
+
+aiSpeak(
+    text   : "BoxLang hace la integración de IA simple, elegante y divertida para todo desarrollador.",
+    params : { model: "tts-1-hd", voice: "nova" },
+    options: { outputFile: salidaHD, provider: "openai" }
+)
+
+println( "✅ Audio HD (voz nova) guardado en: #salidaHD#" )
+println( "" )
+
+// ============================================================================
+// Parte 3: Trabajar con el objeto AiSpeechResponse
+// ============================================================================
+println( "--- Parte 3: Usando el objeto AiSpeechResponse ---" )
+println( "" )
+
+// Sin outputFile, aiSpeak() retorna un objeto AiSpeechResponse.
+// Úsalo para inspeccionar el audio, procesarlo en memoria o guardarlo después.
+
+respuesta = aiSpeak(
+    text   : "El rápido zorro marrón salta sobre el perro perezoso.",
+    params : { voice: "alloy" },
+    options: { provider: "openai" }
+)
+
+println( "Tipo de contenido : #respuesta.getContentType()#" )    // "audio/mpeg"
+println( "Tamaño del audio  : #respuesta.getAudioData().length# bytes" )
+
+// Guardar mediante el objeto respuesta
+rutaGuardado = expandPath( "./data/alloy.mp3" )
+respuesta.saveToFile( rutaGuardado )
+println( "✅ Audio guardado en: #rutaGuardado#" )
+println( "" )
+
+// También puedes pasar los bytes directamente a aiTranscribe()
+// (ver transcripcion.bxs Parte 4 para el ejemplo de ida y vuelta)
+
+// ============================================================================
+// Parte 4: Instrucciones de estilo de voz (solo gpt-4o-mini-tts)
+// ============================================================================
+println( "--- Parte 4: Instrucciones de estilo de voz ---" )
+println( "" )
+
+// El parámetro `instructions` controla el tono, acento y personalidad.
+// ⚠️  Solo compatible con gpt-4o-mini-tts — será ignorado por tts-1 / tts-1-hd.
+
+archivoPirata = expandPath( "./data/pirata.mp3" )
+
+aiSpeak(
+    text    : "¡Ahoy! ¡Bienvenido a BoxLang AI, el mejor tesoro de los siete mares!",
+    params  : { model: "gpt-4o-mini-tts", voice: "ash" },
+    options : {
+        outputFile  : archivoPirata,
+        instructions: "Habla como un dramático pirata. Usa 'Arrr!' y vocabulario marinero."
+    }
+)
+
+println( "✅ Audio pirata guardado en: #archivoPirata#" )
+println( "" )
+
+// Las instrucciones también se pueden anidar dentro de params — ambas formas funcionan
+archivoCalmado = expandPath( "./data/narrador-calmado.mp3" )
+
+aiSpeak(
+    text  : "BoxLang hace que la IA se sienta natural y sin esfuerzo.",
+    params: {
+        model       : "gpt-4o-mini-tts",
+        voice       : "nova",
+        instructions: "Habla con una voz de narrador calmada, lenta y tranquilizadora."
+    },
+    options: { outputFile: archivoCalmado }
+)
+
+println( "✅ Audio narrador calmado guardado en: #archivoCalmado#" )
+println( "" )
+
+// ============================================================================
+// Conclusiones clave
+// ============================================================================
+println( "========================================" )
+println( "CONCLUSIONES CLAVE:" )
+println( "========================================" )
+println( "1. aiSpeak( text, params, options ) — convierte texto en voz" )
+println( "2. options.outputFile guarda el audio en disco directamente" )
+println( "3. Sin outputFile, retorna un objeto AiSpeechResponse" )
+println( "4. AiSpeechResponse: getAudioData() → byte[], saveToFile(path)" )
+println( "5. Voces: alloy, echo, fable, onyx, nova, shimmer, ash" )
+println( "6. Modelos: tts-1 (rápido), tts-1-hd (calidad), gpt-4o-mini-tts (expresivo)" )
+println( "7. Las instrucciones solo se respetan con gpt-4o-mini-tts" )

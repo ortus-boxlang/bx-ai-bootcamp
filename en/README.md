@@ -39,6 +39,7 @@ By the end of this bootcamp, you will:
 - ✅ Build an autonomous AI agent
 - ✅ Load and process documents for RAG systems
 - ✅ Create MCP servers and clients for remote tools
+- ✅ Add voice capabilities — text-to-speech, transcription and audio translation
 
 ### What You'll Build
 
@@ -100,6 +101,7 @@ Throughout this bootcamp, you'll create:
 | **6** | [Building Agents](lesson-06-agents/) | 90 mins | Autonomous AI, memory, multi-step tasks |
 | **7** | [Loaders & Documents](lesson-07-loaders-documents/) | 60 mins | File loading, chunking, RAG systems, vector memory |
 | **8** | [MCP Servers & Clients](lesson-08-mcp-servers-clients/) | 60 mins | Model Context Protocol, remote tools, server creation |
+| **9** | [Audio AI](lesson-09-audio/) | 60 mins | Text-to-speech, speech-to-text, audio translation |
 
 ---
 
@@ -184,7 +186,19 @@ bootcamp/
 │   ├── README.md
 │   ├── examples/
 │   └── labs/
-└── lesson-06-agents/              # Autonomous AI
+├── lesson-06-agents/              # Autonomous AI
+│   ├── README.md
+│   ├── examples/
+│   └── labs/
+├── lesson-07-loaders-documents/   # RAG & document loading
+│   ├── README.md
+│   ├── examples/
+│   └── labs/
+├── lesson-08-mcp-servers-clients/ # Model Context Protocol
+│   ├── README.md
+│   ├── examples/
+│   └── labs/
+└── lesson-09-audio/               # Audio AI (new in v3.1)
     ├── README.md
     ├── examples/
     └── labs/

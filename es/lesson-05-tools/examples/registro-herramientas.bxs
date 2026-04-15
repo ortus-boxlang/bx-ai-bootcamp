@@ -1,0 +1,128 @@
+// registro-herramientas.bxs
+// Registro Global de Herramientas — registra una vez, úsalas en cualquier lugar
+// Ejecutar con: boxlang registro-herramientas.bxs
+
+println( "🗂️ Demo del Registro de Herramientas" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Parte 1: El Problema Sin un Registro
+// ───────────────────────────────────────────────────────────────
+// Sin un registro tienes que pasar *instancias* de herramientas a cada aiChat().
+// Esto se vuelve complejo cuando tienes docenas de herramientas compartidas.
+
+// ───────────────────────────────────────────────────────────────
+// Parte 2: Registrar Herramientas Una Vez
+// ───────────────────────────────────────────────────────────────
+println( "📋 Registrando herramientas en el registro global..." )
+println()
+
+// Obtener (o crear) el registro singleton
+registro = aiToolRegistry()
+
+// Registrar una herramienta calculadora
+registro.register(
+    name       : "calculadora",
+    description: "Realiza operaciones matemáticas básicas: +, -, *, /. Pasa la expresión como texto.",
+    module     : "bootcamp",
+    callback   : ( args ) => {
+        resultado = evaluate( args.expression ?: "0" )
+        return "Resultado: " & resultado
+    }
+)
+
+// Registrar una herramienta de clima
+registro.register(
+    name       : "obtener_clima",
+    description: "Devuelve el clima actual de una ciudad.",
+    module     : "bootcamp",
+    callback   : ( args ) => {
+        datos = {
+            "Ciudad de México": "22°C, Parcialmente nublado",
+            "Bogotá"          : "18°C, Lluvioso",
+            "Buenos Aires"    : "25°C, Soleado"
+        }
+        ciudad = args.city ?: "Ciudad de México"
+        return datos[ ciudad ] ?: "Sin datos para #ciudad#"
+    }
+)
+
+println( "✓ Registrada: calculadora@bootcamp" )
+println( "✓ Registrada: obtener_clima@bootcamp" )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Parte 3: Inspeccionar el Registro
+// ───────────────────────────────────────────────────────────────
+println( "🔍 Contenido del registro:" )
+herramientas = registro.getAll()
+herramientas.each( ( clave, herramienta ) => {
+    println( "  • #clave# → #herramienta.getDescription().left( 50 )#..." )
+} )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Parte 4: Referenciar Herramientas por Nombre en aiChat()
+// ───────────────────────────────────────────────────────────────
+println( "💬 Usando herramientas por nombre en aiChat()..." )
+println()
+
+// Pasa nombres como cadenas — el registro las resuelve automáticamente
+respuesta1 = aiChat(
+    "¿Cuánto es el 25% de 200?",
+    { tools: [ "calculadora@bootcamp" ] }
+)
+println( "P: ¿Cuánto es el 25% de 200?" )
+println( "R: " & respuesta1 )
+println()
+
+respuesta2 = aiChat(
+    "¿Qué clima hace en Bogotá?",
+    { tools: [ "obtener_clima@bootcamp" ] }
+)
+println( "P: ¿Qué clima hace en Bogotá?" )
+println( "R: " & respuesta2 )
+println()
+
+// Mezclar referencias de texto con instancias de herramientas
+herramientaFecha = aiTool(
+    "obtener_fecha",
+    "Devuelve la fecha de hoy.",
+    ( args ) => now().format( "d 'de' MMMM 'de' yyyy" )
+)
+
+respuesta3 = aiChat(
+    "¿Cuánto es 42 * 7 y cuál es la fecha de hoy?",
+    { tools: [ "calculadora@bootcamp", herramientaFecha ] }
+)
+println( "P: ¿Cuánto es 42 * 7 y cuál es la fecha de hoy?" )
+println( "R: " & respuesta3 )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Parte 5: Herramientas Incorporadas
+// ───────────────────────────────────────────────────────────────
+println( "⚙️  Herramientas incorporadas (proporcionadas por bx-ai):" )
+println()
+
+if( registro.has( "now@bx-ai" ) ) {
+    println( "  ✓ now@bx-ai disponible" )
+    respFecha = aiChat( "¿Cuál es la fecha de hoy?", { tools: [ "now@bx-ai" ] } )
+    println( "  P: ¿Cuál es la fecha de hoy?" )
+    println( "  R: " & respFecha )
+} else {
+    println( "  ℹ️  now@bx-ai no disponible en este entorno" )
+}
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Conclusiones Clave
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Conclusiones Clave:" )
+println( "  • aiToolRegistry() devuelve un singleton — regístrala una vez al inicio" )
+println( "  • Usa claves nombre@modulo (ej. 'calculadora@bootcamp')" )
+println( "  • Puedes pasar strings O instancias en params.tools — ambos funcionan" )
+println( "  • registro.getAll() lista todas las herramientas registradas" )
+println( "  • 'now@bx-ai' es una herramienta incorporada del módulo" )

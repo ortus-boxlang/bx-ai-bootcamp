@@ -1,0 +1,116 @@
+// agentes-paralelos.bxs
+// Ejecución Paralela de Agentes — distribuye una entrada a múltiples agentes concurrentemente
+// Ejecutar con: boxlang agentes-paralelos.bxs
+
+println( "⚡ Demo de Agentes Paralelos" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// ¿Cómo Funciona aiParallel()?
+// ───────────────────────────────────────────────────────────────
+// aiParallel({ nombre1: runnable1, nombre2: runnable2 })
+//   • Distribuye UNA entrada a TODOS los runnables concurrentemente
+//   • Devuelve un struct con las mismas claves que contienen cada resultado
+//   • Funciona con cualquier IAiRunnable: modelos, agentes, pipelines, transformaciones
+//   • Implementa IAiRunnable — compónelo en pipelines más grandes
+
+// ───────────────────────────────────────────────────────────────
+// Parte 1: Comparación Multi-Modelo
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 1: Comparación Multi-Modelo ---" )
+println()
+
+// Hacemos la misma pregunta a múltiples modelos simultáneamente
+paralelo = aiParallel({
+    openai: aiModel( provider: "openai" ),
+    claude: aiModel( provider: "claude" ),
+    groq  : aiModel( provider: "groq" )
+})
+
+pregunta = "Explica la recursión en una sola oración."
+println( "👤 Pregunta: " & pregunta )
+println()
+
+resultados = paralelo.run( pregunta )
+
+println( "📦 OpenAI : " & resultados.openai )
+println( "📦 Claude : " & resultados.claude )
+println( "📦 Groq   : " & resultados.groq )
+println()
+
+cliRead( "Presiona Enter para continuar..." )
+
+// ───────────────────────────────────────────────────────────────
+// Parte 2: Agentes Especializados en Paralelo
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 2: Agentes Especializados en Paralelo ---" )
+println()
+
+agenteResumen = aiAgent(
+    name        : "resumidor",
+    instructions: "Resume el texto dado en exactamente dos oraciones.",
+    model       : aiModel()
+)
+
+agenteSentimiento = aiAgent(
+    name        : "analizador-sentimiento",
+    instructions: "Responde SOLO con uno de: positivo, neutro, o negativo — luego una oración explicando por qué.",
+    model       : aiModel()
+)
+
+agentePalabrasClave = aiAgent(
+    name        : "extractor-palabras-clave",
+    instructions: "Extrae las 5 palabras clave más importantes del texto, devuélvelas como lista separada por comas.",
+    model       : aiModel()
+)
+
+analisisParalelo = aiParallel({
+    resumen        : agenteResumen,
+    sentimiento    : agenteSentimiento,
+    palabrasClave  : agentePalabrasClave
+})
+
+fragmentoArticulo = "BoxLang 3.0 incluye un poderoso módulo de IA que hace trivialmente fácil chatear
+con grandes modelos de lenguaje, construir agentes autónomos y ejecutar pipelines de generación
+aumentada por recuperación. La respuesta de la comunidad ha sido abrumadoramente positiva, con cientos
+de desarrolladores ya construyendo aplicaciones en producción en semanas en lugar de meses."
+
+println( "📄 Fragmento de artículo proporcionado..." )
+println()
+
+analisis = analisisParalelo.run( fragmentoArticulo )
+
+println( "📝 Resumen          : " & analisis.resumen )
+println( "💭 Sentimiento      : " & analisis.sentimiento )
+println( "🔑 Palabras Clave   : " & analisis.palabrasClave )
+println()
+
+cliRead( "Presiona Enter para continuar..." )
+
+// ───────────────────────────────────────────────────────────────
+// Parte 3: aiParallel() dentro de un Pipeline
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 3: Paralelo dentro de un Pipeline ---" )
+println()
+
+// Como aiParallel() implementa IAiRunnable, se encadena con .transform()
+pipeline = aiParallel({
+    resumen    : agenteResumen,
+    sentimiento: agenteSentimiento
+}).transform( r => "Resumen: #r.resumen# | Sentimiento: #r.sentimiento#" )
+
+combinado = pipeline.run( fragmentoArticulo )
+println( "🔗 Combinado: " & combinado )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Conclusiones Clave
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Conclusiones Clave:" )
+println( "  • aiParallel({ nombre: runnable }) distribuye UNA entrada a todos los runnables" )
+println( "  • Los resultados se devuelven como struct con las mismas claves que definiste" )
+println( "  • Funciona con cualquier IAiRunnable: modelos, agentes, pipelines, transformaciones" )
+println( "  • aiParallel() implementa IAiRunnable — encadénalo con .transform()" )
+println( "  • Úsalo para: comparar modelos, análisis paralelo, tareas concurrentes de agentes" )

@@ -1,0 +1,135 @@
+/**
+* Lección 9 — Lab: Pipeline Completo de Audio
+*
+* Este lab encadena los tres BIFs de audio en un flujo de trabajo realista:
+*   Texto → aiSpeak() → bytes de audio → aiTranscribe() → transcripción
+*   → aiTranslate() en audio extranjero → aiChat() para resumen
+*
+* Ejercicio del Lab:
+*   1. Sintetiza un mensaje de texto como voz
+*   2. Verifica la salida transcribiendo el audio de vuelta a texto (ida y vuelta)
+*   3. Carga un archivo de audio en idioma extranjero y tradúcelo al inglés
+*   4. Resume el contenido traducido con aiChat()
+*   5. (Opcional) Construye un bucle interactivo de preguntas y respuestas por voz
+*
+* Ejecutar:
+*   mkdir -p data
+*   boxlang labs/pipeline-audio.bxs
+*/
+
+println( "========================================" )
+println( "Lección 9 Lab: Pipeline Completo de Audio" )
+println( "========================================" )
+println( "" )
+
+// Asegurar que el directorio de salida exista
+if ( !directoryExists( expandPath( "./data" ) ) ) {
+    directoryCreate( expandPath( "./data" ) )
+}
+
+// ============================================================================
+// Paso 1: Texto → Voz
+// ============================================================================
+println( "--- Paso 1: Texto → Voz (aiSpeak) ---" )
+println( "" )
+
+textoOriginal = "BoxLang es un lenguaje JVM moderno y dinámico que hace la integración de IA simple y elegante."
+
+respuestaVoz = aiSpeak(
+    text   : textoOriginal,
+    params : { voice: "nova" },
+    options: { provider: "openai" }
+)
+
+println( "✅ Audio generado: #respuestaVoz.getAudioData().length# bytes" )
+println( "   Tipo de contenido: #respuestaVoz.getContentType()#" )
+println( "" )
+
+// Guardar una copia para inspección
+respuestaVoz.saveToFile( expandPath( "./data/lab-salida.mp3" ) )
+println( "✅ Audio guardado en: ./data/lab-salida.mp3" )
+println( "" )
+
+// ============================================================================
+// Paso 2: Voz → Texto de ida y vuelta (verificar fidelidad)
+// ============================================================================
+println( "--- Paso 2: Voz → Texto (ida y vuelta con aiTranscribe) ---" )
+println( "" )
+
+textoIdaVuelta = aiTranscribe( respuestaVoz.getAudioData() )
+
+println( "Original   : #textoOriginal#" )
+println( "Ida-vuelta : #textoIdaVuelta#" )
+println( "" )
+
+// ============================================================================
+// Paso 3: Audio extranjero → Inglés (aiTranslate)
+// ============================================================================
+println( "--- Paso 3: Audio extranjero → Inglés (aiTranslate) ---" )
+println( "" )
+
+archivoEspanol = expandPath( "./assets/sample-es.mp3" )
+
+if ( fileExists( archivoEspanol ) ) {
+
+    // Para comparar, primero transcribimos (conserva idioma original)
+    transcritoEspanol = aiTranscribe(
+        audio  : archivoEspanol,
+        params : { language: "es" }
+    )
+
+    // Ahora traducimos al inglés
+    traducidoIngles = aiTranslate( archivoEspanol )
+
+    println( "Original (español) : #transcritoEspanol#" )
+    println( "Traducido (inglés) : #traducidoIngles#" )
+    println( "" )
+
+} else {
+    println( "⚠️  ./assets/sample-es.mp3 no encontrado — omitiendo paso de traducción." )
+    println( "   Coloca un archivo de audio en español (u otro idioma) allí para probarlo." )
+    traducidoIngles = textoIdaVuelta  // usar texto de ida-vuelta para el siguiente paso
+    println( "" )
+}
+
+// ============================================================================
+// Paso 4: Resumir con aiChat()
+// ============================================================================
+println( "--- Paso 4: Resumir contenido traducido (aiChat) ---" )
+println( "" )
+
+resumen = aiChat(
+    "En una oración, resume lo siguiente e identifica el tema principal: #traducidoIngles#"
+)
+
+println( "Contenido a resumir : #traducidoIngles#" )
+println( "Resumen de IA       : #resumen#" )
+println( "" )
+
+// ============================================================================
+// 🏆 Desafío (Extensión)
+// ============================================================================
+println( "--- 🏆 Desafío: Construye tu propio Q&A por voz ---" )
+println( "" )
+println( "Extiende este lab para:" )
+println( "1. Recibir una pregunta como texto de entrada" )
+println( "2. Usar aiChat() para responderla" )
+println( "3. Convertir la respuesta a voz con aiSpeak()" )
+println( "4. Guardar la respuesta hablada en ./data/respuesta.mp3" )
+println( "" )
+println( "Pista:" )
+println( "  pregunta  = '¿Cuál es la capital de Francia?'" )
+println( "  respuesta = aiChat( pregunta )" )
+println( "  aiSpeak( text: respuesta, options: { outputFile: './data/respuesta.mp3' } )" )
+println( "" )
+
+// ============================================================================
+// Conclusiones clave
+// ============================================================================
+println( "========================================" )
+println( "CONCLUSIONES CLAVE:" )
+println( "========================================" )
+println( "1. aiSpeak() + aiTranscribe() forman un pipeline de ida y vuelta TTS→STT" )
+println( "2. AiSpeechResponse.getAudioData() retorna byte[] — sin necesidad de archivo" )
+println( "3. aiTranslate() → inglés; aiTranscribe() → idioma original" )
+println( "4. Encadena aiTranslate() + aiChat() para resumen multilingüe" )

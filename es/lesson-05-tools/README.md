@@ -405,6 +405,62 @@ Tú: salir
 
 ---
 
+## 🗂️ Parte 5: Registro Global de Herramientas (10 mins)
+
+Cuando tu aplicación tiene muchas herramientas compartidas entre diferentes llamadas de IA, pasar instancias en todos lados se vuelve repetitivo. El **Registro de Herramientas** te permite registrarlas una vez al inicio y referenciarlas por nombre.
+
+### Registra Una Vez, Usa en Cualquier Lugar
+
+```java
+// Al iniciar la app (una sola vez)
+registro = aiToolRegistry()
+
+registro.register(
+    name       : "calculadora",
+    description: "Realiza operaciones matemáticas: +, -, *, /",
+    module     : "miapp",
+    callback   : ( args ) => evaluate( args.expression )
+)
+
+registro.register(
+    name       : "obtener_clima",
+    description: "Devuelve el clima para una ciudad",
+    module     : "miapp",
+    callback   : ( args ) => consultarClima( args.city )
+)
+```
+
+### Referenciar por Nombre en aiChat()
+
+```java
+// Más adelante, en cualquier parte del código
+respuesta = aiChat(
+    "¿Cuánto es el 15% de 200 y qué clima hay en Miami?",
+    { tools: [ "calculadora@miapp", "obtener_clima@miapp" ] }
+)
+```
+
+También puedes mezclar referencias de texto con instancias en línea:
+
+```java
+herramientaFecha = aiTool( "obtener_fecha", "Fecha de hoy", ( args ) => now() )
+
+respuesta = aiChat(
+    "¿Qué hora es y cuánto es 2+2?",
+    { tools: [ "calculadora@miapp", herramientaFecha ] }
+)
+```
+
+### Herramienta Incorporada
+
+`bx-ai` incluye `now@bx-ai` — disponible sin registro:
+
+```java
+respuesta = aiChat( "¿Cuál es la fecha de hoy?", { tools: [ "now@bx-ai" ] } )
+```
+
+---
+
 ## ✅ Verificación de Conocimientos
 
 1. **¿Qué permiten las herramientas de IA?**
@@ -474,7 +530,8 @@ lesson-05-tools/
 ├── examples/
 │   ├── herramienta-calculadora.bxs
 │   ├── herramienta-clima.bxs
-│   └── asistente-inteligente.bxs
+│   ├── asistente-inteligente.bxs
+│   └── registro-herramientas.bxs
 └── labs/
     └── bot-clima.bxs
 ```

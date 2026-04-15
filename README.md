@@ -86,6 +86,7 @@ This intensive, hands-on course takes you from zero AI experience to building in
 - ✅ Build an autonomous AI agent
 - ✅ Load and process documents for RAG systems
 - ✅ Create MCP servers and clients for remote tools
+- ✅ Add voice — text-to-speech, transcription and audio translation
 
 ---
 

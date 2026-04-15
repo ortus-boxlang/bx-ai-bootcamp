@@ -1,0 +1,119 @@
+// agente-habilidades.bxs
+// Habilidades de Agentes — inyecta conocimiento de dominio reutilizable
+// Ejecutar con: boxlang agente-habilidades.bxs
+
+println( "🧠 Demo de Habilidades de Agentes" )
+println( "═".repeat( 40 ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// ¿Qué son las Habilidades?
+// ───────────────────────────────────────────────────────────────
+// Las habilidades son bloques reutilizables de conocimiento de dominio
+// que se inyectan en el contexto del sistema del agente.
+//
+// Dos modos de inyección:
+//   skills:          Siempre activo — contenido completo en cada interacción
+//   availableSkills: Carga diferida — la IA carga el contenido solo cuando lo necesita
+
+// ───────────────────────────────────────────────────────────────
+// Parte 1: Habilidad en Línea (sin archivos)
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 1: Habilidad en Línea ---" )
+println()
+
+habilidadTono = aiSkill(
+    name       : "tono-profesional",
+    description: "Define el estilo de comunicación para todas las respuestas.",
+    content    : "
+        Siempre usa un tono profesional pero amigable.
+        Mantén las respuestas concisas — máximo tres párrafos.
+        Evita la jerga técnica a menos que el usuario sea claramente técnico.
+        Termina cada respuesta con una oración motivadora breve.
+    "
+)
+
+println( "✓ Habilidad en línea creada: " & habilidadTono.getName() )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Parte 2: Habilidades Siempre Activas
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 2: Agente con Habilidades Siempre Activas ---" )
+println()
+
+asistente = aiAgent(
+    name        : "AsistenteProfesional",
+    description : "Un asistente que siempre usa estilo consistente.",
+    instructions: "Responde las preguntas del usuario de forma útil y precisa.",
+    model       : aiModel(),
+    skills      : [ habilidadTono ]
+)
+
+println( "✓ Agente creado con habilidades siempre activas" )
+print( "👤 Usuario: ¿Qué es BoxLang y por qué debería usarlo?" )
+println()
+print( "🤖 Agente: " )
+println( asistente.run( "¿Qué es BoxLang y por qué debería usarlo?" ) )
+println()
+
+cliRead( "Presiona Enter para continuar..." )
+
+// ───────────────────────────────────────────────────────────────
+// Parte 3: Habilidades de Carga Diferida
+// ───────────────────────────────────────────────────────────────
+println( "--- Parte 3: Agente con Habilidades de Carga Diferida ---" )
+println()
+
+revisor = aiAgent(
+    name           : "RevisorCodigo",
+    description    : "Un revisor de código BoxLang.",
+    instructions   : "Revisa el código BoxLang para detectar errores, estilo y problemas de seguridad.",
+    model          : aiModel(),
+    availableSkills: [
+        aiSkill(
+            name       : "estilo-boxlang",
+            description: "Guía de estilo BoxLang: espaciado, nombres, patrones.",
+            content    : "
+                - Usa camelCase para variables y funciones.
+                - Agrega espacios alrededor de operadores: a + b, no a+b.
+                - Prefiere array.each() sobre bucles for.
+                - Usa el operador Elvis ?: para valores por defecto.
+            "
+        ),
+        aiSkill(
+            name       : "revision-seguridad",
+            description: "Lista de verificación de seguridad: inyección SQL, XSS, exposición de datos.",
+            content    : "
+                - Nunca concatenes entrada del usuario en cadenas SQL. Usa queryExecute() con params.
+                - Siempre valida y sanitiza la entrada del usuario.
+                - Nunca registres ni devuelvas claves API, contraseñas o secretos.
+            "
+        )
+    ]
+)
+
+println( "✓ Agente revisor con 2 habilidades de carga diferida" )
+println()
+
+codigoEjemplo = "
+resultado = queryExecute( 'SELECT * FROM usuarios WHERE id=' & url.userId )
+println( resultado )
+"
+
+print( "👤 Usuario: Revisa este código: " & codigoEjemplo )
+println()
+print( "🤖 Revisor: " )
+println( revisor.run( "Revisa este código para detectar problemas: " & codigoEjemplo ) )
+println()
+
+// ───────────────────────────────────────────────────────────────
+// Conclusiones Clave
+// ───────────────────────────────────────────────────────────────
+println( "─".repeat( 40 ) )
+println( "Conclusiones Clave:" )
+println( "  • aiSkill( name, description, content ) — crea una habilidad en línea" )
+println( "  • skills: [ ... ]           — siempre inyectado en cada mensaje del sistema" )
+println( "  • availableSkills: [ ... ]  — carga diferida solo cuando la IA lo necesita" )
+println( "  • Combina ambos: siempre activo para conocimiento base, diferido para especialidades" )
+println( "  • Habilidades mantienen los agentes modulares — define una vez, reutiliza en muchos agentes" )

@@ -404,6 +404,83 @@ You: quit
 
 ---
 
+## 🗂️ Part 5: Global Tool Registry (10 mins)
+
+When your app has many tools shared across different AI calls, passing instances everywhere becomes repetitive. The **Tool Registry** lets you register tools once at startup and reference them by name.
+
+### Register Once, Use Anywhere
+
+```java
+// At app startup (once)
+registry = aiToolRegistry()
+
+registry.register(
+    name       : "calculator",
+    description: "Performs math: +, -, *, /",
+    module     : "myapp",
+    callback   : ( args ) => evaluate( args.expression )
+)
+
+registry.register(
+    name       : "get_weather",
+    description: "Returns weather for a city",
+    module     : "myapp",
+    callback   : ( args ) => fetchWeather( args.city )
+)
+```
+
+### Reference by Name in aiChat()
+
+```java
+// Later, anywhere in your code — reference by "name@module" string
+answer = aiChat(
+    "What is 15% of 200 and what's the weather in Miami?",
+    { tools: [ "calculator@myapp", "get_weather@myapp" ] }
+)
+```
+
+You can also mix string references with inline tool instances:
+
+```java
+inlineTool = aiTool( "get_date", "Today's date", ( args ) => now() )
+
+answer = aiChat(
+    "What time is it and what's 2+2?",
+    { tools: [ "calculator@myapp", inlineTool ] }
+)
+```
+
+### Inspect the Registry
+
+```java
+// List all registered tools
+registry.getAll().each( ( key, tool ) => {
+    println( "#key# → #tool.getDescription()#" )
+})
+
+// Check if a tool exists
+if( registry.has( "calculator@myapp" ) ) {
+    println( "Calculator is registered!" )
+}
+```
+
+### Built-In Tools
+
+`bx-ai` ships `now@bx-ai` — a date/time tool available without registration:
+
+```java
+answer = aiChat( "What is today's date?", { tools: [ "now@bx-ai" ] } )
+```
+
+### Summary: Inline vs Registry
+
+| Approach | Best For |
+|---|---|
+| Inline `aiTool()` | One-off tools in a single script |
+| Registry `aiToolRegistry()` | Shared tools used across the application |
+
+---
+
 ## ✅ Knowledge Check
 
 1. **What do AI tools allow?**
@@ -473,7 +550,8 @@ lesson-05-tools/
 ├── examples/
 │   ├── calculator-tool.bxs
 │   ├── weather-tool.bxs
-│   └── smart-assistant.bxs
+│   ├── smart-assistant.bxs
+│   └── tool-registry.bxs
 └── labs/
     └── weather-bot.bxs
 ```

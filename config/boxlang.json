@@ -42,7 +42,18 @@
                 // If true, the AI response will be logged to the console
                 "logResponseToConsole" : false,
                 // The default return format of the AI response: single, all, raw
-                "returnFormat" : "single"
+                "returnFormat" : "single",
+                // Skills: directory to auto-load SKILL.md files from at startup
+                "skillsDirectory" : "/.ai/skills",
+                // If true, skills are automatically loaded from skillsDirectory on startup
+                "autoLoadSkills" : true,
+                // Audio settings for aiSpeak(), aiTranscribe(), aiTranslate()
+                "audio" : {
+                    "defaultVoice" : "",
+                    "defaultOutputFormat" : "mp3",
+                    "defaultSpeechModel" : "",
+                    "defaultTranscriptionModel" : ""
+                }
             }
         }
     }

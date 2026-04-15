@@ -1,0 +1,135 @@
+/**
+* Lesson 9 — Lab: Full Audio Pipeline
+*
+* This lab chains all three audio BIFs together into a realistic workflow:
+*   Text → aiSpeak() → audio bytes → aiTranscribe() → English transcription
+*   → aiTranslate() on foreign audio → aiChat() for summarization
+*
+* Lab Exercise:
+*   1. Synthesise a text message as speech
+*   2. Verify the output by transcribing the audio back to text (round-trip)
+*   3. Load a foreign-language audio file and translate it to English
+*   4. Summarize the translated content with aiChat()
+*   5. (Optional) Build an interactive voice Q&A loop
+*
+* Run:
+*   mkdir -p data
+*   boxlang labs/audio-pipeline.bxs
+*/
+
+println( "========================================" )
+println( "Lesson 9 Lab: Full Audio Pipeline" )
+println( "========================================" )
+println( "" )
+
+// Ensure output directory exists
+if ( !directoryExists( expandPath( "./data" ) ) ) {
+    directoryCreate( expandPath( "./data" ) )
+}
+
+// ============================================================================
+// Step 1: Text → Speech
+// ============================================================================
+println( "--- Step 1: Text → Speech (aiSpeak) ---" )
+println( "" )
+
+originalText = "BoxLang is a modern dynamic JVM language that makes AI integration simple and elegant."
+
+speechResponse = aiSpeak(
+    text   : originalText,
+    params : { voice: "nova" },
+    options: { provider: "openai" }
+)
+
+println( "✅ Generated audio: #speechResponse.getAudioData().length# bytes" )
+println( "   Content type   : #speechResponse.getContentType()#" )
+println( "" )
+
+// Optionally save a copy for inspection
+speechResponse.saveToFile( expandPath( "./data/lab-output.mp3" ) )
+println( "✅ Audio saved to: ./data/lab-output.mp3" )
+println( "" )
+
+// ============================================================================
+// Step 2: Speech → Text round-trip (verify fidelity)
+// ============================================================================
+println( "--- Step 2: Speech → Text (aiTranscribe round-trip) ---" )
+println( "" )
+
+roundTripText = aiTranscribe( speechResponse.getAudioData() )
+
+println( "Original  : #originalText#" )
+println( "Round-trip: #roundTripText#" )
+println( "" )
+
+// ============================================================================
+// Step 3: Foreign audio → English (aiTranslate)
+// ============================================================================
+println( "--- Step 3: Foreign audio → English (aiTranslate) ---" )
+println( "" )
+
+spanishFile = expandPath( "./assets/sample-es.mp3" )
+
+if ( fileExists( spanishFile ) ) {
+
+    // For comparison, transcribe first (keeps original language)
+    transcribedSpanish = aiTranscribe(
+        audio  : spanishFile,
+        params : { language: "es" }
+    )
+
+    // Now translate to English
+    translatedEnglish = aiTranslate( spanishFile )
+
+    println( "Original (Spanish) : #transcribedSpanish#" )
+    println( "Translated (English): #translatedEnglish#" )
+    println( "" )
+
+} else {
+    println( "⚠️  ./assets/sample-es.mp3 not found — skipping translate step." )
+    println( "   Drop a Spanish (or other language) audio file there to try it." )
+    translatedEnglish = roundTripText  // use round-trip text for next step
+    println( "" )
+}
+
+// ============================================================================
+// Step 4: Summarize with aiChat()
+// ============================================================================
+println( "--- Step 4: Summarize translated content (aiChat) ---" )
+println( "" )
+
+summary = aiChat(
+    "In one sentence, summarize the following and identify the main topic: #translatedEnglish#"
+)
+
+println( "Content to summarize : #translatedEnglish#" )
+println( "AI summary           : #summary#" )
+println( "" )
+
+// ============================================================================
+// 🏆 Challenge (Extension)
+// ============================================================================
+println( "--- 🏆 Challenge: Build your own audio Q&A ---" )
+println( "" )
+println( "Extend this lab to:" )
+println( "1. Accept a question as text input" )
+println( "2. Use aiChat() to answer it" )
+println( "3. Convert the answer to speech with aiSpeak()" )
+println( "4. Save the spoken answer to ./data/answer.mp3" )
+println( "" )
+println( "Hint:" )
+println( "  question = 'What is the capital of France?'" )
+println( "  answer   = aiChat( question )" )
+println( "  aiSpeak( text: answer, options: { outputFile: './data/answer.mp3' } )" )
+println( "" )
+
+// ============================================================================
+// Key Takeaways
+// ============================================================================
+println( "========================================" )
+println( "KEY TAKEAWAYS:" )
+println( "========================================" )
+println( "1. aiSpeak() + aiTranscribe() form a TTS→STT round-trip pipeline" )
+println( "2. AiSpeechResponse.getAudioData() returns byte[] — no file needed" )
+println( "3. aiTranslate() → English; aiTranscribe() → original language" )
+println( "4. Chain aiTranslate() + aiChat() for multilingual summarization" )

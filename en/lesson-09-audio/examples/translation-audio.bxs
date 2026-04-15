@@ -1,0 +1,107 @@
+/**
+* Lesson 9 — Part 3: Audio Translation with aiTranslate()
+*
+* aiTranslate() takes audio in ANY supported language and returns
+* English text. It is the "international speech recognition" BIF.
+*
+* Key distinction:
+*   aiTranscribe() → preserves the original language
+*   aiTranslate()  → ALWAYS outputs English
+*
+* BIF signature:
+*   aiTranslate( audio, params, options )
+*     - audio   : string | byte[] — file path, URL, or raw bytes
+*     - params  : struct          — model
+*     - options : struct          — provider
+*   Returns: string — English transcription of the audio
+*
+* Assets needed:
+*   ./assets/sample-es.mp3  (Spanish audio file)
+*
+* Run:
+*   boxlang examples/translation-audio.bxs
+*/
+
+println( "========================================" )
+println( "Lesson 9 — Part 3: Audio Translation" )
+println( "========================================" )
+println( "" )
+
+spanishFile = expandPath( "./assets/sample-es.mp3" )
+
+// ============================================================================
+// Part 1: Translate Spanish audio directly to English
+// ============================================================================
+println( "--- Part 1: Spanish audio → English text ---" )
+println( "" )
+
+englishText = aiTranslate( spanishFile )
+
+println( "English translation:" )
+println( englishText )
+println( "" )
+
+// ============================================================================
+// Part 2: Explicit provider and model
+// ============================================================================
+println( "--- Part 2: Explicit provider and model ---" )
+println( "" )
+
+translation = aiTranslate(
+    audio  : spanishFile,
+    params : { model: "whisper-1" },
+    options: { provider: "openai" }
+)
+
+println( "OpenAI Whisper translation:" )
+println( translation )
+println( "" )
+
+// ============================================================================
+// Part 3: Transcribe vs Translate — side-by-side comparison
+// ============================================================================
+println( "--- Part 3: aiTranscribe() vs aiTranslate() comparison ---" )
+println( "" )
+
+// aiTranscribe with language hint → returns Spanish text
+originalLang = aiTranscribe(
+    audio  : spanishFile,
+    params : { language: "es" }
+)
+
+// aiTranslate → always returns English text
+translatedEn = aiTranslate( spanishFile )
+
+println( "aiTranscribe (original Spanish) : #originalLang#" )
+println( "aiTranslate  (English)          : #translatedEn#" )
+println( "" )
+
+// ============================================================================
+// Part 4: Translate audio → then process with aiChat()
+// ============================================================================
+println( "--- Part 4: Translate + summarize with aiChat() ---" )
+println( "" )
+
+// Step 1 — get English text from the audio
+englishFromAudio = aiTranslate( spanishFile )
+
+// Step 2 — feed it to aiChat() for further processing
+summary = aiChat(
+    "Summarize the following in one sentence and identify the main topic: #englishFromAudio#"
+)
+
+println( "Translated audio : #englishFromAudio#" )
+println( "AI summary       : #summary#" )
+println( "" )
+
+// ============================================================================
+// Key Takeaways
+// ============================================================================
+println( "========================================" )
+println( "KEY TAKEAWAYS:" )
+println( "========================================" )
+println( "1. aiTranslate( audio, params, options ) — translates any spoken language to English" )
+println( "2. audio can be a file path, URL, or raw byte[]" )
+println( "3. aiTranscribe() preserves the original language; aiTranslate() always outputs English" )
+println( "4. Chain aiTranslate() + aiChat() for powerful multilingual workflows" )
+println( "5. Use aiChat() for text-to-text translation between arbitrary languages" )

@@ -10,6 +10,10 @@ En esta lección final, reunimos todo para construir **agentes de IA autónomos*
 - Crear agentes con `aiAgent()`
 - Agregar memoria para que los agentes recuerden el contexto
 - Dar herramientas a los agentes para interactuar con el mundo
+- Inyectar conocimiento reutilizable con **Habilidades** (`aiSkill()`)
+- Observar y proteger agentes con **Middleware**
+- Delegar tareas mediante **jerarquías de sub-agentes**
+- Ejecutar múltiples agentes simultáneamente con **`aiParallel()`**
 - Construir un asistente completo que maneje tareas complejas
 
 ---
@@ -946,12 +950,16 @@ Aprendiste:
 | **Memoria Multi-Tenant** | Aísla memoria por userId y conversationId |
 | **Instrucciones** | Guía el comportamiento del agente |
 | **Herramientas** | Acciones que el agente puede tomar |
+| **Habilidades** | Conocimiento de dominio reutilizable (`aiSkill()`) |
+| **Middleware** | Registro, grabación y barreras de seguridad |
+| **Sub-Agentes** | Delegación jerárquica de tareas |
+| **aiParallel()** | Ejecución concurrente de múltiples runnables |
 | **agent.stream()** | Transmite respuestas en tiempo real |
 | **agent.runAsync()** | Ejecuta agentes en segundo plano |
 
 ### Patrón de Código Clave
 
-```java
+```javascript
 // Crear agente
 agente = aiAgent(
     name: "MiAgente",
@@ -964,12 +972,30 @@ agente = aiAgent(
 // Usar agente
 respuesta = agente.run( "Solicitud del usuario" )
 
+// Agente con habilidades y middleware
+agente = aiAgent(
+    name      : "Asistente",
+    model     : aiModel(),
+    skills    : [ aiSkill( name: "tono", description: "...", content: "..." ) ],
+    middleware: [ new LoggingMiddleware( logToConsole: true ) ]
+)
+
+// Jerarquía de sub-agentes
+coordinador = aiAgent(
+    name      : "coordinador",
+    model     : aiModel(),
+    subAgents : [ especialista1, especialista2 ]
+)
+
+// Ejecución paralela
+resultados = aiParallel({ resumen: agenteResumen, analisis: agenteAnalisis }).run( texto )
+
 // Agente multi-tenant
-function createUserAgent( userId, conversationId ) {
+function crearAgenteUsuario( userId, conversationId ) {
     return aiAgent(
-        name: "Assistant",
+        name  : "AsistenteWeb",
         memory: aiMemory( "cache",
-            userId: userId,
+            userId        : userId,
             conversationId: conversationId
         )
     )
@@ -982,6 +1008,224 @@ agente.stream( "pregunta", ( chunk ) => print( chunk ) )
 future = agente.runAsync( "tarea larga" )
 resultado = future.get()
 ```
+
+---
+
+## 🔬 Parte 5: Habilidades del Agente — Conocimiento Reutilizable (15 mins)
+
+Las habilidades son bloques de conocimiento de dominio reutilizable que se inyectan en el contexto del sistema del agente.
+
+### Dos Modos de Inyección
+
+| Modo | Parámetro | Comportamiento |
+|---|---|---|
+| Siempre activo | `skills: [ ... ]` | Contenido completo en cada interacción |
+| Carga diferida | `availableSkills: [ ... ]` | La IA carga el contenido solo cuando lo necesita |
+
+### Creando Habilidades
+
+```javascript
+// Habilidad en línea — sin archivos
+habilidadTono = aiSkill(
+    name       : "tono-profesional",
+    description: "Define el estilo de comunicación.",
+    content    : "Usa siempre un tono profesional y amigable. Sé conciso."
+)
+
+// Habilidad basada en archivo
+habilidadBL = aiSkill( "/.ai/skills/boxlang-expert/SKILL.md" )
+
+// Escaneo de directorio
+todasHabilidades = aiSkill( "/.ai/skills" )
+```
+
+### Uso en Agentes
+
+```javascript
+// Siempre activo
+asistente = aiAgent(
+    name  : "AsistenteProfesional",
+    model : aiModel(),
+    skills: [ habilidadTono ]
+)
+
+// Carga diferida
+revisor = aiAgent(
+    name           : "RevisorCodigo",
+    model          : aiModel(),
+    availableSkills: [
+        aiSkill( name: "estilo-bl",      description: "Guía de estilo BoxLang...", content: "..." ),
+        aiSkill( name: "rev-seguridad",  description: "Lista de seguridad...",    content: "..." )
+    ]
+)
+
+// Combinado: algunos siempre activos + algunos diferidos
+asistentePlataforma = aiAgent(
+    name           : "AsistentePlataforma",
+    model          : aiModel(),
+    skills         : [ habilidadTono ],                           // siempre
+    availableSkills: [ habilidadBL, habilidadSeguridad ]          // bajo demanda
+)
+```
+
+📂 **Archivo de ejemplo:** `examples/agente-habilidades.bxs`
+
+---
+
+## 🛡️ Parte 6: Middleware del Agente — Observar y Proteger (15 mins)
+
+El middleware intercepta los ganchos del ciclo de vida del agente sin alterar su lógica central.
+
+### Middleware Integrado
+
+| Clase | Propósito |
+|---|---|
+| `LoggingMiddleware` | Imprime/registra cada evento del ciclo de vida |
+| `FlightRecorderMiddleware` | Captura una traza de ejecución reproducible |
+| `GuardrailMiddleware` | Bloquea herramientas inseguras o patrones de argumentos |
+| `HumanInTheLoopMiddleware` | Pausa la ejecución para aprobación humana |
+
+### Importaciones
+
+```javascript
+import bxModules.bxai.models.middleware.core.LoggingMiddleware
+import bxModules.bxai.models.middleware.core.FlightRecorderMiddleware
+import bxModules.bxai.models.middleware.core.GuardrailMiddleware
+```
+
+### Ejemplo: Registro
+
+```javascript
+registrador = new LoggingMiddleware(
+    logToFile   : true,
+    logToConsole: true,
+    logLevel    : "info",
+    prefix      : "[Agente Soporte]"
+)
+
+agente = aiAgent(
+    name      : "agente-soporte",
+    model     : aiModel(),
+    tools     : [ consultarPedido ],
+    middleware: [ registrador ]
+)
+
+agente.run( "Ver pedido 10042" )
+println( agente.listMiddleware() )
+```
+
+### Ejemplo: Barreras de Seguridad
+
+```javascript
+barrera = new GuardrailMiddleware(
+    blockedTools: [ "eliminarCliente" ],
+    argPatterns : {
+        "ejecutarSql": [ { "query": "(?i)drop|truncate|delete" } ]
+    }
+)
+
+agente = aiAgent(
+    name      : "ops-seguras",
+    model     : aiModel(),
+    tools     : [ ejecutarSql, eliminarCliente ],
+    middleware: [ new LoggingMiddleware( logToConsole: true ), barrera ]
+)
+```
+
+> ⚠️ **El orden importa** — coloca `LoggingMiddleware` primero para observar toda la cadena.
+
+📂 **Archivo de ejemplo:** `examples/agente-middleware.bxs`
+
+---
+
+## 🤝 Parte 7: Jerarquías de Sub-Agentes (10 mins)
+
+Los sub-agentes permiten que un coordinador delegue tareas a agentes especialistas. Cada sub-agente se **envuelve automáticamente como herramienta invocable** — sin configuración manual.
+
+```javascript
+// Agentes especialistas (no necesitan modelo propio)
+agenteInvestigacion = aiAgent(
+    name        : "investigador",
+    description : "Investiga temas y devuelve hechos clave.",
+    instructions: "Proporciona resúmenes concisos y precisos."
+)
+
+agenteEscritor = aiAgent(
+    name        : "escritor",
+    description : "Escribe prosa atractiva a partir de notas.",
+    instructions: "Convierte puntos clave en párrafos claros."
+)
+
+// Coordinador — los sub-agentes se convierten en herramientas automáticamente
+coordinador = aiAgent(
+    name        : "coordinador-contenido",
+    instructions: "Usa 'investigador' y luego 'escritor' para producir contenido pulido.",
+    model       : aiModel(),
+    subAgents   : [ agenteInvestigacion, agenteEscritor ]
+)
+
+resultado = coordinador.run( "Escribe una intro a BoxLang para un blog." )
+
+// Inspeccionar jerarquía
+config   = coordinador.getConfig()
+historial = coordinador.getMemoryMessages().len()
+```
+
+📂 **Archivo de ejemplo:** `examples/jerarquia-agentes.bxs`
+
+---
+
+## ⚡ Parte 8: Ejecución Paralela de Agentes (10 mins)
+
+`aiParallel()` distribuye UNA entrada a múltiples runnables **concurrentemente** y devuelve los resultados como struct con nombres. Implementa `IAiRunnable`, por lo que se compone en cualquier pipeline.
+
+### Sintaxis
+
+```javascript
+resultados = aiParallel({ nombre1: runnable1, nombre2: runnable2 }).run( entrada )
+//                        ↑ claves del resultado                      ↑ entrada compartida
+```
+
+### Comparación Multi-Modelo
+
+```javascript
+paralelo = aiParallel({
+    openai: aiModel( provider: "openai" ),
+    claude: aiModel( provider: "claude" ),
+    groq  : aiModel( provider: "groq" )
+})
+
+resultados = paralelo.run( "Explica la recursión en una oración." )
+
+println( resultados.openai )  // Respuesta de OpenAI
+println( resultados.claude )  // Respuesta de Claude
+println( resultados.groq   )  // Respuesta de Groq
+```
+
+### Agentes Especializados en Paralelo
+
+```javascript
+analisis = aiParallel({
+    resumen    : agenteResumen,
+    sentimiento: agenteSentimiento,
+    palabrasClave: agentePalabrasClave
+}).run( textoArticulo )
+
+println( analisis.resumen      )
+println( analisis.sentimiento  )
+println( analisis.palabrasClave )
+```
+
+### Dentro de un Pipeline
+
+```javascript
+pipeline = aiParallel({ resumen: agenteResumen, sentimiento: agenteSentimiento })
+    .transform( r => "Resumen: #r.resumen# | Sentimiento: #r.sentimiento#" )
+
+combinado = pipeline.run( textoArticulo )
+```
+
+📂 **Archivo de ejemplo:** `examples/agentes-paralelos.bxs`
 
 ---
 
@@ -1045,9 +1289,13 @@ La mejor manera de aprender es haciendo. Intenta construir:
 lesson-06-agents/
 ├── README.md (este archivo)
 ├── examples/
-│   ├── agente-basico.bxs
-│   ├── agente-herramientas.bxs
-│   └── agente-memoria.bxs
+│   ├── agente-basico.bxs             # Primer agente, demo de memoria básica
+│   ├── agente-herramientas.bxs       # Agente con herramientas de function-calling
+│   ├── agente-memoria.bxs            # Aislamiento de memoria multi-turno
+│   ├── agente-habilidades.bxs        # aiSkill() — siempre activo + carga diferida
+│   ├── agente-middleware.bxs         # LoggingMiddleware + GuardrailMiddleware
+│   ├── jerarquia-agentes.bxs         # Coordinador + sub-agentes especialistas
+│   └── agentes-paralelos.bxs        # aiParallel() multi-modelo + agentes especializados
 └── labs/
     ├── agente-soporte.bxs
     └── agente-investigacion.bxs
