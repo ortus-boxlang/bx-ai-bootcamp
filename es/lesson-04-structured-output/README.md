@@ -80,9 +80,12 @@ plantilla = {
 }
 
 // Pide a la IA que extraiga en esta estructura
+// Pasa la plantilla como returnFormat para que la IA la rellene directamente
 resultado = aiChat(
-    "Extract person info: John Doe is 30 years old, email john@example.com"
-).structuredOutput( plantilla )
+    "Extract person info: John Doe is 30 years old, email john@example.com",
+    {},
+    { returnFormat: plantilla }
+)
 
 // ¡Usa el resultado como un struct normal!
 println( "Nombre: " & resultado.name )
@@ -120,8 +123,10 @@ plantillaProducto = {
 }
 
 producto = aiChat(
-    "Product: MacBook Pro, $2499, available, category: Electronics"
-).structuredOutput( plantillaProducto )
+    "Product: MacBook Pro, $2499, available, category: Electronics",
+    {},
+    { returnFormat: plantillaProducto }
+)
 
 println( "#producto.name# - $#producto.price#" )
 ```
@@ -137,8 +142,10 @@ plantillaDireccion = {
 }
 
 direccion = aiChat(
-    "Parse: 123 Main St, Boston, MA 02101, USA"
-).structuredOutput( plantillaDireccion )
+    "Parse: 123 Main St, Boston, MA 02101, USA",
+    {},
+    { returnFormat: plantillaDireccion }
+)
 ```
 
 ---
@@ -163,9 +170,12 @@ class {
 ```java
 // extraccion-clase.bxs
 // Extrae en la clase Persona
+// Pasa la instancia de clase como returnFormat para que la IA la rellene directamente
 resultado = aiChat(
-    "Extract: Sarah Connor, 35, sarah@resistance.org"
-).structuredOutput( new Persona() )
+    "Extract: Sarah Connor, 35, sarah@resistance.org",
+    {},
+    { returnFormat: new Persona() }
+)
 
 // ¡Usa getters!
 println( "Nombre: " & resultado.getName() )
@@ -188,12 +198,16 @@ class {
 
 ```java
 // Extraer orden del texto
-orden = aiChat( "
+orden = aiChat(
+    "
     Order #12345 for Jane Smith
     Total: $156.99
     Items: Widget (x2), Gadget (x1)
     Status: Shipped
-" ).structuredOutput( new Orden() )
+    ",
+    {},
+    { returnFormat: new Orden() }
+)
 
 println( "Orden #orden.getOrderId()# - $#orden.getTotal()#" )
 ```
@@ -225,12 +239,16 @@ plantillaTarea = {
 }
 
 // Envuelve en array para extraer MÚLTIPLES tareas
-tareas = aiChat( "
+tareas = aiChat(
+    "
     Extract tasks:
     1. Buy groceries (high priority, not done)
     2. Call mom (medium, done)
     3. Exercise (low, not done)
-" ).structuredOutput( [ plantillaTarea ] )
+    ",
+    {},
+    { returnFormat: [ plantillaTarea ] }
+)
 
 // Recorre los resultados
 for( tarea in tareas ) {
@@ -258,12 +276,16 @@ class {
 
 ```java
 // Extraer múltiples productos
-productos = aiChat( "
+productos = aiChat(
+    "
     Parse products:
     - iPhone 15: $999
     - AirPods Pro: $249
     - MacBook Air: $1299
-" ).structuredOutput( [ new Producto() ] )
+    ",
+    {},
+    { returnFormat: [ new Producto() ] }
+)
 
 total = 0
 for( producto in productos ) {
@@ -339,8 +361,11 @@ Total: $8,000
 "
 
 // Extraer datos estructurados
-factura = aiChat( "Parse this invoice: " & textoFactura )
-    .structuredOutput( plantillaFactura )
+factura = aiChat(
+    "Parse this invoice: " & textoFactura,
+    {},
+    { returnFormat: plantillaFactura }
+)
 
 // Mostrar resultados
 println( "📄 Resultados del Parser de Facturas" )
@@ -362,11 +387,11 @@ println()
 println( "─".repeat( 40 ) )
 println( "Total: $#numberFormat( factura.total, ',.00' )#" )
 
-// Verificar total
-if( totalCalculado == factura.total ) {
+// Verificar total (con precisión de centavos para comparaciones monetarias)
+if( abs( totalCalculado - factura.total ) < 0.01 ) {
     println( "✅ ¡Total verificado!" )
 } else {
-    println( "⚠️ ¡Discrepancia de total! Calculado: $#totalCalculado#" )
+    println( "⚠️ ¡Discrepancia de total! Calculado: $#numberFormat( totalCalculado, ',.00' )#" )
 }
 ```
 
@@ -394,7 +419,7 @@ Total: $8,000.00
 
 ## ✅ Verificación de Conocimientos
 
-1. **¿Qué devuelve structuredOutput()?**
+1. **¿Qué devuelve `returnFormat` con un struct/clase?**
    - [ ] Un string
    - [x] Un struct u objeto que coincide con tu plantilla
    - [ ] Texto JSON
@@ -402,8 +427,8 @@ Total: $8,000.00
 
 2. **¿Cómo extraes un array de elementos?**
    - [ ] Usar extractArray()
-   - [x] Envolver tu plantilla en [ ]
-   - [ ] Llamar structuredOutput() múltiples veces
+   - [x] Envolver tu plantilla en [ ] y pasarla como returnFormat
+   - [ ] Llamar aiChat() múltiples veces
    - [ ] Usar un bucle
 
 3. **¿Cuándo deberías usar una clase en lugar de struct?**
@@ -429,22 +454,22 @@ Aprendiste:
 | **Plantilla de Struct** | Extracción estructurada rápida con `{}` |
 | **Clase** | Extracción reutilizable con tipos seguros |
 | **Arrays** | Extraer múltiples elementos con `[ ]` |
-| **structuredOutput()** | Método para extraer datos estructurados |
+| **returnFormat** | Opción para extraer datos estructurados (struct, clase o array) |
 
 ### Patrones de Código Clave
 
 ```java
 // Plantilla de struct
-resultado = aiChat( "texto" ).structuredOutput( { name: "", age: 0 } )
+resultado = aiChat( "texto", {}, { returnFormat: { name: "", age: 0 } } )
 
 // Clase
-resultado = aiChat( "texto" ).structuredOutput( new Persona() )
+resultado = aiChat( "texto", {}, { returnFormat: new Persona() } )
 
-// Array
-resultados = aiChat( "texto" ).structuredOutput( [ { item: "" } ] )
+// Array de structs
+resultados = aiChat( "texto", {}, { returnFormat: [ { item: "" } ] } )
 
 // Array de clases
-resultados = aiChat( "texto" ).structuredOutput( [ new Tarea() ] )
+resultados = aiChat( "texto", {}, { returnFormat: [ new Tarea() ] } )
 ```
 
 ---

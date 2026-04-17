@@ -3,9 +3,12 @@
 // Ejecutar con: boxlang extraccion-clase.bxs
 
 // Extrae en la clase Persona
+// Pasa la instancia de clase como returnFormat para que la IA la rellene directamente
 result = aiChat(
-    "Extract: Sarah Connor, 35, sarah@resistance.org"
-).structuredOutput( new Persona() )
+    "Extract: Sarah Connor, 35, sarah@resistance.org",
+    {},
+    { returnFormat: new Persona() }
+)
 
 // ¡Usa getters!
 println( "Nombre: " & result.getName() )

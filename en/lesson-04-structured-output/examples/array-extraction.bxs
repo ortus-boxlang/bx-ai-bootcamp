@@ -9,13 +9,18 @@ taskTemplate = {
     "done": false
 }
 
-// Wrap in array to extract MULTIPLE tasks
-tasks = aiChat( "
+// Wrap template in array to extract MULTIPLE tasks
+// Pass it as returnFormat so the AI returns a populated array of structs
+tasks = aiChat(
+    "
     Extract these tasks:
     1. Buy groceries (high priority, not done)
     2. Call mom (medium priority, done)
     3. Exercise (low priority, not done)
-" ).structuredOutput( [ taskTemplate ] )
+    ",
+    {},
+    { returnFormat: [ taskTemplate ] }
+)
 
 // Display results
 println( "📋 Extracted Tasks:" )

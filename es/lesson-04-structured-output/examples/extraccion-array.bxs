@@ -10,12 +10,17 @@ taskTemplate = {
 }
 
 // Envuelve en array para extraer MÚLTIPLES tareas
-tasks = aiChat( "
+// Pasa el array como returnFormat para que la IA devuelva múltiples structs
+tasks = aiChat(
+    "
     Extract tasks:
     1. Buy groceries (high priority, not done)
     2. Call mom (medium, done)
     3. Exercise (low, not done)
-" ).structuredOutput( [ taskTemplate ] )
+    ",
+    {},
+    { returnFormat: [ taskTemplate ] }
+)
 
 // Recorre los resultados
 for( task in tasks ) {

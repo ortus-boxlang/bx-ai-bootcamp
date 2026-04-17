@@ -41,8 +41,11 @@ println()
 
 // Extract structured data
 try {
-    invoice = aiChat( "Parse this invoice: " & invoiceText )
-        .structuredOutput( invoiceTemplate )
+    invoice = aiChat(
+        "Parse this invoice: " & invoiceText,
+        {},
+        { returnFormat: invoiceTemplate }
+    )
     
     // Display results
     println( "Invoice #: " & invoice.invoiceNumber )

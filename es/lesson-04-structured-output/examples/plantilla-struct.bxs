@@ -10,9 +10,12 @@ template = {
 }
 
 // Pide a la IA que extraiga en esta estructura
+// Pasa la plantilla como returnFormat para que la IA la rellene directamente
 result = aiChat(
-    "Extract person info: John Doe is 30 years old, email john@example.com"
-).structuredOutput( template )
+    "Extract person info: John Doe is 30 years old, email john@example.com",
+    {},
+    { returnFormat: template }
+)
 
 // ¡Usa el resultado como un struct normal!
 println( "Nombre: " & result.name )

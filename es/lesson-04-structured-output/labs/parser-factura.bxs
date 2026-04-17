@@ -33,8 +33,11 @@ Total: $8,000
 "
 
 // Extraer datos estructurados
-invoice = aiChat( "Parse this invoice: " & invoiceText )
-    .structuredOutput( invoiceTemplate )
+invoice = aiChat(
+    "Parse this invoice: " & invoiceText,
+    {},
+    { returnFormat: invoiceTemplate }
+)
 
 // Mostrar resultados
 println( "📄 Resultados del Parser de Facturas" )
@@ -56,9 +59,9 @@ println()
 println( "─".repeat( 40 ) )
 println( "Total: $#numberFormat( invoice.total, ',.00' )#" )
 
-// Verificar total
-if( calculatedTotal == invoice.total ) {
+// Verificar total (con precisión de centavos para comparaciones monetarias)
+if( abs( calculatedTotal - invoice.total ) < 0.01 ) {
     println( "✅ ¡Total verificado!" )
 } else {
-    println( "⚠️ ¡Discrepancia de total! Calculado: $#calculatedTotal#" )
+    println( "⚠️ ¡Discrepancia de total! Calculado: $#numberFormat( calculatedTotal, ',.00' )#" )
 }

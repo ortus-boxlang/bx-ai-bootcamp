@@ -80,9 +80,12 @@ template = {
 }
 
 // Ask AI to extract into this structure
-result = aiChat( 
-    "Extract person info: John Doe is 30 years old, email john@example.com" 
-).structuredOutput( template )
+// Pass the template as returnFormat so the AI populates it directly
+result = aiChat(
+    "Extract person info: John Doe is 30 years old, email john@example.com",
+    {},
+    { returnFormat: template }
+)
 
 // Use the result as a normal struct!
 println( "Name: " & result.name )
@@ -119,9 +122,11 @@ productTemplate = {
     "category": ""
 }
 
-product = aiChat( 
-    "Product: MacBook Pro, $2499, available, category: Electronics" 
-).structuredOutput( productTemplate )
+product = aiChat(
+    "Product: MacBook Pro, $2499, available, category: Electronics",
+    {},
+    { returnFormat: productTemplate }
+)
 
 println( "#product.name# - $#product.price#" )
 ```
@@ -136,9 +141,11 @@ addressTemplate = {
     "country": ""
 }
 
-address = aiChat( 
-    "Parse: 123 Main St, Boston, MA 02101, USA" 
-).structuredOutput( addressTemplate )
+address = aiChat(
+    "Parse: 123 Main St, Boston, MA 02101, USA",
+    {},
+    { returnFormat: addressTemplate }
+)
 ```
 
 ---
@@ -163,9 +170,12 @@ class {
 ```java
 // class-extraction.bxs
 // Extract into Person class
-result = aiChat( 
-    "Extract: Sarah Connor, 35, sarah@resistance.org" 
-).structuredOutput( new Person() )
+// Pass class instance as returnFormat so the AI populates it directly
+result = aiChat(
+    "Extract: Sarah Connor, 35, sarah@resistance.org",
+    {},
+    { returnFormat: new Person() }
+)
 
 // Use getters!
 println( "Name: " & result.getName() )
@@ -188,12 +198,16 @@ class {
 
 ```java
 // Extract order from text
-order = aiChat( "
+order = aiChat(
+    "
     Order #12345 for Jane Smith
     Total: $156.99
     Items: Widget (x2), Gadget (x1)
     Status: Shipped
-" ).structuredOutput( new Order() )
+    ",
+    {},
+    { returnFormat: new Order() }
+)
 
 println( "Order #order.getOrderId()# - $#order.getTotal()#" )
 ```
@@ -225,12 +239,16 @@ taskTemplate = {
 }
 
 // Wrap in array to extract MULTIPLE tasks
-tasks = aiChat( "
+tasks = aiChat(
+    "
     Extract tasks:
     1. Buy groceries (high priority, not done)
     2. Call mom (medium, done)
     3. Exercise (low, not done)
-" ).structuredOutput( [ taskTemplate ] )
+    ",
+    {},
+    { returnFormat: [ taskTemplate ] }
+)
 
 // Loop through results
 for( task in tasks ) {
@@ -258,12 +276,16 @@ class {
 
 ```java
 // Extract multiple products
-products = aiChat( "
+products = aiChat(
+    "
     Parse products:
     - iPhone 15: $999
     - AirPods Pro: $249
     - MacBook Air: $1299
-" ).structuredOutput( [ new Product() ] )
+    ",
+    {},
+    { returnFormat: [ new Product() ] }
+)
 
 total = 0
 for( product in products ) {
@@ -339,8 +361,11 @@ Total: $8,000
 "
 
 // Extract structured data
-invoice = aiChat( "Parse this invoice: " & invoiceText )
-    .structuredOutput( invoiceTemplate )
+invoice = aiChat(
+    "Parse this invoice: " & invoiceText,
+    {},
+    { returnFormat: invoiceTemplate }
+)
 
 // Display results
 println( "📄 Invoice Parser Results" )
@@ -362,11 +387,11 @@ println()
 println( "─".repeat( 40 ) )
 println( "Total: $#numberFormat( invoice.total, ',.00' )#" )
 
-// Verify total
-if( calculatedTotal == invoice.total ) {
+// Verify total (using penny precision for currency comparison)
+if( abs( calculatedTotal - invoice.total ) < 0.01 ) {
     println( "✅ Total verified!" )
 } else {
-    println( "⚠️ Total mismatch! Calculated: $#calculatedTotal#" )
+    println( "⚠️ Total mismatch! Calculated: $#numberFormat( calculatedTotal, ',.00' )#" )
 }
 ```
 
@@ -394,7 +419,7 @@ Total: $8,000.00
 
 ## ✅ Knowledge Check
 
-1. **What does structuredOutput() return?**
+1. **What does `returnFormat` with a struct/class return?**
    - [ ] A string
    - [x] A struct or object matching your template
    - [ ] JSON text
@@ -402,8 +427,8 @@ Total: $8,000.00
 
 2. **How do you extract an array of items?**
    - [ ] Use extractArray()
-   - [x] Wrap your template in [ ]
-   - [ ] Call structuredOutput() multiple times
+   - [x] Wrap your template in [ ] and pass as returnFormat
+   - [ ] Call aiChat() multiple times
    - [ ] Use a loop
 
 3. **When should you use a class instead of struct?**
@@ -429,22 +454,22 @@ You learned:
 | **Struct Template** | Quick structured extraction with `{}` |
 | **Class** | Reusable type-safe extraction |
 | **Arrays** | Extract multiple items with `[ ]` |
-| **structuredOutput()** | Method to extract structured data |
+| **returnFormat** | Option to extract structured data (struct, class, or array) |
 
 ### Key Code Patterns
 
 ```java
 // Struct template
-result = aiChat( "text" ).structuredOutput( { name: "", age: 0 } )
+result = aiChat( "text", {}, { returnFormat: { name: "", age: 0 } } )
 
 // Class
-result = aiChat( "text" ).structuredOutput( new Person() )
+result = aiChat( "text", {}, { returnFormat: new Person() } )
 
-// Array
-results = aiChat( "text" ).structuredOutput( [ { item: "" } ] )
+// Array of structs
+results = aiChat( "text", {}, { returnFormat: [ { item: "" } ] } )
 
 // Array of classes
-results = aiChat( "text" ).structuredOutput( [ new Task() ] )
+results = aiChat( "text", {}, { returnFormat: [ new Task() ] } )
 ```
 
 ---

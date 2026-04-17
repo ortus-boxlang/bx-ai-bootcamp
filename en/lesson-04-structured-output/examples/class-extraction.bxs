@@ -5,9 +5,12 @@
 // Person class is defined in Person.bx in this folder
 
 // Extract into Person class
-result = aiChat( 
-    "Extract person info: Sarah Connor, 35 years old, sarah@resistance.org" 
-).structuredOutput( new Person() )
+// Pass the class instance as returnFormat so the AI populates it directly
+result = aiChat(
+    "Extract person info: Sarah Connor, 35 years old, sarah@resistance.org",
+    {},
+    { returnFormat: new Person() }
+)
 
 // Use getters!
 println( "Extracted Person (using class):" )
