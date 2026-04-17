@@ -46,31 +46,31 @@ try {
         {},
         { returnFormat: invoiceTemplate }
     )
-    
+
     // Display results
     println( "Invoice #: " & invoice.invoiceNumber )
     println( "Date: " & invoice.date )
     println( "Customer: " & invoice.customerName )
     println()
     println( "Line Items:" )
-    
+
     calculatedTotal = 0
     for( item in invoice.lineItems ) {
         println( "  • #item.description#: $#numberFormat( item.amount, ',.00' )#" )
         calculatedTotal += item.amount
     }
-    
+
     println()
     println( "─".repeat( 40 ) )
     println( "Total: $#numberFormat( invoice.total, ',.00' )#" )
-    
+
     // Verify total (using penny precision for currency comparison)
     if( abs( calculatedTotal - invoice.total ) < 0.01 ) {
         println( "✅ Total verified!" )
     } else {
         println( "⚠️ Total mismatch! Calculated: $#numberFormat( calculatedTotal, ',.00' )#" )
     }
-    
+
 } catch( any e ) {
     println( "❌ Error parsing invoice: " & e.message )
 }

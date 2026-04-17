@@ -27,10 +27,10 @@ AI returns text, but you often need data:
 
   Your Question:
   "Extract the person's name and age from: John is 30 years old"
-  
+
   AI Response (Text):
   "The person's name is John and their age is 30."
-  
+
   What You Actually Need:
   { name: "John", age: 30 }    ← STRUCTURED DATA!
 ```
@@ -102,7 +102,7 @@ println( "Email: " & result.email )
 
   1. Template          2. AI Extracts        3. You Get Data
   ───────────          ──────────────        ───────────────
-  
+
   {                    "John Doe is 30       {
     name: "",          years old..."           name: "John Doe",
     age: 0,                 │                   age: 30,
