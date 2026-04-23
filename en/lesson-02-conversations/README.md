@@ -563,6 +563,8 @@ For real-time responses (like ChatGPT), use **streaming**:
 
 ### Basic Streaming
 
+Note: Streaming to a web application would need a continuous connection such as websockets
+
 ```java
 // streaming-basic.bxs
 println( "AI: " )
@@ -630,17 +632,17 @@ println( "AI finished: " & result )
 ### Streaming vs Async vs Regular
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                  RESPONSE TYPE COMPARISON                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  📄 aiChat()           ⚡ aiChatStream()      🔄 aiChatAsync()  │
+┌────────────────────────────────────────────────────────────────┐
+│                  RESPONSE TYPE COMPARISON                      │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  📄 aiChat()         ⚡ aiChatStream()    🔄 aiChatAsync()    │
 │  ────────────         ────────────────       ───────────────   │
 │  • Waits for all      • Real-time chunks     • Non-blocking    │
 │  • Simple to use      • Progressive display  • Returns Future  │
 │  • Best for scripts   • Best for UIs         • Parallel tasks  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 **Choose based on your use case:**
@@ -874,7 +876,7 @@ result = future.get()
 
 Now you can build conversations! Let's learn how to switch between different AI providers.
 
-👉 **[Lesson 3: Switching Providers](../lesson-03-providers/)**
+👉 **[Lesson 3: Switching Providers](../lesson-03-providers/README.md)**
 
 ---
 

@@ -19,7 +19,7 @@ This is easiest when using CommandBox. [Download CommandBox](https://www.ortusso
 
 This will start a server locally with BoxLang as the engine and using OpenJDK21.
 
-Note: The code examples use println extensively. For a web app you could use writeoutput(), dump() or the tag base component syntax to output to the browser.
+Note: The code examples lean heavily toward using the terminal. The underlying code will be transferrable between the two contexts but there are differences in how anything visual appears on the screen such as using println() for the terminal vs writeoutput() for a browser etc.
 
 ## Terminal ( Recommended )
 

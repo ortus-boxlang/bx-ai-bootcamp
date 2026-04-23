@@ -35,12 +35,12 @@ An LLM is an AI system that:
   ──────────────        ───────────────         ──────────────
        │                      │                       │
        ▼                      ▼                       ▼
-  ┌─────────┐           ┌─────────┐            ┌─────────┐
-  │"What is │  ──────▶  │ Neural │  ──────▶  │"BoxLang │
-  │BoxLang?"│           │ Network │            │is a JVM │
-  │         │           │(billions│            │language │
-  │         │           │of params│            │that..." │
-  └─────────┘           └─────────┘            └─────────┘
+  ┌─────────┐           ┌──────────┐            ┌─────────┐
+  │"What is │  ──────▶  │ Neural  │  ──────▶  │"BoxLang │
+  │BoxLang?"│           │ Network  │            │is a JVM │
+  │         │           │(billions │            │language │
+  │         │           │of params)│            │that..." │
+  └─────────┘           └──────────┘            └─────────┘
 ```
 
 ### What is a Token?
@@ -62,6 +62,7 @@ AI doesn't see words like we do. It breaks text into **tokens** - small pieces o
 ```
 
 **Why tokens matter:**
+
 - ✅ You pay per token (input + output)
 - ✅ Models have token limits (context window)
 - ✅ More tokens = longer responses
@@ -103,15 +104,19 @@ println( answer )
 ```
 
 Run it:
+
 ```bash
 boxlang hello-ai.bxs
 ```
 
 **Expected output:**
+
 ```
 Hello! Welcome to your BoxLang AI journey! I'm excited to help you 
 learn how to build amazing AI-powered applications. Let's get started! 🚀
 ```
+
+Arguments: aiChat( message, params, options). We'll cover more on this as we go through the course.
 
 ### Example 2: Ask a Question
 

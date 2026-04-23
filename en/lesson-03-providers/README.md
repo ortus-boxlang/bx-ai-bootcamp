@@ -1,5 +1,7 @@
 # Lesson 3: Switching Providers
 
+[Home](../README.md)
+
 **⏱️ Duration: 45 minutes**
 
 BoxLang AI lets you work with multiple AI providers through a unified API. This means you can switch between OpenAI, Claude, Ollama, and more without changing your code!
