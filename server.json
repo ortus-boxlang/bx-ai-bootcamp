@@ -1,0 +1,11 @@
+{
+    "app":{
+        "cfengine":"boxlang"
+    },
+    "JVM":{
+        "javaVersion":"openJDK21"
+    },
+    "scripts":{
+        "preServerStart":"install"
+    }
+}

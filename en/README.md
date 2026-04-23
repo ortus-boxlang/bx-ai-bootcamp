@@ -1,21 +1,26 @@
 # 🚀 BoxLang AI Bootcamp
 
+[top](/README.md)
+
 **Get Started with AI Development in One Day**
 
 Welcome to the BoxLang AI Bootcamp! This intensive, hands-on course will take you from zero AI experience to building intelligent applications with BoxLang in just 8-9 hours.
 
+
 ```
 ╔════════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
-║   ⚡ BoxLang AI Bootcamp ⚡                                         ║
+║   ⚡ BoxLang AI Bootcamp ⚡                                       ║
 ║                                                                    ║
-║   🎯 Learn AI fundamentals in one day                             ║
+║   🎯 Learn AI fundamentals in one day                              ║
 ║   🛠️ Build real applications                                       ║
 ║   🔄 Switch between AI providers                                   ║
 ║   🤖 Create your first AI agent                                    ║
 ║                                                                    ║
 ╚════════════════════════════════════════════════════════════════════╝
 ```
+
+Helpful Tip: In VSCode, type CTRL+K then V to open a rendered copy of any markdown page. You can navigate through the course content easily from this view.
 
 ## 📋 Bootcamp Overview
 
@@ -65,8 +70,8 @@ Throughout this bootcamp, you'll create:
 │                                                                 │
 │  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
 │  │   Lesson 1   │──▶│   Lesson 2   │──▶│   Lesson 3   │        │
-│  │   45 mins    │   │   60 mins    │   │   45 mins    │        │
-│  │  🚀 Setup    │   │  💬 Chats    │   │  🔄 Providers│        │
+│  │   45 mins    │    │   60 mins    │   │   45 mins    │        │
+│  │  🚀 Start    |   │  💬 Chats    │   │  🔄 Providers│        │
 │  └──────────────┘   └──────────────┘   └──────────────┘        │
 │          │                                    │                 │
 │          │            ☕ BREAK                │                 │
@@ -93,15 +98,16 @@ Throughout this bootcamp, you'll create:
 
 | Lesson | Title | Duration | What You'll Learn |
 |--------|-------|----------|-------------------|
-| **1** | [Getting Started](lesson-01-getting-started/) | 45 mins | Setup, first AI call, understanding tokens |
-| **2** | [Conversations & Messages](lesson-02-conversations/) | 60 mins | Multi-turn chat, message roles, conversation history |
-| **3** | [Switching Providers](lesson-03-providers/) | 45 mins | OpenAI, Claude, Ollama, provider switching |
-| **4** | [Structured Output](lesson-04-structured-output/) | 60 mins | Type-safe responses, classes, data extraction |
-| **5** | [AI Tools](lesson-05-tools/) | 60 mins | Function calling, real-time data, tool creation |
-| **6** | [Building Agents](lesson-06-agents/) | 90 mins | Autonomous AI, memory, multi-step tasks |
-| **7** | [Loaders & Documents](lesson-07-loaders-documents/) | 60 mins | File loading, chunking, RAG systems, vector memory |
-| **8** | [MCP Servers & Clients](lesson-08-mcp-servers-clients/) | 60 mins | Model Context Protocol, remote tools, server creation |
-| **9** | [Audio AI](lesson-09-audio/) | 60 mins | Text-to-speech, speech-to-text, audio translation |
+| **0**| [Setup](Setup) | 15 min | Choosing web based vs command line, pre-reqs and settings |
+| **1** | [Getting Started](lesson-01-getting-started/README.md) | 45 mins | First AI call, understanding tokens, prompts |
+| **2** | [Conversations & Messages](lesson-02-conversations/README.md) | 60 mins | Multi-turn chat, message roles, conversation history |
+| **3** | [Switching Providers](lesson-03-providers/README.md) | 45 mins | OpenAI, Claude, Ollama, provider switching |
+| **4** | [Structured Output](lesson-04-structured-output/README.md) | 60 mins | Type-safe responses, classes, data extraction |
+| **5** | [AI Tools](lesson-05-tools/README.md) | 60 mins | Function calling, real-time data, tool creation |
+| **6** | [Building Agents](lesson-06-agents/README.md) | 90 mins | Autonomous AI, memory, multi-step tasks |
+| **7** | [Loaders & Documents](lesson-07-loaders-documents/README.md) | 60 mins | File loading, chunking, RAG systems, vector memory |
+| **8** | [MCP Servers & Clients](lesson-08-mcp-servers-clients/README.md) | 60 mins | Model Context Protocol, remote tools, server creation |
+| **9** | [Audio AI](lesson-09-audio/README.md) | 60 mins | Text-to-speech, speech-to-text, audio translation |
 
 ---
 
@@ -304,7 +310,7 @@ Stuck? Here's where to get help:
 | Resource | Link |
 |----------|------|
 | Full Documentation | [docs/](https://ai.ortusbooks.com/) |
-| Code Examples | [examples/](../../examples/README.md) |
+| Code Examples | Each lesson folder has an examples folder |
 | GitHub Issues | [Report a bug](https://github.com/ortus-boxlang/bx-ai/issues) |
 | Community | [BoxLang Community](https://boxlang.io/community) |
 
@@ -336,4 +342,4 @@ This bootcamp is released under the Apache 2.0 license, same as the bx-ai module
 
 **Ready to start?** Let's go! 🚀
 
-👉 **[Start Lesson 1: Getting Started](lesson-01-getting-started/)**
+👉 **[Start Lesson 1: Getting Started](lesson-01-getting-started/README.md)**

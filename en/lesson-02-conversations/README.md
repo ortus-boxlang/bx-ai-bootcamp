@@ -1,5 +1,7 @@
 # Lesson 2: Conversations & Messages
 
+[Home](../README.md)
+
 **⏱️ Duration: 60 minutes**
 
 In the last lesson, you made single AI calls. Now let's build real conversations where the AI remembers what you said!
@@ -50,7 +52,7 @@ Messages are just structs with `role` and `content`:
 // A single message
 message = { role: "user", content: "Hello!" }
 
-// An array of messages (a conversation)
+// An array of messages (a conversation captured from the back and forth with the model)
 messages = [
     { role: "system", content: "You are a helpful assistant." },
     { role: "user", content: "Hi there!" },

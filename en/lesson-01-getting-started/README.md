@@ -1,5 +1,7 @@
 # Lesson 1: Getting Started
 
+[Home](../README.md)
+
 **⏱️ Duration: 45 minutes**
 
 Welcome to your first step into AI development with BoxLang! In this lesson, you'll set up your environment and make your first AI call.
@@ -34,7 +36,7 @@ An LLM is an AI system that:
        │                      │                       │
        ▼                      ▼                       ▼
   ┌─────────┐           ┌─────────┐            ┌─────────┐
-  │"What is │  ──────▶  │ Neural  │  ──────▶   │"BoxLang │
+  │"What is │  ──────▶  │ Neural │  ──────▶  │"BoxLang │
   │BoxLang?"│           │ Network │            │is a JVM │
   │         │           │(billions│            │language │
   │         │           │of params│            │that..." │
@@ -74,68 +76,9 @@ A provider is a company that runs AI models in the cloud (or locally):
 | **Claude** | Claude 3.5 Sonnet | Paid | Long context, reasoning |
 | **Ollama** | Llama 3.2, Mistral | **Free** | Local/private |
 
----
+## 💻 Part 2: Your First AI Call (10 mins)
 
-## 🛠️ Part 2: Setup (15 mins)
-
-### Step 1: Verify BoxLang
-
-Open your terminal and run:
-
-```bash
-boxlang --version
-```
-
-You should see something like `BoxLang 1.x.x`. If not, [download BoxLang](https://boxlang.io).
-
-### Step 2: Install bx-ai Module
-
-```bash
-install-bx-module bx-ai
-```
-
-Or for web apps (CommandBox):
-```bash
-box install bx-ai
-```
-
-### Step 3: Get an API Key
-
-**Option A: OpenAI (Recommended for beginners)**
-
-1. Go to https://platform.openai.com/api-keys
-2. Sign up or log in
-3. Click "Create new secret key"
-4. Copy the key (starts with `sk-`)
-5. Add credits to your account ($5 is plenty to start)
-
-**Option B: Ollama (Free, runs locally)**
-
-1. Download from https://ollama.ai
-2. Install and run Ollama
-3. Pull a model:
-   ```bash
-   ollama pull llama3.2
-   ```
-4. No API key needed!
-
-### Step 4: Set Your API Key
-
-Create a `.env` file in your project:
-
-```bash
-# For OpenAI
-OPENAI_API_KEY=sk-your-key-here
-
-# For Claude
-CLAUDE_API_KEY=sk-ant-your-key-here
-```
-
-> ⚠️ **Never commit API keys to git!** Add `.env` to your `.gitignore`.
-
----
-
-## 💻 Part 3: Your First AI Call (10 mins)
+Note: This assumes you have completed the setup in [Setup](../Setup).
 
 ### The aiChat() Function
 
@@ -210,6 +153,10 @@ try {
 }
 ```
 
+### Example 5: Prompts
+
+A prompt is context and background we give the AI engine to better frame how it answers. In this lab, we are giving the model a context from which to answer. We are telling the model that it is a Magic 8 ball and it can only answer with a list of predetermined responses which we are providing. The lab goes into prompts in more detail. 
+
 ---
 
 ## 🧪 Part 4: Lab - Magic 8-Ball (10 mins)
@@ -219,6 +166,7 @@ Let's build your first AI application: a Magic 8-Ball!
 ### The Goal
 
 Create an AI-powered fortune teller that answers yes/no questions.
+
 
 ### Instructions
 
@@ -265,7 +213,7 @@ Respond with ONLY the Magic 8-Ball phrase, nothing else.
 
 // Get the mystical answer
 try {
-    answer = aiChat( prompt, { temperature: 0.9 } )
+    answer = aiChat( prompt, { temperature: 1.0 } )
     println( "" )
     println( "🔮 The Magic 8-Ball says..." )
     println( "   " & answer )
@@ -340,6 +288,7 @@ You learned:
 | **LLM** | AI that understands and generates text |
 | **Token** | A piece of text (~4 characters) |
 | **Provider** | Company running AI models |
+| **Prompt** | Context for a question to an AI model|
 | **aiChat()** | Function to send messages to AI |
 
 ### Key Code
@@ -362,7 +311,7 @@ answer = aiChat(
 
 You've made your first AI call! Now let's learn to have real conversations.
 
-👉 **[Lesson 2: Conversations & Messages](../lesson-02-conversations/)**
+👉 **[Lesson 2: Conversations & Messages](../lesson-02-conversations/README.md)**
 
 ---
 

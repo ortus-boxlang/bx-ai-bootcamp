@@ -1,5 +1,7 @@
 # 🚀 Bootcamp de BoxLang AI
 
+[top](/README.md)
+
 **Comienza con el Desarrollo de IA en Un Día**
 
 ¡Bienvenido al Bootcamp de BoxLang AI! Este curso intensivo y práctico te llevará desde cero experiencia en IA hasta construir aplicaciones inteligentes con BoxLang en solo 6-7 horas.

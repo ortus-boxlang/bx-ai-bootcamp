@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<bx:script>
+    pointsNeeded=4;
+    currentPoints = 0;
+
+    if(!fileExists(expandpath("/.env"))){
+        fileCopy(expandPath("/.env.example"), expandPath("/.env"));
+    }
+
+   if(!directoryExists(expandPath("/bootcamp/"))){
+        directoryCreate(expandPath("./bootcamp/"));
+        DirectoryCopy(expandPath("/en/"), expandPath("/bootcamp/"), true, "*", true, false);
+    }
+    dirExists = directoryExists(expandPath("/bootcamp/"));
+
+    envVars = createObject("java","java.lang.System").getenv();
+    isSet = envVars
+        .filter((item)=>item.findNoCase("_API_"))
+        .filter((item)=>envVars[item].len() && envVars[item] != "your-api-key");
+    AINAmes = {
+        "OPENAI_API_KEY":"Open AI",
+        "DEEPSEEK_API_KEY":"Deep Seek",
+        "GEMINI_API_KEY":"Gemini",
+        "GROK_API_KEY":"Grok",
+        "GROQ_API_KEY":"Groq",
+        "PERPLEXITY_API_KEY":"Perplexity",
+        "CLAUDE_API_KEY":"Claude",
+        "OPENROUTER_API_KEY":"Open Router",
+        "MISTRAL_API_KEY":"Mistral",
+        "HUGGINGFACE_API_KEY":"Hugging Face",
+        "VOYAGE_API_KEY":"Voyage",
+        "COHERE_API_KEY":"Cohere",
+        "ELEVENLABS_API_KEY":"Eleven Labs",
+        "AWS_ACCESS_KEY_ID":"AWS",
+    };
+    modData = GetModuleInfo("bxai");
+
+</bx:script>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Bootcamp de BoxLang AI</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Bienvenido al Bootcamp de BoxLang AI!</h1>
+            <p> Este es tu punto de partida para aprender a utilizar BoxLang para crear increíbles aplicaciones de AI.</p>
+            <ul class="list-group">
+                <bx:if modData.len()>
+                    <bx:set currentPoints = currentPoints + 1 />
+                    <li class="list-group-item" style="color:green"> <i class="bi bi-check-lg"></i> El módulo de BoxLang AI está instalado.</li>
+                <bx:else>
+                    <li class="list-group-item" style="color:red"> <i class="bi bi-x-lg"></i> El módulo de BoxLang AI no está instalado.</li>
+                
+                </bx:if>
+                <bx:if isSet.len() gt 0>
+                    <bx:set currentPoints = currentPoints + 1 />
+                    <li class="list-group-item" style="color:green"><i class="bi bi-check-lg"></i>Parece que has configurado API Keys para: 
+                    <ul>
+                        <bx:loop array="#isSet.keyArray()#" item="key">
+                            <bx:output>
+                                <li>#AINAmes.keyExists(key) ? AINames[key] : key#</li>
+                            </bx:output>
+                        </bx:loop>
+                    </ul>
+                </li>
+                    
+                    
+                <bx:else>
+                    <li class="list-group-item" style="color:red"><i class="bi bi-x-lg"></i> Parece que aún necesitas agregar una clave API al archivo .env antes de comenzar. Consulta el archivo Readme.md del proyecto para obtener más información.</li>
+                </bx:if>
+                <bx:if dirExists>
+                    <bx:set currentPoints = currentPoints + 1 />    
+                    <li class="list-group-item" style="color:green"><i class="bi bi-check-lg"></i> Las lecciones del bootcamp están disponibles en el directorio /bootcamp/.</li>
+                <bx:else>
+                    <li class="list-group-item" style="color:red"> <i class="bi bi-x-lg"></i> Las lecciones del bootcamp están disponibles en el directorio /en/. Sugerimos copiarlas a la carpeta /bootcamp y trabajar allí.
+                    </li>
+                
+                </bx:if>
+            </ul>
+            <bx:if pointsNeeded eq currentPoints>
+                <bx:output>
+                    <div style="margin-top:25px">Abre tu IDE para <a href="vscode://file/#expandpath('/bootcamp/lesson-01-getting-started/README.md')#"><code>Lección 1</code></code></a> Y empecemos! </div>
+                </bx:output>
+            </bx:if>
+        </div>
+    </body>
+</html>

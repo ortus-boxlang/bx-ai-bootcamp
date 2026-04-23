@@ -6,12 +6,21 @@
 
 | Language | Idioma | Link |
 |----------|--------|------|
-| 🇺🇸 English | Inglés | **[Start Bootcamp →](en/)** |
-| 🇪🇸 Español | Spanish | **[Iniciar Bootcamp →](es/)** |
+| 🇺🇸 English | Inglés | **[Start Bootcamp →](en/README.md)** |
+| 🇪🇸 Español | Spanish | **[Iniciar Bootcamp →](es/README.md)** |
 
 ---
+## Install the Boxlang Version Manager
+
+Install the BoxLang Version manager 
+- https://boxlang.ortusbooks.com/getting-started/installation/boxlang-version-manager-bvm
+
+Make sure JQ is install ( "choco install jq" from powershell)
+
 
 ## ⚡ Quick Setup
+
+Note: Must have BoxLang Version Manager ( [BVM](https://boxlang.ortusbooks.com/getting-started/installation/boxlang-version-manager-bvm) ) installed for this method. If this is not possible, see alternate methods on Setup.md in the respective language folders.
 
 Run the interactive setup wizard to get your bootcamp environment ready in seconds:
 
