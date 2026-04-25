@@ -135,6 +135,12 @@ Before starting, ensure you have:
 
 #### Install Ollama LLM locally
 
+There are 3 options here to install Ollama
+
+1. Docker Simple - This configuration has a small footprint and has everything you need for this course.
+2. Docker Robust - This configuration has a larger footprint and a separate docker container which runs WebUI and other services
+3. Non-Docker - Installs a non-containerized version locally
+
 With Docker ( option 1 - simple )
 
 1. Make sure that Docker Desktop or other docker tool is running
@@ -149,17 +155,28 @@ docker compose up -d
 
 ```java
 docker exec -it ollama ollama pull qwen3:0.6b
+docker exec -it ollama ollama pull nomic-embed-text
 ```
 
 5. Visit http://localhost:11434/ to see if the service it running. Expected result: "Ollama is running"
 6. To see the models downloaded: http://localhost:11434/api/tags
 
-With Docker ( option 2 - robust )
+---
 
-docker compose -f my-config.yml up -d
+With Docker ( option 2 - robust  - 5.5g)
 
+1. Make sure that Docker Desktop or other docker tool is running
+2. In the docker-compose-ollama.yml file, check the *volumes* section and ensure that the first item points to a local folder. ( i.e. ./.ollama/server:/root/.ollama OR C:\path\to\folder:/root/.ollama )
+3. From a terminal run
 
+```java
+docker compose -f docker-compose-ollama.yml up -d
+```
 
+4. Visit http://localhost:11434/ to see if the service it running. Expected result: "Ollama is running"
+5. To see the models downloaded: http://localhost:11434/api/tags
+
+---
 
 Without Docker
 
@@ -183,36 +200,15 @@ Without Docker
 
 ---
 
-## ⚡ Quick Start
+### Final Check: Run your first AI call
 
-### 5-Minute Setup
-
-1. **Install the bx-ai module**:
-
-   ```bash
-   install-bx-module bx-ai
-   ```
-
-2. **Set your API key**:
-
-   ```bash
-   # Create .env file
-   echo "OPENAI_API_KEY=sk-your-key-here" > .env
-   ```
-
-3. **Run your first AI call**:
-
-   ```java
-   // hello-ai.bxs
-   answer = aiChat( "Hello, AI!" )
-   println( answer )
-   ```
+After running `boxlang Setup.bx` and setting your api in the .env file, try the following:
 
    ```bash
    boxlang hello-ai.bxs
    ```
 
-4. **You're ready!** 🎉
+If you get a reponse from your provider,  **You're ready!** 🎉
 
 ---
 
@@ -332,7 +328,7 @@ This bootcamp is designed to build skills progressively:
 ### Before You Start
 
 1. **Have your API key ready** - You'll need this immediately
-2. **Keep docs nearby** - The [main readme](../../readme.md) is a great reference
+2. **Keep docs nearby** - Typing CTRL+K and then V in VS code will open a rendered preview of these Readme files. Detach the tab and have it in its own window for easy reference.
 3. **Follow along** - Type the code, don't just copy/paste
 4. **Experiment** - Change things and see what happens!
 
@@ -345,10 +341,8 @@ This bootcamp is designed to build skills progressively:
 
 ### After the Bootcamp
 
-1. **Explore the full course** - [12-lesson course](../../course/) goes deeper
-2. **Check examples** - The [examples folder](../../examples/) has more code
-3. **Read the docs** - [Documentation](https://ai.ortusbooks.com/) covers everything
-4. **Build something!** - Best way to learn is by doing
+1. **Build something!** - Best way to learn is by doing
+
 
 ---
 
@@ -358,8 +352,9 @@ Stuck? Here's where to get help:
 
 | Resource | Link |
 |----------|------|
+| Full Course | [Full Course](../../course/) |
 | Full Documentation | [docs/](https://ai.ortusbooks.com/) |
-| Code Examples | [examples/](../../examples/README.md) |
+| Code Examples | [examples/](https://github.com/ortus-boxlang/bx-ai/tree/development/examples) |
 | GitHub Issues | [Report a bug](https://github.com/ortus-boxlang/bx-ai/issues) |
 | Community | [BoxLang Community](https://boxlang.io/community) |
 

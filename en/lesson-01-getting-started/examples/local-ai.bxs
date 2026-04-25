@@ -5,7 +5,7 @@
 
 answer = aiChat(
     "What is 2 + 2? Just give me the number.",
-    { model: "qwen3.5:0.8b", provider: "ollama" },
+    { model: "qwen3:0.6b", provider: "ollama" },
     { provider: "ollama"}
 )
 

@@ -125,9 +125,29 @@ class {
 		// 5. Copy language assets into bootcamp/
 		copyLanguageAssets( lang )
 
+		modData = GetModuleInfo("bxai");
+
+		if(modData.len() == 0){
+			println( "⚠️  bx-ai module is not installed." )
+			println( "  Either a) Use CommandBox and run `install` to install for this project only OR " )
+			println( "  b) Use CommandBox and run `cd ${BOXLANG_HOME}` and then `install bx-ai` to install globally OR" )
+			println( "  c) Install the BVM from https://boxlang.ortusbooks.com/getting-started/installation/boxlang-version-manager-bvm and rerun this Setup.bx" )
+
+			println( "" )
+			return
+		} else {
+			println("✅ bx-ai module is installed." )
+		}
+
+
+
+
 		println( "✅ Setup complete! Your bootcamp is ready." )
 		println( "   📂 Open: bootcamp/README.md to get started." )
 		println( "" )
+
+
+
 	}
 
 	/**
@@ -288,6 +308,8 @@ class {
 	 * 4. Show Instructions to install the bx-ai
 	 */
 	private function setupNoBVM() {
+		var completePoint = 2;
+		var complete = 0;
 		println( "" )
 		println( "╔══════════════════════════════════════════════════════════╗" )
 		println( "║          🚀  BoxLang AI Bootcamp Setup                   ║" )
@@ -327,32 +349,21 @@ class {
 			println( "" )
 			return
 		} else {
+			complete = complete +1;
 			println("✅ bx-ai module is installed." )
 		}
 
-		var apiSetup = checkAPI();
-		if(apiSetup.len() == 0){
-			println( "⚠️  No API keys found in environment variables." )
-			println( "   Please add your API keys to the .env file before proceeding." )
-			println( "   Example: OPENAI_API_KEY=your-api-key" )
+		complete = complete + checkAPI();
+
+		if(complete < completePoint){
+			println( "⚠️  Your setup is almost complete! Please address the above issues and then rerun this Setup.bx script." )
 			println( "" )
-			return
+			return;
 		} else {
-			println("✅ API keys found these keys in environment variables:" )
-			apiSetup.each((item)=>{
-				println( "       - #item#" )
-			});
-
-			var provArr = apiSetup.keyArray().map(item=>AINAmes[item]);
-			println(" The last step is to change the value of the modules.bxai.settings.provider property in the config/boxlang.json file to match one of these items: #provArr.tolist()#." )
+			println( "✅ Setup complete! Your bootcamp is ready." )
+			println( "   📂 Open: bootcamp/README.md to get started." )
 			println( "" )
-			
 		}
-
-
-		println( "✅ Setup complete! Your bootcamp is ready." )
-		println( "   📂 Open: bootcamp/README.md to get started." )
-		println( "" )
 	}
 
 	function runLanguage(){
@@ -365,9 +376,38 @@ class {
 	}
 
 	function checkAPI(){
-		envVars = createObject("java","java.lang.System").getenv();
-		return envVars.filter((key)=>key.findNoCase("_API_") > 0 && envVars[key] != "your-api-key");
-
+		var complete = 0;
+		var envVars = createObject("java","java.lang.System").getenv();
+		var modData = GetModuleInfo("bxai");
+		var apiSetup = envVars.filter((key)=>key.findNoCase("_API_") > 0 && envVars[key] != "your-api-key");
+		if(apiSetup.len() == 0){
+			println( "⚠️  No API keys found in environment variables." )
+			println( "   Please add your API keys to the .env file before proceeding." )
+			println( "   Example: OPENAI_API_KEY=your-api-key" )
+			println( "" )
+			return
+		} else {
+			complete=1;
+			println("✅ API keys found these keys in environment variables:" )
+			apiSetup.each((item)=>{
+				println( "       - #item#" )
+			});
+			var setProvider = apiSetup.filter((item)=>{
+				return AINAmes[item] == modData.settings.provider;
+			}); 
+			if(setProvider.len()){
+				println( "" )
+				println( "✅ Your current provider setting (#modData.settings.provider#) matches the API keys you have set." );
+				println( "" )
+			} else {
+				var provArr = apiSetup.keyArray().map(item=>AINAmes[item]);
+				println(" The last step is to change the value of the modules.bxai.settings.provider property in the config/boxlang.json file to match one of these items: #provArr.tolist()#." )
+				println( "" )
+			}
+			
+			
+		}
+		return complete;
 	}
 
 }

@@ -108,11 +108,15 @@ println( answer )
 ```
 
 Run it:
+
+Note: Running scripts from the root of the project, even to lower folders, will ensure your API keys are read with minimal configuration. We will look at ways of mitigating this later in the course.
+
 ```bash
-boxlang hello-ai.bxs
+boxlang bootcamp\lesson-01-getting-started\examples\hello-ai.bxs
 ```
 
-**Expected output:**
+**Expected output:** ( or equivalent )
+
 ```
 Hello! Welcome to your BoxLang AI journey! I'm excited to help you 
 learn how to build amazing AI-powered applications. Let's get started! 🚀
@@ -131,14 +135,14 @@ println( "A: " & answer )
 
 ### Example 3: Using Ollama (Free/Local)
 
-If you installed Ollama:
+If you installed Ollama, make sure it is running and try the next example:
 
 ```java
 // local-ai.bxs
 answer = aiChat(
-    "What is 2 + 2?",
-    { model: "llama3.2" },
-    { provider: "ollama" }
+    "What is 2 + 2? Just give me the number.",
+    { model: "qwen3:0.6b", provider: "ollama" },
+    { provider: "ollama"}
 )
 println( answer )
 ```
@@ -174,6 +178,10 @@ Create an AI-powered fortune teller that answers yes/no questions.
 2. Ask the user for a question
 3. Send it to the AI with special instructions
 4. Display the mystical answer
+
+### One more concept: Prompts
+
+A prompt is context and background given the AI engine to better frame how it answers. In this lab, we are giving the model a context from which to answer. We are telling the model that it is a Magic 8 ball and it can only answer with a list of predetermined responses which we are providing. The lab goes into prompts in more detail.
 
 ### Starter Code
 
@@ -213,7 +221,7 @@ Respond with ONLY the Magic 8-Ball phrase, nothing else.
 
 // Get the mystical answer
 try {
-    answer = aiChat( prompt, { temperature: 0.9 } )
+    answer = aiChat( prompt, { temperature: 1.0 } )
     println( "" )
     println( "🔮 The Magic 8-Ball says..." )
     println( "   " & answer )

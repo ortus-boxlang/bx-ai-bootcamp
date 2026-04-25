@@ -34,9 +34,11 @@ Respond with ONLY the Magic 8-Ball phrase, nothing else.
 "
 
 // Get the mystical answer
-// Using high temperature (0.9) for more random/varied responses - perfect for a fortune teller!
+// Using high temperature (1.0) for more random/varied responses - perfect for a fortune teller!
+// The higher the temperature, the more random the responses.A lower temperature (e.g. 0.2) would make the 8-Ball more predictable and repetitive.
+
 try {
-    answer = aiChat( prompt, { temperature: 0.9 } )
+    answer = aiChat( prompt, { temperature: 1.0 } )
     println( "" )
     println( "🔮 The Magic 8-Ball says..." )
     println( "   " & answer )
