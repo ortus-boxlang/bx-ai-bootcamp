@@ -1,5 +1,7 @@
 # 🚀 Bootcamp de BoxLang AI
 
+[Página Principal](/README.md)
+
 **Comienza con el Desarrollo de IA en Un Día**
 
 ¡Bienvenido al Bootcamp de BoxLang AI! Este curso intensivo y práctico te llevará desde cero experiencia en IA hasta construir aplicaciones inteligentes con BoxLang en solo 6-7 horas.
@@ -7,7 +9,7 @@
 ```
 ╔════════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
-║   ⚡ Bootcamp de BoxLang AI ⚡                                      ║
+║   ⚡ Bootcamp de BoxLang AI ⚡                                    ║
 ║                                                                    ║
 ║   🎯 Aprende los fundamentos de IA en un día                       ║
 ║   🛠️ Construye aplicaciones reales                                 ║
@@ -16,6 +18,8 @@
 ║                                                                    ║
 ╚════════════════════════════════════════════════════════════════════╝
 ```
+
+Consejo útil: En VSCode, presiona CTRL+K y luego V para abrir una copia renderizada de cualquier página Markdown. Desde esta vista, puedes navegar fácilmente por el contenido del curso.
 
 ## 📋 Resumen del Bootcamp
 
@@ -63,26 +67,26 @@ A lo largo de este bootcamp, crearás:
 │                     LÍNEA DE TIEMPO DEL BOOTCAMP                │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
-│  │   Lección 1  │──▶│   Lección 2  │──▶│   Lección 3  │        │
-│  │   45 mins    │   │   60 mins    │   │   45 mins    │        │
-│  │  🚀 Inicio   │   │  💬 Chats    │   │  🔄 Proveed. │        │
-│  └──────────────┘   └──────────────┘   └──────────────┘        │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐         │
+│  │   Lección 1  │──▶│   Lección 2  │──▶│ Lección 3   │         │
+│  │   45 mins    │   │   60 mins    │   │  45 mins     │         │
+│  │  🚀 Inicio   │   │  💬 Chats    │  │ 🔄 Proveed. │         │
+│  └──────────────┘   └──────────────┘   └──────────────┘         │
 │          │                                    │                 │
 │          │            ☕ DESCANSO             │                 │
 │          ▼                                    ▼                 │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
+│  ┌──────────────┐   ┌──────────────┐    ┌──────────────┐         │
 │  │   Lección 4  │──▶│   Lección 5  │──▶│   Lección 6  │        │
-│  │   60 mins    │   │   60 mins    │   │   90 mins    │        │
+│  │   60 mins    │   │   60 mins    │    │   90 mins    │        │
 │  │  📝 Salida   │   │  🛠️ Herram.  │   │  🤖 Agentes  │        │
-│  └──────────────┘   └──────────────┘   └──────────────┘        │
+│  └──────────────┘   └──────────────┘    └──────────────┘        │
 │          │                                    │                 │
 │          │            ☕ DESCANSO             │                 │
 │          ▼                                    ▼                 │
 │  ┌──────────────┐   ┌──────────────┐                            │
 │  │   Lección 7  │──▶│   Lección 8  │                            │
 │  │   60 mins    │   │   60 mins    │                            │
-│  │  📚 Docs     │   │  🌐 MCP      │                            │
+│  │  📚 Docs     │   │  🌐 MCP      │                           │
 │  └──────────────┘   └──────────────┘                            │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘

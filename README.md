@@ -6,17 +6,24 @@
 
 | Language | Idioma | Link |
 |----------|--------|------|
-| 🇺🇸 English | Inglés | **[Start Bootcamp →](en/)** |
-| 🇪🇸 Español | Spanish | **[Iniciar Bootcamp →](es/)** |
+| 🇺🇸 English | Inglés | **[Start Bootcamp →](en/README.md)** |
+| 🇪🇸 Español | Spanish | **[Iniciar Bootcamp →](es/README.md)** |
 
 ---
 
 ## ⚡ Quick Setup
 
+
 Run the interactive setup wizard to get your bootcamp environment ready in seconds:
 
+If BVM installed:
 ```bash
 boxlang Setup.bx
+```
+
+Without BVM Installed
+```bash
+boxlang Setup.bx --noBVM
 ```
 
 The wizard will:
@@ -37,6 +44,7 @@ The wizard will:
 | `boxlang Setup.bx` | Run the interactive setup wizard (default) |
 | `boxlang Setup.bx --help` | Show all available commands and options |
 | `boxlang Setup.bx --reset` | Reset the `bootcamp/` folder back to its original state |
+| `boxlang Setup.bx --noBVM` | Runs the interactive setup without using the BVM for systems where it can not be used |
 
 ### `boxlang Setup.bx` (default)
 
@@ -68,6 +76,10 @@ CLAUDE_API_KEY=sk-ant-...
 OPENROUTER_API_KEY=sk-or-...
 # etc.
 ```
+
+## 📝 Setting Your Provider
+
+In the /config/boxlang.json folder, change the modules.bxai.settings.provider setting to the value indicated in the Setup.bx messaging. 
 
 ---
 

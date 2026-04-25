@@ -1,5 +1,7 @@
 # 🚀 BoxLang AI Bootcamp
 
+[Home](/README.md)
+
 **Get Started with AI Development in One Day**
 
 Welcome to the BoxLang AI Bootcamp! This intensive, hands-on course will take you from zero AI experience to building intelligent applications with BoxLang in just 8-9 hours.
@@ -7,15 +9,17 @@ Welcome to the BoxLang AI Bootcamp! This intensive, hands-on course will take yo
 ```
 ╔════════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
-║   ⚡ BoxLang AI Bootcamp ⚡                                         ║
+║   ⚡ BoxLang AI Bootcamp ⚡                                       ║
 ║                                                                    ║
-║   🎯 Learn AI fundamentals in one day                             ║
+║   🎯 Learn AI fundamentals in one day                              ║
 ║   🛠️ Build real applications                                       ║
 ║   🔄 Switch between AI providers                                   ║
 ║   🤖 Create your first AI agent                                    ║
 ║                                                                    ║
 ╚════════════════════════════════════════════════════════════════════╝
 ```
+
+Helpful Tip: In VSCode, type CTRL+K then V to open a rendered copy of any markdown page. You can navigate through the course content easily from this view.
 
 ## 📋 Bootcamp Overview
 
@@ -63,26 +67,26 @@ Throughout this bootcamp, you'll create:
 │                     BOOTCAMP TIMELINE                           │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
-│  │   Lesson 1   │──▶│   Lesson 2   │──▶│   Lesson 3   │        │
-│  │   45 mins    │   │   60 mins    │   │   45 mins    │        │
-│  │  🚀 Setup    │   │  💬 Chats    │   │  🔄 Providers│        │
-│  └──────────────┘   └──────────────┘   └──────────────┘        │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐         │
+│  │   Lesson 1   │──▶│   Lesson 2  │──▶│   Lesson 3   │         │ 
+│  │   45 mins    │   │   60 mins    │   │   45 mins    │         │
+│  │  🚀 Setup    │   │  💬 Chats   │   │  🔄 Providers│         │
+│  └──────────────┘   └──────────────┘   └──────────────┘         │
 │          │                                    │                 │
 │          │            ☕ BREAK                │                 │
 │          ▼                                    ▼                 │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐        │
+│  ┌──────────────┐    ┌──────────────┐   ┌──────────────┐        │
 │  │   Lesson 4   │──▶│   Lesson 5   │──▶│   Lesson 6   │        │
-│  │   60 mins    │   │   60 mins    │   │   90 mins    │        │
-│  │  📝 Output   │   │  🛠️ Tools    │   │  🤖 Agents   │        │
-│  └──────────────┘   └──────────────┘   └──────────────┘        │
+│  │   60 mins    │    │   60 mins    │   │   90 mins    │        │
+│  │  📝 Output   │    │  🛠️ Tools   │   │  🤖 Agents   │        │
+│  └──────────────┘    └──────────────┘   └──────────────┘        │
 │          │                                    │                 │
 │          │            ☕ BREAK                │                 │
 │          ▼                                    ▼                 │
 │  ┌──────────────┐   ┌──────────────┐                            │
-│  │   Lesson 7   │──▶│   Lesson 8   │                            │
+│  │   Lesson 7   │──▶│   Lesson 8  │                             │
 │  │   60 mins    │   │   60 mins    │                            │
-│  │  📚 Loaders  │   │  🔌 MCP      │                            │
+│  │  📚 Loaders  │   │  🔌 MCP     │                            │ 
 │  └──────────────┘   └──────────────┘                            │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -93,15 +97,15 @@ Throughout this bootcamp, you'll create:
 
 | Lesson | Title | Duration | What You'll Learn |
 |--------|-------|----------|-------------------|
-| **1** | [Getting Started](lesson-01-getting-started/) | 45 mins | Setup, first AI call, understanding tokens |
-| **2** | [Conversations & Messages](lesson-02-conversations/) | 60 mins | Multi-turn chat, message roles, conversation history |
-| **3** | [Switching Providers](lesson-03-providers/) | 45 mins | OpenAI, Claude, Ollama, provider switching |
-| **4** | [Structured Output](lesson-04-structured-output/) | 60 mins | Type-safe responses, classes, data extraction |
-| **5** | [AI Tools](lesson-05-tools/) | 60 mins | Function calling, real-time data, tool creation |
-| **6** | [Building Agents](lesson-06-agents/) | 90 mins | Autonomous AI, memory, multi-step tasks |
-| **7** | [Loaders & Documents](lesson-07-loaders-documents/) | 60 mins | File loading, chunking, RAG systems, vector memory |
-| **8** | [MCP Servers & Clients](lesson-08-mcp-servers-clients/) | 60 mins | Model Context Protocol, remote tools, server creation |
-| **9** | [Audio AI](lesson-09-audio/) | 60 mins | Text-to-speech, speech-to-text, audio translation |
+| **1** | [Getting Started](lesson-01-getting-started/README.md) | 45 mins | Setup, first AI call, understanding tokens |
+| **2** | [Conversations & Messages](lesson-02-conversations/README.md) | 60 mins | Multi-turn chat, message roles, conversation history |
+| **3** | [Switching Providers](lesson-03-providers/README.md) | 45 mins | OpenAI, Claude, Ollama, provider switching |
+| **4** | [Structured Output](lesson-04-structured-output/README.md) | 60 mins | Type-safe responses, classes, data extraction |
+| **5** | [AI Tools](lesson-05-tools/README.md) | 60 mins | Function calling, real-time data, tool creation |
+| **6** | [Building Agents](lesson-06-agents/README.md) | 90 mins | Autonomous AI, memory, multi-step tasks |
+| **7** | [Loaders & Documents](lesson-07-loaders-documents/README.md) | 60 mins | File loading, chunking, RAG systems, vector memory |
+| **8** | [MCP Servers & Clients](lesson-08-mcp-servers-clients/README.md) | 60 mins | Model Context Protocol, remote tools, server creation |
+| **9** | [Audio AI](lesson-09-audio/README.md) | 60 mins | Text-to-speech, speech-to-text, audio translation |
 
 ---
 
@@ -112,6 +116,7 @@ Before starting, ensure you have:
 ### Required
 
 1. **BoxLang Installed** ([Download](https://boxlang.io))
+
    ```bash
    boxlang --version
    # Should output: BoxLang 1.x.x
@@ -123,6 +128,52 @@ Before starting, ensure you have:
    - **OpenAI** (Recommended): https://platform.openai.com/api-keys
    - **Claude**: https://console.anthropic.com/
    - **Ollama** (Free/Local): https://ollama.ai
+
+4. From a terminal in the root of this project, run `boxlang Setup.bx` if you have the BVM installed OR `boxlang Setup.bx --nobvm` if you do not and do not want to install the BVM.
+
+### Recommended
+
+#### Install Ollama LLM locally
+
+With Docker ( option 1 - simple )
+
+1. Make sure that Docker Desktop or other docker tool is running
+2. In the docker-compose.yml file in the bootcamp folder, change where it says *localpathere* in the volume section to the full path to local folder ( i.e. C:\path\to\folder:/root/.ollama ). This will save models and other files downloaded for this process outside of the container.
+3. From your terminal run:
+
+```java
+docker compose up -d
+```
+
+4. After the container has started type
+
+```java
+docker exec -it ollama ollama pull qwen3:0.6b
+```
+
+5. Visit http://localhost:11434/ to see if the service it running. Expected result: "Ollama is running"
+6. To see the models downloaded: http://localhost:11434/api/tags
+
+With Docker ( option 2 - robust )
+
+docker compose -f my-config.yml up -d
+
+
+
+
+Without Docker
+
+1. Visit https://ollama.com/ and download the installer for your OS
+2. After running the installer, open a terminal and type
+
+```java
+   ollama pull qwen3:0.6b
+   ollama run qwen3:0.6b
+```
+
+3. A prompt saying *Send a message (/? for help)* should appear. Say *Hello* to Ollama and it should respond.
+4. Visit http://localhost:11434/ to see if the service it running. Expected result: "Ollama is running"
+5. To see the models downloaded: http://localhost:11434/api/tags
 
 ### Optional but Helpful
 
@@ -137,22 +188,26 @@ Before starting, ensure you have:
 ### 5-Minute Setup
 
 1. **Install the bx-ai module**:
+
    ```bash
    install-bx-module bx-ai
    ```
 
 2. **Set your API key**:
+
    ```bash
    # Create .env file
    echo "OPENAI_API_KEY=sk-your-key-here" > .env
    ```
 
 3. **Run your first AI call**:
+
    ```java
    // hello-ai.bxs
    answer = aiChat( "Hello, AI!" )
    println( answer )
    ```
+
    ```bash
    boxlang hello-ai.bxs
    ```
@@ -336,4 +391,4 @@ This bootcamp is released under the Apache 2.0 license, same as the bx-ai module
 
 **Ready to start?** Let's go! 🚀
 
-👉 **[Start Lesson 1: Getting Started](lesson-01-getting-started/)**
+👉 **[Start Lesson 1: Getting Started](lesson-01-getting-started/README.md)**

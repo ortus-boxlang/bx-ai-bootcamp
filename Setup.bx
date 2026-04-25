@@ -8,6 +8,24 @@
  */
 class {
 
+	AINAmes = {
+        "OPENAI_API_KEY":"openai",
+        "DEEPSEEK_API_KEY":"deepseek",
+        "GEMINI_API_KEY":"gemini",
+        "GROK_API_KEY":"grok",
+        "GROQ_API_KEY":"groq",
+        "PERPLEXITY_API_KEY":"perplexity",
+        "CLAUDE_API_KEY":"claude",
+        "OPENROUTER_API_KEY":"openrouter",
+        "MISTRAL_API_KEY":"mistral",
+        "HUGGINGFACE_API_KEY":"huggingface",
+        "VOYAGE_API_KEY":"voyage",
+        "COHERE_API_KEY":"cohere",
+        "ELEVENLABS_API_KEY":"elevenlabs",
+        "AWS_ACCESS_KEY_ID":"aws",
+    };
+
+
 	function main() {
 		var parsed = CLIGetArgs()
 		// parsed.options  → struct of --flag / --key=value pairs
@@ -22,6 +40,12 @@ class {
 		// Check for --reset flag
 		if ( parsed.options.keyExists( "reset" ) ) {
 			resetBootcamp()
+			return
+		}
+
+		//check for the ---nobvm 
+		if ( parsed.options.keyExists( "nobvm" ) ) {
+			setupNoBVM()
 			return
 		}
 
@@ -254,6 +278,96 @@ class {
 		pb.inheritIO()
 		var process = pb.start()
 		return process.waitFor()
+	}
+
+	/**
+	 * Default setup flow:
+	 * 1. Setup .env
+	 * 2. Choose language
+	 * 3. Copy language assets to bootcamp/
+	 * 4. Show Instructions to install the bx-ai
+	 */
+	private function setupNoBVM() {
+		println( "" )
+		println( "╔══════════════════════════════════════════════════════════╗" )
+		println( "║          🚀  BoxLang AI Bootcamp Setup                   ║" )
+		println( "╚══════════════════════════════════════════════════════════╝" )
+		println( "" )
+
+		// 1. Setup .env file
+		setupEnv()
+
+		// 2. Install bx-ai module locally
+		//installModule()
+
+		// 3. If bootcamp folder already exists, ask whether to overwrite
+		if ( directoryExists( "bootcamp" ) ) {
+			println( "" )
+			println( "⚠️  A 'bootcamp' folder already exists." )
+			var answer = cliRead( "   Do you want to start fresh? This will overwrite it. (y/N): " ).trim()
+			if ( !answer.equalsIgnoreCase( "y" ) && !answer.equalsIgnoreCase( "yes" ) ) {
+				println( "" )
+				println( "✅ 'Bootcamp' folder left unchanged." )
+				println( "" )
+			} else {
+				runLanguage();
+			}
+		} else {
+			runLanguage();
+		}
+
+		modData = GetModuleInfo("bxai");
+
+		if(modData.len() == 0){
+			println( "⚠️  bx-ai module is not installed." )
+			println( "  Either a) Use CommandBox and run `install` to install for this project only OR " )
+			println( "  b) Use CommandBox and run `cd ${BOXLANG_HOME}` and then `install bx-ai` to install globally OR" )
+			println( "  c) Install the BVM from https://boxlang.ortusbooks.com/getting-started/installation/boxlang-version-manager-bvm and rerun this Setup.bx" )
+
+			println( "" )
+			return
+		} else {
+			println("✅ bx-ai module is installed." )
+		}
+
+		var apiSetup = checkAPI();
+		if(apiSetup.len() == 0){
+			println( "⚠️  No API keys found in environment variables." )
+			println( "   Please add your API keys to the .env file before proceeding." )
+			println( "   Example: OPENAI_API_KEY=your-api-key" )
+			println( "" )
+			return
+		} else {
+			println("✅ API keys found these keys in environment variables:" )
+			apiSetup.each((item)=>{
+				println( "       - #item#" )
+			});
+
+			var provArr = apiSetup.keyArray().map(item=>AINAmes[item]);
+			println(" The last step is to change the value of the modules.bxai.settings.provider property in the config/boxlang.json file to match one of these items: #provArr.tolist()#." )
+			println( "" )
+			
+		}
+
+
+		println( "✅ Setup complete! Your bootcamp is ready." )
+		println( "   📂 Open: bootcamp/README.md to get started." )
+		println( "" )
+	}
+
+	function runLanguage(){
+		// 4. Ask for language preference
+		var lang = askLanguage()
+
+		// 5. Copy language assets into bootcamp/
+		copyLanguageAssets( lang )
+		return true;
+	}
+
+	function checkAPI(){
+		envVars = createObject("java","java.lang.System").getenv();
+		return envVars.filter((key)=>key.findNoCase("_API_") > 0 && envVars[key] != "your-api-key");
+
 	}
 
 }

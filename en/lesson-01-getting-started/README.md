@@ -1,5 +1,7 @@
 # Lesson 1: Getting Started
 
+[Home](../README.md)
+
 **⏱️ Duration: 45 minutes**
 
 Welcome to your first step into AI development with BoxLang! In this lesson, you'll set up your environment and make your first AI call.
@@ -20,6 +22,7 @@ Before writing code, let's understand what we're working with.
 ### What is a Large Language Model (LLM)?
 
 An LLM is an AI system that:
+
 - **Reads** and understands text
 - **Generates** human-like responses
 - **Helps** with coding, writing, analysis, and more
@@ -33,12 +36,12 @@ An LLM is an AI system that:
   ──────────────        ───────────────         ──────────────
        │                      │                       │
        ▼                      ▼                       ▼
-  ┌─────────┐           ┌─────────┐            ┌─────────┐
-  │"What is │  ──────▶  │ Neural  │  ──────▶   │"BoxLang │
-  │BoxLang?"│           │ Network │            │is a JVM │
-  │         │           │(billions│            │language │
-  │         │           │of params│            │that..." │
-  └─────────┘           └─────────┘            └─────────┘
+  ┌─────────┐           ┌──────────┐            ┌─────────┐
+  │"What is │  ──────▶  │ Neural   │  ──────▶  │"BoxLang │
+  │BoxLang?"│           │ Network  │            │is a JVM │
+  │         │           │(billions │            │language │
+  │         │           │of params)│            │that..." │
+  └─────────┘           └──────────┘            └─────────┘
 ```
 
 ### What is a Token?
@@ -60,6 +63,7 @@ AI doesn't see words like we do. It breaks text into **tokens** - small pieces o
 ```
 
 **Why tokens matter:**
+
 - ✅ You pay per token (input + output)
 - ✅ Models have token limits (context window)
 - ✅ More tokens = longer responses
@@ -76,66 +80,10 @@ A provider is a company that runs AI models in the cloud (or locally):
 
 ---
 
-## 🛠️ Part 2: Setup (15 mins)
-
-### Step 1: Verify BoxLang
-
-Open your terminal and run:
-
-```bash
-boxlang --version
-```
-
-You should see something like `BoxLang 1.x.x`. If not, [download BoxLang](https://boxlang.io).
-
-### Step 2: Install bx-ai Module
-
-```bash
-install-bx-module bx-ai
-```
-
-Or for web apps (CommandBox):
-```bash
-box install bx-ai
-```
-
-### Step 3: Get an API Key
-
-**Option A: OpenAI (Recommended for beginners)**
-
-1. Go to https://platform.openai.com/api-keys
-2. Sign up or log in
-3. Click "Create new secret key"
-4. Copy the key (starts with `sk-`)
-5. Add credits to your account ($5 is plenty to start)
-
-**Option B: Ollama (Free, runs locally)**
-
-1. Download from https://ollama.ai
-2. Install and run Ollama
-3. Pull a model:
-   ```bash
-   ollama pull llama3.2
-   ```
-4. No API key needed!
-
-### Step 4: Set Your API Key
-
-Create a `.env` file in your project:
-
-```bash
-# For OpenAI
-OPENAI_API_KEY=sk-your-key-here
-
-# For Claude
-CLAUDE_API_KEY=sk-ant-your-key-here
-```
-
-> ⚠️ **Never commit API keys to git!** Add `.env` to your `.gitignore`.
 
 ---
 
-## 💻 Part 3: Your First AI Call (10 mins)
+## 💻 Part 2: Your First AI Call (10 mins)
 
 ### The aiChat() Function
 

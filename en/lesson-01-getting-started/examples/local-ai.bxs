@@ -5,8 +5,8 @@
 
 answer = aiChat(
     "What is 2 + 2? Just give me the number.",
-    { model: "llama3.2" },
-    { provider: "ollama" }
+    { model: "qwen3.5:0.8b", provider: "ollama" },
+    { provider: "ollama"}
 )
 
 println( "The AI says: " & answer )
