@@ -318,7 +318,7 @@ answer = aiChat(
 
 You've made your first AI call! Now let's learn to have real conversations.
 
-👉 **[Lesson 2: Conversations & Messages](../lesson-02-conversations/)**
+👉 **[Lesson 2: Conversations & Messages](../lesson-02-conversations/README.md)**
 
 ---
 

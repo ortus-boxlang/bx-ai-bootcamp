@@ -1,5 +1,7 @@
 # Lesson 3: Switching Providers
 
+[Home](../README.md)
+
 **⏱️ Duration: 45 minutes**
 
 BoxLang AI lets you work with multiple AI providers through a unified API. This means you can switch between OpenAI, Claude, Ollama, and more without changing your code!
@@ -27,13 +29,13 @@ A provider is a company (or software) that runs AI models:
   ☁️ CLOUD PROVIDERS (Paid)              🏠 LOCAL (Free)
   ───────────────────────                 ───────────────
 
-  ┌──────────┐  ┌──────────┐             ┌──────────┐
-  │  OpenAI  │  │  Claude  │             │  Ollama  │
-  │  (GPT-4) │  │(Anthropic│             │ (Local)  │
-  └──────────┘  └──────────┘             └──────────┘
-       │             │                         │
-       │             │                         │
-       ▼             ▼                         ▼
+  ┌──────────┐  ┌───────────┐             ┌──────────┐
+  │  OpenAI  │  │  Claude   │             │  Ollama  │
+  │  (GPT-4) │  │(Anthropic)│             │ (Local)  │
+  └──────────┘  └───────────┘             └──────────┘
+                                               │
+                                               │
+                                               ▼
   ┌──────────┐  ┌──────────┐             ┌──────────┐
   │  Gemini  │  │   Grok   │             │ Your PC! │
   │ (Google) │  │   (xAI)  │             │ Private  │

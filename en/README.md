@@ -364,13 +364,13 @@ Stuck? Here's where to get help:
 
 After completing this bootcamp, you can:
 
-1. **Go Deeper** - Take the [full 12-lesson course](../../course/)
-2. **Explore Advanced Topics**:
+1. **Explore Advanced Topics**:
    - Vector embeddings and semantic search
    - Streaming responses
    - Pipeline workflows
    - Production deployment
-3. **Build Real Projects**:
+
+2. **Build Real Projects**:
    - Customer support bots
    - Content generators
    - Data analysis tools

@@ -1413,17 +1413,6 @@ You've completed the BoxLang AI Bootcamp! You now know:
 
 ## ⏭️ What's Next?
 
-### Deep Dive: Full Course
-
-Take the [12-lesson course](../../course/) for:
-
-- Streaming responses
-- Pipeline workflows
-- Advanced memory systems
-- Production deployment
-- Vector embeddings
-- And much more!
-
 ### Explore Examples
 
 Check out the [examples folder](../../examples/) for more code.

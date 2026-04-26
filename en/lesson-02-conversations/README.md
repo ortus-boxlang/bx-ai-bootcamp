@@ -489,40 +489,22 @@ println( response )
 // AI knows: 42 logins, last login yesterday, 15 tasks done, beta access enabled
 ```
 
-### Streaming with Context
 
-Context works with streaming too:
-
-```java
-// streaming-context.bxs
-message = aiMessage()
-    .system( "User info: ${context}. Be helpful and personalized." )
-    .setContext({
-        name: "Alex",
-        preferences: { tone: "friendly" }
-    })
-    .user( "Tell me a joke" )
-
-aiChatStream(
-    onChunk: ( chunk ) => print( chunk.content ),
-    message: message.render()
-)
 ```
 
 ### Best Practices
 
-```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    CONTEXT BEST PRACTICES                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ✅ DO:                           ❌ DON'T:                      │
+│  ✅ DO:                           ❌ DON'T:                    │
 │  ─────                            ────────                      │
-│  • Use IDs, not sensitive data    • Send passwords             │
-│  • Keep context lightweight       • Send PII unnecessarily     │
-│  • Structure data clearly         • Include huge datasets      │
-│  • Use for RAG documents          • Mix concerns              │
-│  • Document context schema        • Forget to sanitize        │
+│  • Use IDs, not sensitive data    • Send passwords              │
+│  • Keep context lightweight       • Send PII unnecessarily      │
+│  • Structure data clearly         • Include huge datasets       │
+│  • Use for RAG documents          • Mix concerns                │
+│  • Document context schema        • Forget to sanitize          │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -561,21 +543,29 @@ response = aiChat( message.render() )
 
 For real-time responses (like ChatGPT), use **streaming**:
 
+The streaming data chunks return in arrays which includes information about how the data was created, service tiers and so on. The actual data you would display to the user is somewhere in that structure as well. This `cleanChunk` function below performs that service in the following functions.
+
 ### Basic Streaming
 
 ```java
 // streaming-basic.bxs
 println( "AI: " )
 
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
 aiChatStream(
-    onChunk: ( chunk ) => print( chunk.content ),
-    message: "Write a haiku about programming"
+    callback: ( chunk ) => print( cleanChunk(chunk) ),
+    messages: "Write a haiku about programming"
 )
 
 println()  // New line after stream completes
 ```
 
 **Output appears word-by-word:**
+
 ```
 AI: Code flows like stream
 Bugs hide in silent shadows
@@ -585,20 +575,27 @@ Coffee makes it work
 ### Streaming with Conversations
 
 ```java
+
 // streaming-conversation.bxs
 conversation = aiMessage()
     .system( "You are a storyteller. Be dramatic!" )
     .user( "Tell me a short story about a robot" )
 
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
 print( "AI: " )
 fullResponse = ""
 
 aiChatStream(
-    onChunk: ( chunk ) => {
-        print( chunk.content )
-        fullResponse &= chunk.content
+    callback: ( chunk ) => {
+        var cc = cleanChunk(chunk);
+        print( cc )
+        fullResponse &= cc
     },
-    message: conversation
+    messages: conversation
 )
 
 println()
@@ -634,11 +631,11 @@ println( "AI finished: " & result )
 │                  RESPONSE TYPE COMPARISON                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  📄 aiChat()           ⚡ aiChatStream()      🔄 aiChatAsync()  │
-│  ────────────         ────────────────       ───────────────   │
-│  • Waits for all      • Real-time chunks     • Non-blocking    │
-│  • Simple to use      • Progressive display  • Returns Future  │
-│  • Best for scripts   • Best for UIs         • Parallel tasks  │
+│  📄 aiChat()          ⚡ aiChatStream()      🔄 aiChatAsync()  │
+│  ────────────         ────────────────       ───────────────    │
+│  • Waits for all      • Real-time chunks     • Non-blocking     │
+│  • Simple to use      • Progressive display  • Returns Future   │
+│  • Best for scripts   • Best for UIs         • Parallel tasks   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -651,8 +648,8 @@ answer = aiChat( "Quick question" )
 
 // Web UI/Chat: Streaming
 aiChatStream(
-    onChunk: ( chunk ) => writeOutput( chunk.content ),
-    message: "User question"
+    callback: ( chunk ) => writeOutput( chunk.content ),
+    messages: "User question"
 )
 
 // Background: Async
@@ -668,6 +665,7 @@ result = future.get()
 ### The Goal
 
 Create an interactive chat assistant that:
+
 1. Has a custom personality
 2. Remembers the conversation
 3. Can be customized by the user
@@ -859,8 +857,8 @@ response = aiChat( message.render() )
 
 // Streaming
 aiChatStream(
-    onChunk: ( chunk ) => print( chunk.content ),
-    message: "Tell me a story"
+    callback: ( chunk ) => print( chunk.content ),
+    messages: "Tell me a story"
 )
 
 // Async
