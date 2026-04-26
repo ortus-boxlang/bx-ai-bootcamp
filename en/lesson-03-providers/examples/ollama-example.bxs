@@ -1,6 +1,6 @@
 // ollama-example.bxs
 // Using Ollama for free, local AI
-// Prerequisites: Install Ollama and run: ollama pull llama3.2
+// Prerequisites: Install Ollama and run: ollama pull qwen3:0.6b
 // Run with: boxlang ollama-example.bxs
 
 println( "🏠 Using Ollama (local AI)..." )

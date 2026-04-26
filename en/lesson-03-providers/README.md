@@ -220,6 +220,7 @@ If one provider fails, try another:
 // fallback-example.bxs
 function chatWithFallback( message ) {
     // Try providers in order
+    // Put any providers for which you have an API key at the end of the list any any for which you don't at the begining
     providers = [ "openai", "claude", "ollama" ]
 
     for( provider in providers ) {
@@ -278,6 +279,9 @@ function routeByTask( task, message ) {
 // Use it
 codeAnswer = routeByTask( "code", "Write a function to sort an array" )
 quickAnswer = routeByTask( "quick", "What is 5 + 5?" )
+
+println( "Code answer (OpenAI): " & codeAnswer )
+println( "Quick answer (Ollama): " & quickAnswer )
 ```
 
 ---
@@ -287,6 +291,7 @@ quickAnswer = routeByTask( "quick", "What is 5 + 5?" )
 ### The Goal
 
 Create an app that:
+
 1. Lets the user choose a provider
 2. Compares responses from different providers
 3. Handles errors gracefully
@@ -332,15 +337,15 @@ function callProvider( name, options, params = {} ) {
 switch( choice ) {
     case "1":
         callProvider( "OpenAI", { provider: "openai" } )
-        break
+        break;
 
     case "2":
         callProvider( "Claude", { provider: "claude" } )
-        break
+        break;
 
     case "3":
         callProvider( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
-        break
+        break;
 
     case "4":
         println( "🔄 Comparing all providers..." )
@@ -351,7 +356,7 @@ switch( choice ) {
         callProvider( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
 
         println( "✨ Comparison complete!" )
-        break
+        break;
 
     default:
         println( "Invalid choice!" )
@@ -458,7 +463,7 @@ service.invoke( aiChatRequest( messages ) )
 
 Now you can switch providers! Let's learn how to get structured data from AI.
 
-👉 **[Lesson 4: Structured Output](../lesson-04-structured-output/)**
+👉 **[Lesson 4: Structured Output](../lesson-04-structured-output/README.md)**
 
 ---
 

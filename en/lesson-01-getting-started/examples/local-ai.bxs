@@ -1,6 +1,6 @@
 // local-ai.bxs
 // Use Ollama for free, local AI
-// Prerequisites: Install Ollama and run: ollama pull llama3.2
+// Prerequisites: Install Ollama and run: ollama pull qwen3:0.6b
 // Run with: boxlang local-ai.bxs
 
 answer = aiChat(

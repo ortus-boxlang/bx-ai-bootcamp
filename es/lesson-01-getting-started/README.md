@@ -116,7 +116,7 @@ box install bx-ai
 2. Instala y ejecuta Ollama
 3. Descarga un modelo:
    ```bash
-   ollama pull llama3.2
+   ollama pull qwen3:0.6b
    ```
 4. ¡No necesitas clave de API!
 
@@ -190,7 +190,7 @@ Si instalaste Ollama:
 // ai-local.bxs
 respuesta = aiChat(
     "¿Cuánto es 2 + 2?",
-    { model: "llama3.2" },
+    { model: "qwen3:0.6b" },
     { provider: "ollama" }
 )
 println( respuesta )
