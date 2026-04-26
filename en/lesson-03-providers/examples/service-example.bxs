@@ -4,6 +4,7 @@
 
 // Create services for different providers
 openaiService = aiService( "openai" )
+ollamaService = aiService( "ollama" )
 
 // Prepare a question
 question = aiMessage().user( "What is BoxLang in one sentence?" )
@@ -12,7 +13,11 @@ question = aiMessage().user( "What is BoxLang in one sentence?" )
 request = aiChatRequest( question )
 
 // Invoke the service
-response = openaiService.invoke( request )
+responseAI = openaiService.chat( request )
+responseOLLAMA = ollamaService.chat( request )
 
 println( "OpenAI says:" )
-println( response )
+println( responseAI )
+
+println( "Ollama says:" )
+println( responseOLLAMA )
