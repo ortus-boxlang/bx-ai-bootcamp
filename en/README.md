@@ -129,7 +129,7 @@ Before starting, ensure you have:
    - **Claude**: https://console.anthropic.com/
    - **Ollama** (Free/Local): https://ollama.ai
 
-4. From a terminal in the root of this project, run `boxlang Setup.bx` if you have the BVM installed OR `boxlang Setup.bx --nobvm` if you do not and do not want to install the BVM.
+4. From a terminal in the root of this project, run `boxlang Setup.bx`.
 
 ### Recommended
 
