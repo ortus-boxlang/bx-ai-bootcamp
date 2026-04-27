@@ -135,35 +135,14 @@ Before starting, ensure you have:
 
 #### Install Ollama LLM locally
 
-There are 3 options here to install Ollama
+There are 2 options here to install Ollama
 
-1. Docker Simple - This configuration has a small footprint and has everything you need for this course.
-2. Docker Robust - This configuration has a larger footprint and a separate docker container which runs WebUI and other services
-3. Non-Docker - Installs a non-containerized version locally
-
-With Docker ( option 1 - simple )
-
-1. Make sure that Docker Desktop or other docker tool is running
-2. In the docker-compose.yml file in the bootcamp folder, change where it says *localpathere* in the volume section to the full path to local folder ( i.e. C:\path\to\folder:/root/.ollama ). This will save models and other files downloaded for this process outside of the container.
-3. From your terminal run:
-
-```java
-docker compose up -d
-```
-
-4. After the container has started type
-
-```java
-docker exec -it ollama ollama pull qwen3:0.6b
-docker exec -it ollama ollama pull nomic-embed-text
-```
-
-5. Visit http://localhost:11434/ to see if the service it running. Expected result: "Ollama is running"
-6. To see the models downloaded: http://localhost:11434/api/tags
+1. Docker Robust - This configuration has a larger footprint and a separate docker container which runs WebUI and other services
+2. Non-Docker - Installs a non-containerized version locally
 
 ---
 
-With Docker ( option 2 - robust  - 5.5g)
+With Docker
 
 1. Make sure that Docker Desktop or other docker tool is running
 2. In the docker-compose-ollama.yml file, check the *volumes* section and ensure that the first item points to a local folder. ( i.e. ./.ollama/server:/root/.ollama OR C:\path\to\folder:/root/.ollama )
