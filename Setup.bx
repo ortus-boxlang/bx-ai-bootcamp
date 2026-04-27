@@ -175,7 +175,14 @@ class {
 			return
 		}
 		println( "📦 Installing bx-ai module locally..." )
-		var exitCode = runCommand( "install-bx-module", [ "bx-ai", "--local" ] )
+
+		// Detect if in windows
+		if( server.os.name.findNoCase( "Win" ) ) {
+			var exitCode = runCommand( "install-bx-module.bat", [ "bx-ai", "--local" ] )
+		} else {
+			var exitCode = runCommand( "install-bx-module", [ "bx-ai", "--local" ] )
+		}
+
 		if ( exitCode == 0 ) {
 			println( "✅ bx-ai module installed successfully." )
 		} else {
