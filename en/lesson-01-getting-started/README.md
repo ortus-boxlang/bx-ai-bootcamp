@@ -141,7 +141,7 @@ If you installed Ollama, make sure it is running and try the next example:
 // local-ai.bxs
 answer = aiChat(
     "What is 2 + 2? Just give me the number.",
-    { model: "qwen3:0.6b", provider: "ollama" },
+    { model: "qwen3:0.6b" },
     { provider: "ollama"}
 )
 println( answer )
