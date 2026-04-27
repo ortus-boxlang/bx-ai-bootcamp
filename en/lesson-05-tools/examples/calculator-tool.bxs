@@ -11,9 +11,10 @@ calculatorTool = aiTool(
     "Performs mathematical calculations. Use for any math operations.",
     ( args ) => {
         // Parse the expression and calculate
-        expression = args.expression
+        //expression = args.expression
         try {
-            result = evaluate( expression )
+            println( "Using the tool to calculate: " & args )
+            result = evaluate( args )
             return "Result: " & result
         } catch( any e ) {
             return "Error calculating: " & e.message

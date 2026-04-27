@@ -43,7 +43,7 @@ registry.register(
             Miami : "85°F, Sunny",
             Denver: "55°F, Windy"
         }
-        city = args.city ?: "Boston"
+        city = args ?: "Boston"
         return data[ city ] ?: "No data for #city#"
     }
 )

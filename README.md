@@ -16,14 +16,16 @@
 
 Run the interactive setup wizard to get your bootcamp environment ready in seconds:
 
-If BVM installed:
-```bash
-boxlang Setup.bx
-```
+If you do not have the BoxLang Version Manager ( BVM ) Installed ( also recommended for Windows Users )
 
-Without BVM Installed
 ```bash
 boxlang Setup.bx --noBVM
+```
+
+If you have the BoxLang Version Manager ( BVM ) installed:
+
+```bash
+boxlang Setup.bx
 ```
 
 The wizard will:

@@ -1,5 +1,7 @@
 # Lesson 6: Building Agents
 
+[Home](../README.md)
+
 **⏱️ Duration: 90 minutes**
 
 In this final lesson, we bring everything together to build **autonomous AI agents**. Agents combine conversation memory, tools, and instructions to complete complex multi-step tasks on their own.
@@ -137,16 +139,16 @@ println( response2 )
 weatherTool = aiTool(
     "get_weather",
     "Get weather for a city",
-    ( args ) => {
+    ( city ) => {
         data = { "Boston": 72, "Miami": 85, "Denver": 65 }
-        return "#data[ args.city ] ?: 70#°F in #args.city#"
+        return "#data[ city ] ?: 70#°F in #city#"
     }
 ).describeCity( "City name" )
 
 calculatorTool = aiTool(
     "calculate",
     "Perform math calculations",
-    ( args ) => evaluate( args.expression )
+    ( expression ) => evaluate( expression )
 ).describeExpression( "Math expression" )
 
 // Create agent with tools
@@ -213,13 +215,14 @@ Memory lets agents remember the conversation:
 
 ```java
 // multi-tenant-agent.bxs
+// multi-tenant-agent.bxs
 function createUserAgent( userId, conversationId = "default" ) {
     return aiAgent(
         name: "PersonalAssistant",
         description: "A personal AI assistant",
         instructions: "Be helpful and remember user preferences",
         memory: aiMemory(
-            "window",
+            memory:"window",
             key: createUUID(),
             userId: userId,                // Isolates by user
             conversationId: conversationId, // Multiple chats per user
@@ -335,7 +338,7 @@ function createEnterpriseAgent( userId, conversationId ) {
         description: "Enterprise AI assistant",
         instructions: "Professional enterprise support",
         memory: aiMemory(
-            "jdbc",
+            memory: "jdbc",
             key: createUUID(),
             userId: userId,
             conversationId: conversationId,
@@ -392,7 +395,7 @@ class {
                 - Never expose sensitive information
             ",
             memory: aiMemory(
-                "jdbc",
+                memory: "jdbc",
                 key: createUUID(),
                 userId: userId,
                 conversationId: conversationId,
@@ -469,7 +472,7 @@ class {
                 Customer context: ${context}
             ",
             memory: aiMemory(
-                "jdbc",
+                memory:"jdbc",
                 key: createUUID(),
                 userId: customerId,              // Customer ID
                 conversationId: ticketId,        // Support ticket

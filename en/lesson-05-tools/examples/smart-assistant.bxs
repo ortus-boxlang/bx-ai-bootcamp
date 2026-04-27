@@ -12,8 +12,7 @@ weatherData = { "Boston": 72, "Miami": 85, "Denver": 65, "Seattle": 58 }
 weatherTool = aiTool(
     "get_weather",
     "Get current weather for a city",
-    ( args ) => {
-        city = args.city
+    ( city ) => {
         temp = weatherData[ city ] ?: 70
         return "#temp#°F in #city#"
     }
@@ -23,9 +22,9 @@ weatherTool = aiTool(
 calcTool = aiTool(
     "calculate",
     "Perform math calculations",
-    ( args ) => {
+    ( expression ) => {
         try {
-            return evaluate( args.expression )
+            return evaluate( expression )
         } catch( any e ) {
             return "Error: " & e.message
         }
