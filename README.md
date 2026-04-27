@@ -16,14 +16,6 @@
 
 Run the interactive setup wizard to get your bootcamp environment ready in seconds:
 
-If you do not have the BoxLang Version Manager ( BVM ) Installed ( also recommended for Windows Users )
-
-```bash
-boxlang Setup.bx --noBVM
-```
-
-If you have the BoxLang Version Manager ( BVM ) installed:
-
 ```bash
 boxlang Setup.bx
 ```
@@ -46,7 +38,7 @@ The wizard will:
 | `boxlang Setup.bx` | Run the interactive setup wizard (default) |
 | `boxlang Setup.bx --help` | Show all available commands and options |
 | `boxlang Setup.bx --reset` | Reset the `bootcamp/` folder back to its original state |
-| `boxlang Setup.bx --noBVM` | Runs the interactive setup without using the BVM for systems where it can not be used |
+
 
 ### `boxlang Setup.bx` (default)
 
