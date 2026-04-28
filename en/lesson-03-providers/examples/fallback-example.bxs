@@ -12,7 +12,7 @@ function chatWithFallback( message ) {
             
             options = { provider: provider }
             if( provider == "ollama" ) {
-                params = { model: "llama3.2" }
+                params = { model: "qwen3:0.6b" }
             } else {
                 params = {}
             }

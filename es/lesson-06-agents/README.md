@@ -1257,16 +1257,6 @@ combinado = pipeline.run( textoArticulo )
 
 ## ⏭️ ¿Qué Sigue?
 
-### Profundiza: Curso Completo
-
-Toma el [curso de 12 lecciones](../../course/) para:
-
-- Respuestas en streaming
-- Flujos de trabajo de pipelines
-- Sistemas de memoria avanzados
-- Despliegue en producción
-- Embeddings vectoriales
-- ¡Y mucho más!
 
 ### Explora Ejemplos
 

@@ -46,7 +46,7 @@ switch( choice ) {
         break
 
     case "3":
-        callProvider( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
+        callProvider( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
         break
 
     case "4":
@@ -55,7 +55,7 @@ switch( choice ) {
 
         callProvider( "OpenAI", { provider: "openai" } )
         callProvider( "Claude", { provider: "claude" } )
-        callProvider( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
+        callProvider( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
 
         println( "✨ ¡Comparación completa!" )
         break

@@ -1,5 +1,7 @@
 # Lesson 4: Structured Output
 
+[Home](../README.md)
+
 **⏱️ Duration: 60 minutes**
 
 Getting text from AI is great, but what if you need **structured data**? In this lesson, you'll learn to extract type-safe objects, arrays, and complex data structures from AI responses.
@@ -114,6 +116,7 @@ println( "Email: " & result.email )
 ### More Template Examples
 
 **Product Info:**
+
 ```java
 productTemplate = {
     "name": "",
@@ -132,6 +135,7 @@ println( "#product.name# - $#product.price#" )
 ```
 
 **Address:**
+
 ```java
 addressTemplate = {
     "street": "",
@@ -183,35 +187,6 @@ println( "Age: " & result.getAge() )
 println( "Email: " & result.getEmail() )
 ```
 
-### Complex Class Example
-
-```java
-// Order.bx
-class {
-    property name="orderId" type="string";
-    property name="customerName" type="string";
-    property name="total" type="numeric";
-    property name="items" type="array";
-    property name="status" type="string";
-}
-```
-
-```java
-// Extract order from text
-order = aiChat(
-    "
-    Order #12345 for Jane Smith
-    Total: $156.99
-    Items: Widget (x2), Gadget (x1)
-    Status: Shipped
-    ",
-    {},
-    { returnFormat: new Order() }
-)
-
-println( "Order #order.getOrderId()# - $#order.getTotal()#" )
-```
-
 ### Class vs Struct: When to Use
 
 | Use Struct Templates | Use Classes |
@@ -258,6 +233,7 @@ for( task in tasks ) {
 ```
 
 **Output:**
+
 ```
 ⬜ Buy groceries [high]
 ✅ Call mom [medium]
@@ -296,6 +272,37 @@ println( "─".repeat( 30 ) )
 println( "Total: $#total#" )
 ```
 
+### Complex Class Example
+
+For each complex property the template model (i.e. array, struct etc) a schema is needed
+
+```java
+//extract-order.bxs
+itemTemplate={name:"", quantity:0};
+orderTemplate = {orderId:"", customerName:"", total:0, status:"",items:[]}
+order = aiChat(
+   "
+    Order ##12345 for Jane Smith
+    Total: $156.99
+    items: Widget (x2), Gadget (x1)
+    Status: Shipped
+    ",
+    {},
+   {
+        "returnFormat":{
+            "order":orderTemplate,
+            "items":[itemTemplate]
+        }
+   }
+)
+itemDisplay = order.items.map((item)=>{
+    return "#item.name# (#item.quantity#)"
+})
+println("");
+println( "Order #order.order.orderId# - $#order.order.total# for #order.items.len()# items: #itemDisplay.tolist()#" );
+println("");
+```
+
 ---
 
 ## 🧪 Part 5: Lab - Invoice Parser (10 mins)
@@ -329,6 +336,12 @@ Total: $8,000
 
 ```java
 // invoice-parser.bxs
+// Lab: Parse an invoice into structured data
+// Run with: boxlang invoice-parser.bxs
+
+println( "📄 Invoice Parser" )
+println( "═".repeat( 40 ) )
+println()
 
 // Define line item structure
 lineItemTemplate = {
@@ -347,7 +360,7 @@ invoiceTemplate = {
 
 // Sample invoice text
 invoiceText = "
-INVOICE #INV-2024-001
+INVOICE ##INV-2024-001
 
 Date: November 15, 2024
 Bill To: Acme Corporation
@@ -360,59 +373,44 @@ Items:
 Total: $8,000
 "
 
+println( "Parsing invoice text..." )
+println()
+
 // Extract structured data
-invoice = aiChat(
-    "Parse this invoice: " & invoiceText,
-    {},
-    { returnFormat: invoiceTemplate }
-)
+try {
+    invoice = aiChat(
+        "Parse this invoice: " & invoiceText,
+        {},
+        { returnFormat: invoiceTemplate }
+    )
 
-// Display results
-println( "📄 Invoice Parser Results" )
-println( "═".repeat( 40 ) )
-println()
-println( "Invoice #: " & invoice.invoiceNumber )
-println( "Date: " & invoice.date )
-println( "Customer: " & invoice.customerName )
-println()
-println( "Line Items:" )
+    // Display results
+    println( "Invoice ##: " & invoice.invoiceNumber )
+    println( "Date: " & invoice.date )
+    println( "Customer: " & invoice.customerName )
+    println()
+    println( "Line Items:" )
 
-calculatedTotal = 0
-for( item in invoice.lineItems ) {
-    println( "  • #item.description#: $#numberFormat( item.amount, ',.00' )#" )
-    calculatedTotal += item.amount
+    calculatedTotal = 0
+    for( item in invoice.lineItems ) {
+        println( "  • #item.description#: $#numberFormat( item.amount, ',__.00' )#" )
+        calculatedTotal += item.amount
+    }
+
+    println()
+    println( "─".repeat( 40 ) )
+    println( "Total: $#numberFormat( invoice.total, ',__.00' )#" )
+
+    // Verify total (using penny precision for currency comparison)
+    if( abs( calculatedTotal - invoice.total ) < 0.01 ) {
+        println( "✅ Total verified!" )
+    } else {
+        println( "⚠️ Total mismatch! Calculated: $#numberFormat( calculatedTotal, ',.00' )#" )
+    }
+
+} catch( any e ) {
+    println( "❌ Error parsing invoice: " & e.message )
 }
-
-println()
-println( "─".repeat( 40 ) )
-println( "Total: $#numberFormat( invoice.total, ',.00' )#" )
-
-// Verify total (using penny precision for currency comparison)
-if( abs( calculatedTotal - invoice.total ) < 0.01 ) {
-    println( "✅ Total verified!" )
-} else {
-    println( "⚠️ Total mismatch! Calculated: $#numberFormat( calculatedTotal, ',.00' )#" )
-}
-```
-
-### Expected Output
-
-```
-📄 Invoice Parser Results
-════════════════════════════════════════
-
-Invoice #: INV-2024-001
-Date: November 15, 2024
-Customer: Acme Corporation
-
-Line Items:
-  • Web Development: $5,000.00
-  • Design Services: $2,500.00
-  • Hosting (1 year): $500.00
-
-────────────────────────────────────────
-Total: $8,000.00
-✅ Total verified!
 ```
 
 ---
@@ -478,7 +476,7 @@ results = aiChat( "text", {}, { returnFormat: [ new Task() ] } )
 
 Now you can extract structured data! Let's learn to give AI access to real-world functions.
 
-👉 **[Lesson 5: AI Tools](../lesson-05-tools/)**
+👉 **[Lesson 5: AI Tools](../lesson-05-tools/README.md)**
 
 ---
 

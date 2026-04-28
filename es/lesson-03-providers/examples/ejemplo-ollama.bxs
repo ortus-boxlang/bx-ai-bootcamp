@@ -4,7 +4,7 @@
 
 answer = aiChat(
     "Write a haiku about programming",
-    { model: "llama3.2" },
+    { model: "qwen3:0.6b" },
     { provider: "ollama" }
 )
 println( answer )

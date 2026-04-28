@@ -19,9 +19,8 @@ weatherData = {
 weatherTool = aiTool(
     "get_weather",
     "Get current weather for a city. Returns temperature in Fahrenheit.",
-    ( args ) => {
-        city = args.city
-        
+    ( city ) => {
+       
         if( weatherData.keyExists( city ) ) {
             data = weatherData[ city ]
             return "Weather in #city#: #data.temp#°F, #data.condition#, Humidity: #data.humidity#%"
@@ -56,8 +55,10 @@ compareTool = aiTool(
     "compare_cities",
     "Compare weather between two cities",
     ( args ) => {
-        city1 = args.city1
-        city2 = args.city2
+        
+        var cityArr =args.listtoArray("vs",false,true);
+        city1 = cityArr[1].trim()
+        city2 = cityArr[2].trim()
         
         if( !weatherData.keyExists( city1 ) || !weatherData.keyExists( city2 ) ) {
             return "Can't compare - need valid cities from: #weatherData.keyList()#"

@@ -1,5 +1,7 @@
 # Lesson 2: Conversations & Messages
 
+[Home](../README.md)
+
 **⏱️ Duration: 60 minutes**
 
 In the last lesson, you made single AI calls. Now let's build real conversations where the AI remembers what you said!
@@ -50,7 +52,7 @@ Messages are just structs with `role` and `content`:
 // A single message
 message = { role: "user", content: "Hello!" }
 
-// An array of messages (a conversation)
+// An array of messages (a conversation captured from the back and forth with the model)
 messages = [
     { role: "system", content: "You are a helpful assistant." },
     { role: "user", content: "Hi there!" },
@@ -262,22 +264,22 @@ Context is **structured data** that gets automatically injected into your messag
   Context Data               ${context}              AI Message
   ────────────              ──────────              ───────────
 
-  { userId: \"123\"    ─────▶  Placeholder   ────▶  \"User 123,
-    role: \"admin\"              in message          role: admin
-    prefs: {...} }                                  prefs: ...\"
+  { userId: "123"    ─────▶  Placeholder   ────▶  "User 123,
+    role: "admin"              in message          role: admin
+    prefs: {...} }                                  prefs: ..."
 ```
 
 ### Why Use Context Instead of String Concatenation?
 
 ```java
 // ❌ Old way: Manual string building (messy)
-userInfo = \"User: #user.name#, Role: #user.role#\"
+userInfo = "User: #user.name#, Role: #user.role#"
 message = aiMessage()
-    .system( \"Help this user: \" & userInfo )
+    .system( "Help this user: " & userInfo )
 
 // ✅ New way: Structured context (clean)
 message = aiMessage()
-    .system( \"You are a helpful assistant. User info: ${context}\" )
+    .system( "You are a helpful assistant. User info: ${context}" )
     .setContext({
         userId: user.id,
         name: user.name,
@@ -290,19 +292,19 @@ message = aiMessage()
 
 ```java
 // Set entire context at once
-message.setContext({ key: \"value\", data: [1,2,3] })
+message.setContext({ key: "value", data: [1,2,3] })
 
 // Add individual values
-message.addContext( \"userId\", \"user-123\" )
-message.addContext( \"tenantId\", \"tenant-456\" )
+message.addContext( "userId", "user-123" )
+message.addContext( "tenantId", "tenant-456" )
 
 // Merge new data with existing context
-message.mergeContext({ newKey: \"newValue\" })
+message.mergeContext({ newKey: "newValue" })
 
 // Check if context exists
 if ( message.hasContext() ) {
     fullContext = message.getContext()
-    userId = message.getContextValue( \"userId\", \"anonymous\" )
+    userId = message.getContextValue( "userId", "anonymous" )
 }
 ```
 
@@ -313,24 +315,24 @@ if ( message.hasContext() ) {
 ```java
 // render() - Uses stored bindings and context only
 message = aiMessage()
-    .system( \"User: ${context}\" )
-    .setContext({ name: \"Alex\" })
+    .system( "User: ${context}" )
+    .setContext({ name: "Alex" })
 
 rendered = message.render()  // Context already applied
 aiChat( rendered )           // Send pre-rendered messages
 
 // format() - Requires runtime bindings
 message = aiMessage()
-    .system( \"User: ${name}\" )
+    .system( "User: ${name}" )
 
-formatted = message.format({ name: \"Alex\" })  // Apply bindings
+formatted = message.format({ name: "Alex" })  // Apply bindings
 aiChat( formatted )
 
 // Combined: bindings + context
 message = aiMessage()
-    .system( \"Hello ${name}! Context: ${context}\" )
-    .bind({ name: \"Alex\" })
-    .setContext({ role: \"admin\" })
+    .system( "Hello ${name}! Context: ${context}" )
+    .bind({ name: "Alex" })
+    .setContext({ role: "admin" })
 
 rendered = message.render()  // Both applied!
 ```
@@ -343,11 +345,11 @@ Perfect for multi-tenant applications:
 // security-context.bxs
 function createSecureMessage( userSession ) {
     return aiMessage()
-        .system( \"
+        .system( "
             You are a secure assistant.
             User context: ${context}
             Only show data this user can access.
-        \" )
+        " )
         .setContext({
             userId: userSession.userId,
             tenantId: userSession.tenantId,
@@ -359,19 +361,19 @@ function createSecureMessage( userSession ) {
 
 // Use it
 userSession = {
-    userId: \"user-123\",
-    tenantId: \"company-abc\",
-    role: \"manager\",
-    permissions: [\"read\", \"write\", \"approve\"],
-    subscription: { tier: \"premium\" }
+    userId: "user-123",
+    tenantId: "company-abc",
+    role: "manager",
+    permissions: ["read", "write", "approve"],
+    subscription: { tier: "premium" }
 }
 
 message = createSecureMessage( userSession )
-    .user( \"What can I do?\" )
+    .user( "What can I do?" )
 
 response = aiChat( message.render() )
 println( response )
-// AI sees: User 123 from company-abc, manager role with read/write/approve permissions
+// AI sees: User 123 from company-abc, manager role with read/write/approve permissions and a premium tier subscription
 ```
 
 ### Use Case 2: RAG (Retrieval Augmented Generation)
@@ -384,37 +386,37 @@ function searchDocuments( query ) {
     // Simulate vector search
     return [
         {
-            content: \"BoxLang is a modern dynamic JVM language.\",
-            source: \"docs/intro.md\",
+            content: "BoxLang is a modern dynamic JVM language.",
+            source: "docs/intro.md",
             score: 0.95
         },
         {
-            content: \"BoxLang supports both dynamic and static typing.\",
-            source: \"docs/types.md\",
+            content: "BoxLang supports both dynamic and static typing.",
+            source: "docs/types.md",
             score: 0.89
         },
         {
-            content: \"Install with: box install boxlang\",
-            source: \"docs/install.md\",
+            content: "Install with: box install boxlang",
+            source: "docs/install.md",
             score: 0.82
         }
     ]
 }
 
 // User asks a question
-userQuestion = \"How do I install BoxLang?\"
+userQuestion = "How do I install BoxLang?"
 
 // Retrieve relevant documents
 docs = searchDocuments( userQuestion )
 
 // Create message with RAG context
 message = aiMessage()
-    .system( \"
+    .system( "
         Answer using ONLY the provided context.
         If the answer isn't in the context, say you don't know.
 
         Context: ${context}
-    \" )
+    " )
     .user( userQuestion )
     .setContext({
         query: userQuestion,
@@ -425,7 +427,7 @@ message = aiMessage()
 
 response = aiChat( message.render() )
 println( response )
-// Output: \"To install BoxLang, use: box install boxlang\"
+// Output: "To install BoxLang, use: box install boxlang"
 ```
 
 ### Use Case 3: User Preferences
@@ -435,24 +437,24 @@ Remember user preferences across sessions:
 ```java
 // preferences-context.bxs
 userPreferences = {
-    userId: \"user-789\",
-    language: \"en\",
-    tone: \"professional\",
-    verbosity: \"concise\",
-    topics: [\"technology\", \"business\"],
-    timezone: \"America/New_York\",
-    dateFormat: \"MM/DD/YYYY\"
+    userId: "user-789",
+    language: "en",
+    tone: "professional",
+    verbosity: "concise",
+    topics: ["technology", "business"],
+    timezone: "America/New_York",
+    dateFormat: "MM/DD/YYYY"
 }
 
 message = aiMessage()
-    .system( \"
+    .system( "
         Tailor responses to user preferences: ${context}
         - Use their preferred tone and verbosity
         - Format dates/times for their timezone
         - Focus on their topics of interest
-    \" )
+    " )
     .setContext( userPreferences )
-    .user( \"Tell me about today's tech news\" )
+    .user( "Tell me about today's tech news" )
 
 response = aiChat( message.render() )
 println( response )
@@ -464,10 +466,10 @@ println( response )
 ```java
 // app-state-context.bxs
 appState = {
-    currentPage: \"dashboard\",
+    currentPage: "dashboard",
     userStats: {
         loginCount: 42,
-        lastLogin: \"2025-12-05\",
+        lastLogin: "2025-12-05",
         tasksCompleted: 15
     },
     features: {
@@ -478,56 +480,39 @@ appState = {
 }
 
 message = aiMessage()
-    .system( \"You are a helpful app assistant. App state: ${context}\" )
+    .system( "You are a helpful app assistant. App state: ${context}" )
     .setContext( appState )
-    .user( \"What have I been up to?\" )
+    .user( "What have I been up to?" )
 
 response = aiChat( message.render() )
 println( response )
 // AI knows: 42 logins, last login yesterday, 15 tasks done, beta access enabled
 ```
 
-### Streaming with Context
 
-Context works with streaming too:
-
-```java
-// streaming-context.bxs
-message = aiMessage()
-    .system( \"User info: ${context}. Be helpful and personalized.\" )
-    .setContext({
-        name: \"Alex\",
-        preferences: { tone: \"friendly\" }
-    })
-    .user( \"Tell me a joke\" )
-
-aiChatStream(
-    onChunk: ( chunk ) => print( chunk.content ),
-    message: message.render()
-)
 ```
 
 ### Best Practices
 
-```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    CONTEXT BEST PRACTICES                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ✅ DO:                           ❌ DON'T:                      │
+│  ✅ DO:                           ❌ DON'T:                    │
 │  ─────                            ────────                      │
-│  • Use IDs, not sensitive data    • Send passwords             │
-│  • Keep context lightweight       • Send PII unnecessarily     │
-│  • Structure data clearly         • Include huge datasets      │
-│  • Use for RAG documents          • Mix concerns              │
-│  • Document context schema        • Forget to sanitize        │
+│  • Use IDs, not sensitive data    • Send passwords              │
+│  • Keep context lightweight       • Send PII unnecessarily      │
+│  • Structure data clearly         • Include huge datasets       │
+│  • Use for RAG documents          • Mix concerns                │
+│  • Document context schema        • Forget to sanitize          │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ### Context vs Bindings: When to Use What
 
-| Use Context When | Use Bindings When |\n|------------------|--------------------|
+| Use Context When | Use Bindings When |
+|------------------|--------------------|
 | Security/user info | Template variables |
 | RAG documents | Simple placeholders |
 | App state | Reusable prompts |
@@ -539,12 +524,12 @@ aiChatStream(
 ```java
 // Bindings for template, context for data
 message = aiMessage()
-    .system( \"You are a ${role} assistant\" )         // Binding
-    .user( \"${action} using context: ${context}\" )   // Both!
-    .bind({ role: \"helpful\", action: \"Assist user\" })
+    .system( "You are a ${role} assistant" )         // Binding
+    .user( "${action} using context: ${context}" )   // Both!
+    .bind({ role: "helpful", action: "Assist user" })
     .setContext({
-        userId: \"123\",
-        permissions: [\"read\", \"write\"]
+        userId: "123",
+        permissions: ["read", "write"]
     })
 
 response = aiChat( message.render() )
@@ -558,21 +543,29 @@ response = aiChat( message.render() )
 
 For real-time responses (like ChatGPT), use **streaming**:
 
+The streaming data chunks return in arrays which includes information about how the data was created, service tiers and so on. The actual data you would display to the user is somewhere in that structure as well. This `cleanChunk` function below performs that service in the following functions.
+
 ### Basic Streaming
 
 ```java
 // streaming-basic.bxs
-println( \"AI: \" )
+println( "AI: " )
+
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
 
 aiChatStream(
-    onChunk: ( chunk ) => print( chunk.content ),
-    message: \"Write a haiku about programming\"
+    callback: ( chunk ) => print( cleanChunk(chunk) ),
+    messages: "Write a haiku about programming"
 )
 
 println()  // New line after stream completes
 ```
 
 **Output appears word-by-word:**
+
 ```
 AI: Code flows like stream
 Bugs hide in silent shadows
@@ -582,20 +575,27 @@ Coffee makes it work
 ### Streaming with Conversations
 
 ```java
+
 // streaming-conversation.bxs
 conversation = aiMessage()
-    .system( \"You are a storyteller. Be dramatic!\" )
-    .user( \"Tell me a short story about a robot\" )
+    .system( "You are a storyteller. Be dramatic!" )
+    .user( "Tell me a short story about a robot" )
 
-print( \"AI: \" )
-fullResponse = \"\"
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
+print( "AI: " )
+fullResponse = ""
 
 aiChatStream(
-    onChunk: ( chunk ) => {
-        print( chunk.content )
-        fullResponse &= chunk.content
+    callback: ( chunk ) => {
+        var cc = cleanChunk(chunk);
+        print( cc )
+        fullResponse &= cc
     },
-    message: conversation
+    messages: conversation
 )
 
 println()
@@ -610,18 +610,18 @@ For background processing, use `aiChatAsync()`:
 
 ```java
 // async-example.bxs
-println( \"Starting AI request in background...\" )
+println( "Starting AI request in background..." )
 
 // Returns a Future immediately
-future = aiChatAsync( \"Write a paragraph about AI\" )
+future = aiChatAsync( "Write a paragraph about AI" )
 
-println( \"Doing other work while AI thinks...\" )
+println( "Doing other work while AI thinks..." )
 sleep( 1000 )
-println( \"Still working...\" )
+println( "Still working..." )
 
 // Get result when ready (blocks if not complete)
 result = future.get()
-println( \"AI finished: \" & result )
+println( "AI finished: " & result )
 ```
 
 ### Streaming vs Async vs Regular
@@ -631,11 +631,11 @@ println( \"AI finished: \" & result )
 │                  RESPONSE TYPE COMPARISON                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  📄 aiChat()           ⚡ aiChatStream()      🔄 aiChatAsync()  │
-│  ────────────         ────────────────       ───────────────   │
-│  • Waits for all      • Real-time chunks     • Non-blocking    │
-│  • Simple to use      • Progressive display  • Returns Future  │
-│  • Best for scripts   • Best for UIs         • Parallel tasks  │
+│  📄 aiChat()          ⚡ aiChatStream()      🔄 aiChatAsync()  │
+│  ────────────         ────────────────       ───────────────    │
+│  • Waits for all      • Real-time chunks     • Non-blocking     │
+│  • Simple to use      • Progressive display  • Returns Future   │
+│  • Best for scripts   • Best for UIs         • Parallel tasks   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -644,16 +644,16 @@ println( \"AI finished: \" & result )
 
 ```java
 // Script/CLI: Regular
-answer = aiChat( \"Quick question\" )
+answer = aiChat( "Quick question" )
 
 // Web UI/Chat: Streaming
 aiChatStream(
-    onChunk: ( chunk ) => writeOutput( chunk.content ),
-    message: \"User question\"
+    callback: ( chunk ) => writeOutput( chunk.content ),
+    messages: "User question"
 )
 
 // Background: Async
-future = aiChatAsync( \"Long analysis\" )
+future = aiChatAsync( "Long analysis" )
 // Do other work...
 result = future.get()
 ```
@@ -665,6 +665,7 @@ result = future.get()
 ### The Goal
 
 Create an interactive chat assistant that:
+
 1. Has a custom personality
 2. Remembers the conversation
 3. Can be customized by the user
@@ -856,8 +857,8 @@ response = aiChat( message.render() )
 
 // Streaming
 aiChatStream(
-    onChunk: ( chunk ) => print( chunk.content ),
-    message: "Tell me a story"
+    callback: ( chunk ) => print( chunk.content ),
+    messages: "Tell me a story"
 )
 
 // Async
@@ -871,7 +872,7 @@ result = future.get()
 
 Now you can build conversations! Let's learn how to switch between different AI providers.
 
-👉 **[Lesson 3: Switching Providers](../lesson-03-providers/)**
+👉 **[Lesson 3: Switching Providers](../lesson-03-providers/README.md)**
 
 ---
 

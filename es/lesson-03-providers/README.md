@@ -161,7 +161,7 @@ aiChat( "mensaje", { model: "deepseek-chat" }, { provider: "deepseek" } )
 aiChat( "mensaje", { model: "llama-3.1-sonar-small-128k-online" }, { provider: "perplexity" } )
 
 // Ollama (local)
-aiChat( "mensaje", { model: "llama3.2" }, { provider: "ollama" } )
+aiChat( "mensaje", { model: "qwen3:0.6b" }, { provider: "ollama" } )
 
 // OpenRouter
 aiChat( "mensaje", {}, { provider: "openrouter" } )
@@ -221,7 +221,7 @@ Ollama te permite ejecutar IA completamente local - **¡gratis, privado, sin int
 2. **Instalar**: Ejecuta el instalador
 3. **Descargar un modelo**:
    ```bash
-   ollama pull llama3.2       # Propósito general
+   ollama pull qwen3:0.6b       # Propósito general
    ollama pull codellama      # Enfocado en código
    ollama pull mistral        # Rápido y capaz
    ```
@@ -232,7 +232,7 @@ Ollama te permite ejecutar IA completamente local - **¡gratis, privado, sin int
 // ejemplo-ollama.bxs
 respuesta = aiChat(
     "Escribe un haiku sobre programación",
-    { model: "llama3.2" },
+    { model: "qwen3:0.6b" },
     { provider: "ollama" }
 )
 println( respuesta )
@@ -258,7 +258,7 @@ println( respuesta )
 
 | Modelo | Tamaño | Mejor Para |
 |--------|--------|-----------|
-| `llama3.2` | 2GB | Propósito general |
+| `qwen3:0.6b` | 2GB | Propósito general |
 | `llama3.2:1b` | 1GB | Rápido, tareas simples |
 | `codellama` | 4GB | Generación de código |
 | `mistral` | 4GB | Respuestas de alta calidad |
@@ -284,7 +284,7 @@ function chatConFallback( mensaje ) {
 
             opciones = { provider: proveedor }
             if( proveedor == "ollama" ) {
-                params = { model: "llama3.2" }
+                params = { model: "qwen3:0.6b" }
             } else {
                 params = {}
             }
@@ -324,7 +324,7 @@ function enrutarPorTarea( tarea, mensaje ) {
 
         case "rapido":
             // Usar Ollama local para tareas rápidas
-            return aiChat( mensaje, { model: "llama3.2" }, { provider: "ollama" } )
+            return aiChat( mensaje, { model: "qwen3:0.6b" }, { provider: "ollama" } )
 
         default:
             return aiChat( mensaje )
@@ -395,7 +395,7 @@ switch( eleccion ) {
         break
 
     case "3":
-        llamarProveedor( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
+        llamarProveedor( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
         break
 
     case "4":
@@ -404,7 +404,7 @@ switch( eleccion ) {
 
         llamarProveedor( "OpenAI", { provider: "openai" } )
         llamarProveedor( "Claude", { provider: "claude" } )
-        llamarProveedor( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
+        llamarProveedor( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
 
         println( "✨ ¡Comparación completa!" )
         break
@@ -501,7 +501,7 @@ Aprendiste:
 aiChat( "msg", {}, { provider: "claude" } )
 
 // Usar Ollama
-aiChat( "msg", { model: "llama3.2" }, { provider: "ollama" } )
+aiChat( "msg", { model: "qwen3:0.6b" }, { provider: "ollama" } )
 
 // Crear servicio
 servicio = aiService( "openai" )

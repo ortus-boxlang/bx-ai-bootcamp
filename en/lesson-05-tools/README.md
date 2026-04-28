@@ -1,5 +1,7 @@
 # Lesson 5: AI Tools
 
+[Home](../README.md)
+
 **⏱️ Duration: 60 minutes**
 
 So far, AI has only used its training knowledge. But what if AI could **call your functions** to get real-time data, perform calculations, or interact with external systems? That's what **tools** enable!
@@ -19,6 +21,7 @@ So far, AI has only used its training knowledge. But what if AI could **call you
 ### The Problem
 
 AI knowledge is frozen at training time. It can't:
+
 - Check today's weather
 - Look up live data
 - Access your database
@@ -88,61 +91,93 @@ tool = aiTool(
 
 ```java
 // calculator-tool.bxs
+// Create a calculator tool that AI can use
+// Run with: boxlang calculator-tool.bxs
+
+println( "🧮 Calculator Tool Demo" )
+println( "─".repeat( 40 ) )
+println()
+
 calculatorTool = aiTool(
     "calculator",
     "Performs mathematical calculations. Use for any math operations.",
     ( args ) => {
         // Parse the expression and calculate
-        expression = args.expression
-        result = evaluate( expression )
-        return "Result: " & result
+        //expression = args.expression
+        try {
+            println( "Using the tool to calculate: " & args )
+            result = evaluate( args )
+            return "Result: " & result
+        } catch( any e ) {
+            return "Error calculating: " & e.message
+        }
     }
 ).describeExpression( "The math expression to calculate, e.g. '2 + 2' or '100 * 0.15'" )
 
-// Use the tool
-answer = aiChat(
+// Test questions that require calculation
+questions = [
     "What is 15% of 200?",
-    { tools: [ calculatorTool ] }
-)
+    "Calculate 45 + 73",
+    "What's 1000 divided by 8?"
+]
 
-println( answer )
-// Output: "15% of 200 is 30"
+for( question in questions ) {
+    println( "Q: " & question )
+    answer = aiChat( question, { tools: [ calculatorTool ] } )
+    println( "A: " & answer )
+    println()
+}
 ```
+Notice the line `println( "Using the tool to calculate: " & args )`. Not every problem the provider uses will have that output indicating that sometimes it can ( or thinks it can ) answer the question with just its existing training.
+
 
 ### Example: Weather Tool
 
 ```java
 // weather-tool.bxs
+// Create a weather lookup tool
+// Run with: boxlang weather-tool.bxs
+
+println( "🌤️ Weather Tool Demo" )
+println( "─".repeat( 40 ) )
+println()
+
+// Simulated weather data (in real app, you'd call a weather API)
+weatherDatabase = {
+    "Boston": { temp: 72, condition: "Sunny" },
+    "New York": { temp: 68, condition: "Cloudy" },
+    "Miami": { temp: 85, condition: "Hot and humid" },
+    "San Francisco": { temp: 62, condition: "Foggy" },
+    "Denver": { temp: 65, condition: "Clear" }
+}
+
 weatherTool = aiTool(
     "get_weather",
-    "Get current weather for a city. Use when asked about weather.",
-    ( args ) => {
-        city = args.city
-
-        // Simulated weather data (in real app, call weather API)
-        weatherData = {
-            "Boston": { temp: 72, condition: "Sunny" },
-            "New York": { temp: 68, condition: "Cloudy" },
-            "Miami": { temp: 85, condition: "Hot and humid" }
-        }
-
-        if( weatherData.keyExists( city ) ) {
-            data = weatherData[ city ]
+    "Get current weather for a city. Use when asked about weather conditions.",
+    ( city ) => {
+       
+        if( weatherDatabase.keyExists( city ) ) {
+            data = weatherDatabase[ city ]
             return "Weather in #city#: #data.temp#°F, #data.condition#"
         }
-
-        return "Weather data not available for #city#"
+        
+        return "Weather data not available for #city#. Try: #weatherDatabase.keyList()#"
     }
-).describeCity( "The city name to get weather for" )
+).describeCity( "The city name to get weather for (e.g., 'Boston', 'Miami')" )
 
-// Use the tool
-answer = aiChat(
+// Test questions
+questions = [
     "What's the weather like in Boston today?",
-    { tools: [ weatherTool ] }
-)
+    "Is it warm in Miami?",
+    "How's the weather in San Francisco?"
+]
 
-println( answer )
-// Output: "The weather in Boston is 72°F and sunny!"
+for( question in questions ) {
+    println( "Q: " & question )
+    answer = aiChat( question, { tools: [ weatherTool ] } )
+    println( "A: " & answer )
+    println()
+}
 ```
 
 ---
@@ -189,26 +224,35 @@ AI can decide which tool to use (or use multiple):
 
 ```java
 // smart-assistant.bxs
+// AI with multiple tools - it chooses the right one!
+// Run with: boxlang smart-assistant.bxs
+
+println( "🤖 Smart Assistant Demo" )
+println( "═".repeat( 40 ) )
+println( "This assistant has 3 tools: weather, calculator, and time" )
+println()
 
 // Tool 1: Weather
+weatherData = { "Boston": 72, "Miami": 85, "Denver": 65, "Seattle": 58 }
 weatherTool = aiTool(
     "get_weather",
     "Get current weather for a city",
-    ( args ) => {
-        // Simulated data
-        data = { "Boston": 72, "Miami": 85, "Denver": 65 }
-        city = args.city
-        temp = data[ city ] ?: 70
+    ( city ) => {
+        temp = weatherData[ city ] ?: 70
         return "#temp#°F in #city#"
     }
-).describeCity( "City name" )
+).describeCity( "City name (Boston, Miami, Denver, or Seattle)" )
 
 // Tool 2: Calculator
 calcTool = aiTool(
     "calculate",
     "Perform math calculations",
-    ( args ) => {
-        return evaluate( args.expression )
+    ( expression ) => {
+        try {
+            return evaluate( expression )
+        } catch( any e ) {
+            return "Error: " & e.message
+        }
     }
 ).describeExpression( "Math expression like '2+2' or '100*0.2'" )
 
@@ -217,28 +261,28 @@ timeTool = aiTool(
     "get_time",
     "Get current date and time",
     ( args ) => {
-        return now().format( "EEEE, MMMM d, yyyy h:mm a" )
+        return now().format( "EEEE, MMMM d, yyyy 'at' h:mm a" )
     }
 )
 
-// AI can use any of these tools!
-println( aiChat(
+// All tools available to AI
+tools = [ weatherTool, calcTool, timeTool ]
+
+// Different questions that use different tools
+questions = [
     "What's the weather in Miami?",
-    { tools: [ weatherTool, calcTool, timeTool ] }
-) )
-// Uses weather tool
-
-println( aiChat(
     "What's 25% of 400?",
-    { tools: [ weatherTool, calcTool, timeTool ] }
-) )
-// Uses calculator tool
+    "What day is it today?",
+    "Is Boston warmer than Denver?",
+    "Calculate 15 * 8 + 12"
+]
 
-println( aiChat(
-    "What day is it?",
-    { tools: [ weatherTool, calcTool, timeTool ] }
-) )
-// Uses time tool
+for( question in questions ) {
+    println( "Q: " & question )
+    answer = aiChat( question, { tools: tools } )
+    println( "A: " & answer )
+    println( "─".repeat( 40 ) )
+}
 ```
 
 ### Tool Selection
@@ -266,6 +310,7 @@ AI automatically chooses the right tool based on the question:
 ### The Goal
 
 Build a weather bot that:
+
 1. Has a weather lookup tool
 2. Has a temperature converter tool
 3. Can answer combined questions
@@ -274,6 +319,8 @@ Build a weather bot that:
 
 ```java
 // weather-bot.bxs
+// Lab: Interactive weather bot with multiple tools
+// Run with: boxlang weather-bot.bxs
 
 println( "🌤️ Weather Bot" )
 println( "═".repeat( 40 ) )
@@ -292,14 +339,13 @@ weatherData = {
 weatherTool = aiTool(
     "get_weather",
     "Get current weather for a city. Returns temperature in Fahrenheit.",
-    ( args ) => {
-        city = args.city
-
+    ( city ) => {
+       
         if( weatherData.keyExists( city ) ) {
             data = weatherData[ city ]
             return "Weather in #city#: #data.temp#°F, #data.condition#, Humidity: #data.humidity#%"
         }
-
+        
         return "No weather data for #city#. Available cities: #weatherData.keyList()#"
     }
 ).describeCity( "City name exactly as: Boston, New York, Miami, San Francisco, or Denver" )
@@ -311,7 +357,7 @@ convertTool = aiTool(
     ( args ) => {
         temp = args.temperature
         from = args.fromUnit.uCase()
-
+        
         if( from == "F" || from == "FAHRENHEIT" ) {
             celsius = ( temp - 32 ) * 5/9
             return "#temp#°F = #numberFormat( celsius, '0.0' )#°C"
@@ -329,17 +375,19 @@ compareTool = aiTool(
     "compare_cities",
     "Compare weather between two cities",
     ( args ) => {
-        city1 = args.city1
-        city2 = args.city2
-
+        
+        var cityArr =args.listtoArray("vs",false,true);
+        city1 = cityArr[1].trim()
+        city2 = cityArr[2].trim()
+        
         if( !weatherData.keyExists( city1 ) || !weatherData.keyExists( city2 ) ) {
-            return "Can't compare - need valid cities"
+            return "Can't compare - need valid cities from: #weatherData.keyList()#"
         }
-
+        
         data1 = weatherData[ city1 ]
         data2 = weatherData[ city2 ]
         diff = data1.temp - data2.temp
-
+        
         if( diff > 0 ) {
             return "#city1# is #abs(diff)#°F warmer than #city2#"
         } else if( diff < 0 ) {
@@ -357,13 +405,14 @@ tools = [ weatherTool, convertTool, compareTool ]
 
 // Chat loop
 println( "Ask me about weather! Type 'quit' to exit." )
+println( "Available cities: #weatherData.keyList()#" )
 println( "─".repeat( 40 ) )
 println()
 
 running = true
 while( running ) {
         question = cliRead( "You: " )
-
+    
     if( question.trim() == "quit" ) {
         running = false
         println( "☀️ Goodbye!" )
@@ -538,7 +587,7 @@ answer = aiChat( "question", { tools: [ tool1, tool2 ] } )
 
 Now you can give AI real capabilities! Let's put it all together and build autonomous agents.
 
-👉 **[Lesson 6: Building Agents](../lesson-06-agents/)**
+👉 **[Lesson 6: Building Agents](../lesson-06-agents/README.md)**
 
 ---
 

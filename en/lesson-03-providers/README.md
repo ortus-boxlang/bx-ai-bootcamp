@@ -1,5 +1,7 @@
 # Lesson 3: Switching Providers
 
+[Home](../README.md)
+
 **⏱️ Duration: 45 minutes**
 
 BoxLang AI lets you work with multiple AI providers through a unified API. This means you can switch between OpenAI, Claude, Ollama, and more without changing your code!
@@ -27,13 +29,13 @@ A provider is a company (or software) that runs AI models:
   ☁️ CLOUD PROVIDERS (Paid)              🏠 LOCAL (Free)
   ───────────────────────                 ───────────────
 
-  ┌──────────┐  ┌──────────┐             ┌──────────┐
-  │  OpenAI  │  │  Claude  │             │  Ollama  │
-  │  (GPT-4) │  │(Anthropic│             │ (Local)  │
-  └──────────┘  └──────────┘             └──────────┘
-       │             │                         │
-       │             │                         │
-       ▼             ▼                         ▼
+  ┌──────────┐  ┌───────────┐             ┌──────────┐
+  │  OpenAI  │  │  Claude   │             │  Ollama  │
+  │  (GPT-4) │  │(Anthropic)│             │ (Local)  │
+  └──────────┘  └───────────┘             └──────────┘
+                                               │
+                                               │
+                                               ▼
   ┌──────────┐  ┌──────────┐             ┌──────────┐
   │  Gemini  │  │   Grok   │             │ Your PC! │
   │ (Google) │  │   (xAI)  │             │ Private  │
@@ -59,6 +61,8 @@ A provider is a company (or software) that runs AI models:
 | **Perplexity** | Research with citations | Fact-checking | $$ |
 
 #### Embedding Providers
+
+Note: We'll discuss embedding more in detail later. It is included here to highlight different ways of categorizing the providers.
 
 | Provider | Models | Dimensions | Best For |
 |----------|--------|------------|----------|
@@ -118,17 +122,25 @@ Create a reusable service:
 ```java
 // service-example.bxs
 openaiService = aiService( "openai" )
-claudeService = aiService( "claude" )
+ollamaService = aiService( "ollama" )
 
 // Same question, different providers
 question = aiMessage().user( "What is BoxLang?" )
 
-openaiAnswer = openaiService.invoke(
+// Note: pulling the aiChatRequest out in to its own variable resulted in it being serialized into a struct which causes an error. Calling the function in a function remedies this. 
+
+openaiAnswer = openaiService.chat(
     aiChatRequest( question )
 )
-claudeAnswer = claudeService.invoke(
+ollamaAnswer = ollamaService.chat(
     aiChatRequest( question )
 )
+
+println( "OpenAI says:" )
+println( openaiAnswer )
+
+println( "Ollama says:" )
+println( ollamaAnswer )
 ```
 
 ### Provider Quick Reference
@@ -155,7 +167,7 @@ aiChat( "message", {}, { provider: "huggingface" } )
 aiChat( "message", {}, { provider: "groq" } )
 
 // Ollama (local)
-aiChat( "message", { model: "llama3.2" }, { provider: "ollama" } )
+aiChat( "message", { model: "qwen3:0.6b" }, { provider: "ollama" } )
 
 // OpenRouter
 aiChat( "message", {}, { provider: "openrouter" } )
@@ -198,64 +210,7 @@ embedding = aiEmbed(
 )
 ```
 
----
-
-## 🏠 Part 3: Using Ollama (Local AI) (10 mins)
-
-Ollama lets you run AI completely locally - **free, private, no internet required!**
-
-### Setup Ollama
-
-1. **Download**: https://ollama.ai
-2. **Install**: Run the installer
-3. **Pull a model**:
-   ```bash
-   ollama pull llama3.2       # General purpose
-   ollama pull codellama      # Coding focused
-   ollama pull mistral        # Fast and capable
-   ```
-
-### Using Ollama in BoxLang
-
-```java
-// ollama-example.bxs
-answer = aiChat(
-    "Write a haiku about programming",
-    { model: "llama3.2" },
-    { provider: "ollama" }
-)
-println( answer )
-```
-
-### Why Use Ollama?
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    OLLAMA BENEFITS                              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  🆓  FREE        - No API costs                                 │
-│  🔒  PRIVATE     - Data never leaves your machine              │
-│  🌐  OFFLINE     - Works without internet                      │
-│  ⚡  FAST        - No network latency                          │
-│  🛠️   DEV-READY  - Perfect for development/testing             │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Popular Ollama Models
-
-| Model | Size | Best For |
-|-------|------|----------|
-| `llama3.2` | 2GB | General purpose |
-| `llama3.2:1b` | 1GB | Fast, simple tasks |
-| `codellama` | 4GB | Code generation |
-| `mistral` | 4GB | High quality responses |
-| `phi3` | 2GB | Microsoft's efficient model |
-
----
-
-## 🔄 Part 4: Provider Fallbacks (10 mins)
+## 🔄 Part 3: Provider Fallbacks (10 mins)
 
 ### Pattern: Try Multiple Providers
 
@@ -265,6 +220,7 @@ If one provider fails, try another:
 // fallback-example.bxs
 function chatWithFallback( message ) {
     // Try providers in order
+    // Put any providers for which you have an API key at the end of the list any any for which you don't at the begining
     providers = [ "openai", "claude", "ollama" ]
 
     for( provider in providers ) {
@@ -273,7 +229,7 @@ function chatWithFallback( message ) {
 
             options = { provider: provider }
             if( provider == "ollama" ) {
-                params = { model: "llama3.2" }
+                params = { model: "qwen3:0.6b" }
             } else {
                 params = {}
             }
@@ -313,7 +269,7 @@ function routeByTask( task, message ) {
 
         case "quick":
             // Use local Ollama for quick tasks
-            return aiChat( message, { model: "llama3.2" }, { provider: "ollama" } )
+            return aiChat( message, { model: "qwen3:0.6b" }, { provider: "ollama" } )
 
         default:
             return aiChat( message )
@@ -323,6 +279,9 @@ function routeByTask( task, message ) {
 // Use it
 codeAnswer = routeByTask( "code", "Write a function to sort an array" )
 quickAnswer = routeByTask( "quick", "What is 5 + 5?" )
+
+println( "Code answer (OpenAI): " & codeAnswer )
+println( "Quick answer (Ollama): " & quickAnswer )
 ```
 
 ---
@@ -332,6 +291,7 @@ quickAnswer = routeByTask( "quick", "What is 5 + 5?" )
 ### The Goal
 
 Create an app that:
+
 1. Lets the user choose a provider
 2. Compares responses from different providers
 3. Handles errors gracefully
@@ -377,15 +337,15 @@ function callProvider( name, options, params = {} ) {
 switch( choice ) {
     case "1":
         callProvider( "OpenAI", { provider: "openai" } )
-        break
+        break;
 
     case "2":
         callProvider( "Claude", { provider: "claude" } )
-        break
+        break;
 
     case "3":
-        callProvider( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
-        break
+        callProvider( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
+        break;
 
     case "4":
         println( "🔄 Comparing all providers..." )
@@ -393,10 +353,10 @@ switch( choice ) {
 
         callProvider( "OpenAI", { provider: "openai" } )
         callProvider( "Claude", { provider: "claude" } )
-        callProvider( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
+        callProvider( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
 
         println( "✨ Comparison complete!" )
-        break
+        break;
 
     default:
         println( "Invalid choice!" )
@@ -490,7 +450,7 @@ You learned:
 aiChat( "msg", {}, { provider: "claude" } )
 
 // Use Ollama
-aiChat( "msg", { model: "llama3.2" }, { provider: "ollama" } )
+aiChat( "msg", { model: "qwen3:0.6b" }, { provider: "ollama" } )
 
 // Create service
 service = aiService( "openai" )
@@ -503,7 +463,7 @@ service.invoke( aiChatRequest( messages ) )
 
 Now you can switch providers! Let's learn how to get structured data from AI.
 
-👉 **[Lesson 4: Structured Output](../lesson-04-structured-output/)**
+👉 **[Lesson 4: Structured Output](../lesson-04-structured-output/README.md)**
 
 ---
 

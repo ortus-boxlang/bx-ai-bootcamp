@@ -427,7 +427,7 @@ function preguntarRAG( pregunta ) {
     // Preguntar a IA con contexto
     return aiChat(
         "Contexto:\n#contexto#\n\nPregunta: #pregunta#",
-        { model: "qwen2.5:0.5b-instruct" },
+        { model: "qwen3:0.6b" },
         { provider: "ollama" }
     )
 }

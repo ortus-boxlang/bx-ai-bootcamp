@@ -18,9 +18,8 @@ weatherDatabase = {
 weatherTool = aiTool(
     "get_weather",
     "Get current weather for a city. Use when asked about weather conditions.",
-    ( args ) => {
-        city = args.city
-        
+    ( city ) => {
+       
         if( weatherDatabase.keyExists( city ) ) {
             data = weatherDatabase[ city ]
             return "Weather in #city#: #data.temp#°F, #data.condition#"

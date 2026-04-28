@@ -23,7 +23,7 @@ invoiceTemplate = {
 
 // Sample invoice text
 invoiceText = "
-INVOICE #INV-2024-001
+INVOICE ##INV-2024-001
 
 Date: November 15, 2024
 Bill To: Acme Corporation
@@ -48,7 +48,7 @@ try {
     )
 
     // Display results
-    println( "Invoice #: " & invoice.invoiceNumber )
+    println( "Invoice ##: " & invoice.invoiceNumber )
     println( "Date: " & invoice.date )
     println( "Customer: " & invoice.customerName )
     println()
@@ -56,13 +56,13 @@ try {
 
     calculatedTotal = 0
     for( item in invoice.lineItems ) {
-        println( "  • #item.description#: $#numberFormat( item.amount, ',.00' )#" )
+        println( "  • #item.description#: $#numberFormat( item.amount, ',__.00' )#" )
         calculatedTotal += item.amount
     }
 
     println()
     println( "─".repeat( 40 ) )
-    println( "Total: $#numberFormat( invoice.total, ',.00' )#" )
+    println( "Total: $#numberFormat( invoice.total, ',__.00' )#" )
 
     // Verify total (using penny precision for currency comparison)
     if( abs( calculatedTotal - invoice.total ) < 0.01 ) {

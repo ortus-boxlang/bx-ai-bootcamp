@@ -39,26 +39,26 @@ function callProvider( name, options, params = {} ) {
 switch( choice ) {
     case "1":
         callProvider( "OpenAI", { provider: "openai" } )
-        break
+        break;
     
     case "2":
         callProvider( "Claude", { provider: "claude" } )
-        break
+        break;
     
     case "3":
-        callProvider( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
-        break
+        callProvider( "Ollama", { provider: "ollama" }, { model: "qwen3:0.6b" } )
+        break;
     
     case "4":
         println( "🔄 Comparing all providers..." )
         println()
         
-        callProvider( "OpenAI", { provider: "openai" } )
-        callProvider( "Claude", { provider: "claude" } )
-        callProvider( "Ollama", { provider: "ollama" }, { model: "llama3.2" } )
+        callProvider( "OpenAI",{}, { provider: "openai" } )
+        callProvider( "Claude",{}, { provider: "claude" } )
+        callProvider( "Ollama",{ model: "qwen3:0.6b" }, { provider: "ollama" } )
         
         println( "✨ Comparison complete!" )
-        break
+        break;
     
     default:
         println( "Invalid choice!" )

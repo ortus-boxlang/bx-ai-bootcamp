@@ -427,7 +427,7 @@ function askRAG( question ) {
     // Ask AI with context
     return aiChat(
         "Context:\n#context#\n\nQuestion: #question#",
-        { model: "qwen2.5:0.5b-instruct" },
+        { model: "qwen3:0.6b" },
         { provider: "ollama" }
     )
 }
