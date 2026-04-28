@@ -631,7 +631,7 @@ println( "AI finished: " & result )
 │                  RESPONSE TYPE COMPARISON                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  📄 aiChat()          ⚡ aiChatStream()      🔄 aiChatAsync()   │
+│  📄 aiChat()          ⚡ aiChatStream()      🔄 aiChatAsync()  │
 │  ────────────         ────────────────       ───────────────    │
 │  • Waits for all      • Real-time chunks     • Non-blocking     │
 │  • Simple to use      • Progressive display  • Returns Future   │
