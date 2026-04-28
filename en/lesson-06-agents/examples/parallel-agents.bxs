@@ -24,8 +24,7 @@ println()
 // Ask the same question to multiple models simultaneously
 parallel = aiParallel({
     openai  : aiModel( provider: "openai" ),
-    claude  : aiModel( provider: "claude" ),
-    groq    : aiModel( provider: "groq" )
+    ollama  : aiModel( provider: "ollama" )
 })
 
 question = "Explain recursion in one sentence."
@@ -35,8 +34,7 @@ println()
 results = parallel.run( question )
 
 println( "📦 OpenAI : " & results.openai )
-println( "📦 Claude : " & results.claude )
-println( "📦 Groq   : " & results.groq )
+println( "📦 Ollama: " & results.ollama )
 println()
 
 cliRead( "Press Enter to continue..." )

@@ -1,0 +1,33 @@
+// multi-tenant-agent.bxs
+function createUserAgent( userId, conversationId = "default" ) {
+    return aiAgent(
+        name: "PersonalAssistant",
+        description: "A personal AI assistant",
+        instructions: "Be helpful and remember user preferences",
+        memory: aiMemory(
+            memory:"window",
+            key: createUUID(),
+            userId: userId,                // Isolates by user
+            conversationId: conversationId, // Multiple chats per user
+            config: { maxMessages: 20 }
+        )
+    )
+}
+
+// Each user gets isolated memory
+aliceAgent = createUserAgent( "user-alice", "support-chat" )
+bobAgent = createUserAgent( "user-bob", "support-chat" )
+
+// Alice's conversation
+aliceAgent.run( "My favorite color is blue" )
+println( "Alice asks: " & aliceAgent.run( "What's my favorite color?" ) )
+// Output: "Your favorite color is blue!"
+
+// Bob's conversation (completely separate!)
+bobAgent.run( "My favorite color is red" )
+println( "Bob asks: " & bobAgent.run( "What's my favorite color?" ) )
+// Output: "Your favorite color is red!"
+
+// Bob cannot access Alice's data
+println( "Bob asks about Alice: " & bobAgent.run( "What's Alice's favorite color?" ) )
+// Output: "I don't have that information"

@@ -557,7 +557,7 @@ function cleanChunk( chunk ) {
 }
 
 aiChatStream(
-    callback: ( chunk ) => print( cleanChunk(chunk) ),
+    onChunk: ( chunk ) => print( cleanChunk(chunk) ),
     messages: "Write a haiku about programming"
 )
 
@@ -590,7 +590,7 @@ print( "AI: " )
 fullResponse = ""
 
 aiChatStream(
-    callback: ( chunk ) => {
+    onChunk: ( chunk ) => {
         var cc = cleanChunk(chunk);
         print( cc )
         fullResponse &= cc
@@ -648,7 +648,7 @@ answer = aiChat( "Quick question" )
 
 // Web UI/Chat: Streaming
 aiChatStream(
-    callback: ( chunk ) => writeOutput( chunk.content ),
+    onChunk: ( chunk ) => writeOutput( chunk.content ),
     messages: "User question"
 )
 
@@ -857,7 +857,7 @@ response = aiChat( message.render() )
 
 // Streaming
 aiChatStream(
-    callback: ( chunk ) => print( chunk.content ),
+    onChunk: ( chunk ) => print( chunk.content ),
     messages: "Tell me a story"
 )
 

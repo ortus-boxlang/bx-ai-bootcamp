@@ -1,0 +1,24 @@
+// preferences-context.bxs
+userPreferences = {
+    userId: "user-789",
+    language: "en",
+    tone: "professional",
+    verbosity: "concise",
+    topics: ["technology", "business"],
+    timezone: "America/New_York",
+    dateFormat: "MM/DD/YYYY"
+}
+
+message = aiMessage()
+    .system( "
+        Tailor responses to user preferences: ${context}
+        - Use their preferred tone and verbosity
+        - Format dates/times for their timezone
+        - Focus on their topics of interest
+    " )
+    .setContext( userPreferences )
+    .user( "Tell me about today's tech news" )
+
+response = aiChat( message.render() )
+println( response )
+// AI responds in professional, concise tone about tech/business

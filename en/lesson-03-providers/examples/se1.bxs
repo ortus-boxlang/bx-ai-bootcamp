@@ -1,0 +1,19 @@
+openaiService = aiService( "openai" )
+ollamaService = aiService( "ollama" )
+
+// Same question, different providers
+question = aiMessage().user( "What is BoxLang?" )
+
+// Note: 
+openaiAnswer = openaiService.chat(
+    aiChatRequest( question )
+)
+ollamaAnswer = ollamaService.chat(
+    aiChatRequest( question )
+)
+
+println( "OpenAI says:" )
+println( openaiAnswer )
+
+println( "Ollama says:" )
+println( ollamaAnswer )

@@ -1,0 +1,25 @@
+function routeByTask( task, message ) {
+    switch( task ) {
+        case "code":
+            // Use OpenAI for coding (best tools)
+            return aiChat( message, { model: "gpt-4o" }, { provider: "openai" } )
+
+        case "analysis":
+            // Use Claude for long analysis
+            return aiChat( message, {}, { provider: "claude" } )
+
+        case "quick":
+            // Use local Ollama for quick tasks
+            return aiChat( message, { model: "qwen3:0.6b" }, { provider: "ollama" } )
+
+        default:
+            return aiChat( message )
+    }
+}
+
+// Use it
+codeAnswer = routeByTask( "code", "Write a function to sort an array" )
+quickAnswer = routeByTask( "quick", "What is 5 + 5?" )
+
+println( "Code answer (OpenAI): " & codeAnswer )
+println( "Quick answer (Ollama): " & quickAnswer )

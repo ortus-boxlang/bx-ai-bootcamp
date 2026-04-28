@@ -1,0 +1,53 @@
+import bxModules.bxai.models.middleware.core.LoggingMiddleware
+import bxModules.bxai.models.middleware.core.FlightRecorderMiddleware
+import bxModules.bxai.models.middleware.core.GuardrailMiddleware
+
+// Simulated database
+orders = {
+    "ORD-001": { status: "Shipped", item: "Widget Pro", customer: "Alex" },
+    "ORD-002": { status: "Processing", item: "Gadget X", customer: "Jordan" },
+    "ORD-003": { status: "Delivered", item: "Tool Kit", customer: "Sam" }
+}
+
+products = {
+    "Widget Pro": { price: 99.99, stock: 50 },
+    "Gadget X": { price: 149.99, stock: 0 },
+    "Tool Kit": { price: 79.99, stock: 25 }
+}
+
+// Tool: Look up order
+lookupOrder = aiTool(
+    "lookup_order",
+    "Look up order status by order ID",
+    ( args ) => {
+        orderId = args.orderId.uCase()
+        if( orders.keyExists( orderId ) ) {
+            order = orders[ orderId ]
+            return "Order #orderId#: #order.item# - Status: #order.status#"
+        }
+        return "Order #orderId# not found"
+    }
+).describeOrderId( "The order ID (e.g., ORD-001)" )
+
+requestLogger = new LoggingMiddleware(
+    logToFile   : true,
+    logToConsole: true,
+    logLevel    : "info",
+    prefix      : "[Support Agent]"
+)
+
+recorder = new FlightRecorderMiddleware(
+    mode       : "record",
+    fixturePath: "/.agents/flight-recorder/session.json"
+)
+
+agent = aiAgent(
+    name      : "support-agent",
+    model     : aiModel(),
+    tools     : [ lookupOrder ],
+    middleware: [ requestLogger, recorder ]  // logging first!
+)
+
+agent.run( "Check order 10042" )
+println( agent.listMiddleware() )                    // inspect stack
+println( recorder.getTape().interactions.len() )    // recorded calls

@@ -215,7 +215,6 @@ Memory lets agents remember the conversation:
 
 ```java
 // multi-tenant-agent.bxs
-// multi-tenant-agent.bxs
 function createUserAgent( userId, conversationId = "default" ) {
     return aiAgent(
         name: "PersonalAssistant",
@@ -254,6 +253,21 @@ println( "Bob asks about Alice: " & bobAgent.run( "What's Alice's favorite color
 
 ```java
 // multi-conversation.bxs
+function createUserAgent( userId, conversationId = "default" ) {
+    return aiAgent(
+        name: "PersonalAssistant",
+        description: "A personal AI assistant",
+        instructions: "Be helpful and remember user preferences",
+        memory: aiMemory(
+            memory:"window",
+            key: createUUID(),
+            userId: userId,                // Isolates by user
+            conversationId: conversationId, // Multiple chats per user
+            config: { maxMessages: 20 }
+        )
+    )
+}
+
 userId = "user-123"
 
 // User has multiple conversation threads
@@ -266,11 +280,20 @@ supportAgent.run( "I have a billing question" )
 salesAgent.run( "Tell me about enterprise pricing" )
 technicalAgent.run( "How do I configure the API?" )
 
+println("Suppport Agent asks: What were we discussing?")
 // Conversations don't mix
 println( supportAgent.run( "What were we discussing?" ) )
 // Output: "We were discussing your billing question"
 
+
+println("______________________________________________")
+println("Sales Agent asks: What were we discussing?")
 println( salesAgent.run( "What were we discussing?" ) )
+// Output: "We were discussing enterprise pricing"
+
+println("______________________________________________")
+println("Technical Agent asks: What were we discussing?")
+println( technicalAgent.run( "What were we discussing?" ) )
 // Output: "We were discussing enterprise pricing"
 ```
 
@@ -542,9 +565,14 @@ agent = aiAgent(
 
 println( "AI: " )
 
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
 // Stream the response
 agent.stream(
-    onChunk: ( chunk ) => print( chunk.content ),
+    onChunk: ( chunk ) => print( cleanChunk(chunk) ),
     input: "Write a short poem about coding"
 )
 
@@ -552,6 +580,7 @@ println()  // New line after stream
 ```
 
 **Output appears in real-time:**
+
 ```
 AI: Code flows through my mind,
 Logic patterns intertwined,
@@ -581,6 +610,11 @@ agent = aiAgent(
     tools: [ weatherTool ]
 )
 
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
 println( "Streaming response with tool calls:" )
 println()
 
@@ -589,7 +623,7 @@ agent.stream(
         if( chunk.keyExists( "toolCalls" ) ) {
             println( "[Tool: #chunk.toolCalls[1].name#]" )
         } else {
-            print( chunk.content )
+            print( cleanChunk(chunk) )
         }
     },
     input: "What's the weather in Miami?"
@@ -599,6 +633,7 @@ println()
 ```
 
 **Output:**
+
 ```
 Streaming response with tool calls:
 
@@ -724,11 +759,11 @@ println( result )
 │                AGENT EXECUTION PATTERNS                         │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  📄 agent.run()           ⚡ agent.stream()      🔄 runAsync()  │
+│  📄 agent.run()          ⚡ agent.stream()     🔄 runAsync()   │
 │  ─────────────           ───────────────        ──────────────  │
-│  • Blocking              • Real-time chunks     • Non-blocking │
-│  • Simple scripts        • Chat UIs             • Background   │
-│  • Complete response     • Progressive display  • Long tasks   │
+│  • Blocking              • Real-time chunks     • Non-blocking  │
+│  • Simple scripts        • Chat UIs             • Background    │
+│  • Complete response     • Progressive display  • Long tasks    │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -754,7 +789,7 @@ agent = aiAgent(
     name: "PersonalAssistant",
     description: "A personal assistant that remembers your preferences",
     instructions: "Remember user preferences and past conversations.",
-    memory: aiMemory( "window", config: { maxMessages: 20 } )
+    memory: aiMemory( memory:"window", config: { maxMessages: 20 } )
 )
 
 // Tell the agent things
@@ -883,7 +918,7 @@ supportAgent = aiAgent(
         Always ask if there's anything else you can help with.
     ",
     tools: [ orderTool, productTool, ticketTool ],
-    memory: aiMemory( "window", config: { maxMessages: 10 } )
+    memory: aiMemory( memory:"window", config: { maxMessages: 10 } )
 )
 
 // Chat loop
@@ -1070,7 +1105,7 @@ while( running ) {
 4. **What method executes an agent?**
    - [ ] agent.chat()
    - [x] agent.run()
-    - [ ] agent.process()
+   - [ ] agent.process()
    - [ ] agent.start()
 
 ---
@@ -1109,6 +1144,25 @@ response = agent.run( "User request" )
 
 Skills are blocks of reusable domain knowledge you inject into an agent's system context. They keep your agents modular: define once, compose into many agents.
 
+They can be created or installed from a ( trusted! ) source. Ortus has recently started the `BoxLang Skills Hub` at https://skills.boxlang.io/. It can be accessed through either CommandBox (recommended ) or npx. In CommandBox, make sure you run `coldbox ai install` to get the latest version of the Coldbox cli which has the needed skills commands.
+
+From the skills repo web page:
+
+```
+What are Skills?
+Skills are reusable, structured SKILL.md files that teach your AI coding assistant (Claude, Cursor, GitHub Copilot, etc.) how to work with BoxLang, ColdBox, TestBox, and the full Ortus ecosystem.
+
+Each skill file contains frontmatter metadata (name, description, tags) and a rich Markdown body explaining patterns, idioms, best practices, and examples specific to BoxLang development. When you install a skill into your AI agent, it gains deep, accurate knowledge about BoxLang without hallucinating incorrect CFML or Java syntax.
+
+Skills are stored in GitHub repositories and are  either 
+   🔷 Core skills maintained by the Ortus Solutions team, or 
+   🌐 Community skills submitted by the broader BoxLang community. All community skills are automatically audited for security heuristics before being made available.
+```
+
+### Installing Skills from the BoxLang Skills Hub
+
+Skills can be found by browsing the directory and then installing use the supplied slugs via CommandBox or NPX. For the next few examples we're going to use `coldbox ai skills install --all` which will install them to the ~/.agents/skills` folder in this project's root.
+
 ### Two Injection Modes
 
 | Mode | Parameter | Behaviour |
@@ -1127,10 +1181,10 @@ toneSkill = aiSkill(
 )
 
 // File-based skill — reads SKILL.md at load time
-boxlangSkill = aiSkill( "/.ai/skills/boxlang-expert/SKILL.md" )
+boxlangSkill = aiSkill( "/.agents/skills/boxlang-expert/SKILL.md" )
 
 // Directory scan — loads all skills in a folder
-allSkills = aiSkill( "/.ai/skills" )
+allSkills = aiSkill( "/.agents/skills" )
 ```
 
 ### Using Skills on Agents
@@ -1199,7 +1253,7 @@ requestLogger = new LoggingMiddleware(
 
 recorder = new FlightRecorderMiddleware(
     mode       : "record",
-    fixturePath: "/.ai/flight-recorder/session.json"
+    fixturePath: "/.agents/flight-recorder/session.json"
 )
 
 agent = aiAgent(
@@ -1388,69 +1442,8 @@ function chat( event, rc, prc ) {
 
 ---
 
-## 🎉 Congratulations!
+## ⏭️ Next Lesson
 
-You've completed the BoxLang AI Bootcamp! You now know:
+Next up: Loaders and Documents.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                  SKILLS ACQUIRED                                │
-└─────────────────────────────────────────────────────────────────┘
-
-  ✅ Lesson 1: Setup & First AI Call
-  ✅ Lesson 2: Conversations & Messages
-  ✅ Lesson 3: Switching Providers
-  ✅ Lesson 4: Structured Output
-  ✅ Lesson 5: AI Tools
-  ✅ Lesson 6: Building Agents
-
-  You can now:
-  ───────────
-  • Make AI calls with aiChat()
-  • Build multi-turn conversations
-  • Use OpenAI, Claude, and Ollama
-  • Extract type-safe structured data
-  • Create tools AI can use
-  • Build autonomous agents
-```
-
-## ⏭️ What's Next?
-
-### Explore Examples
-
-Check out the [examples folder](../../examples/) for more code.
-
-### Build Something
-
-The best way to learn is by doing. Try building:
-
-- A customer service bot
-- A code review assistant
-- A data analysis agent
-- A personal productivity helper
-
----
-
-## 📁 Lesson Files
-
-```
-lesson-06-agents/
-├── README.md (this file)
-├── examples/
-│   ├── basic-agent.bxs           # First agent, basic memory demo
-│   ├── tool-agent.bxs            # Agent with function-calling tools
-│   ├── memory-agent.bxs          # Multi-turn memory isolation
-│   ├── skills-agent.bxs          # aiSkill() — always-on + lazy-loaded
-│   ├── middleware-agent.bxs      # LoggingMiddleware + GuardrailMiddleware
-│   ├── subagent-hierarchy.bxs    # Coordinator + specialist sub-agents
-│   └── parallel-agents.bxs      # aiParallel() multi-model + specialist agents
-└── labs/
-    ├── support-agent.bxs
-    └── research-agent.bxs
-```
-
----
-
-**Thank you for completing the bootcamp! 🎓**
-
-Questions? Visit [GitHub Issues](https://github.com/ortus-boxlang/bx-ai/issues)
+👉 **[Lesson 7: Loaders & Documents](../lesson-07-loaders-documents/README.md)**

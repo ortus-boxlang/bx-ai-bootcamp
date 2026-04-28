@@ -4,6 +4,7 @@
 
 question = "What is BoxLang in one sentence?"
 answer = aiChat( question )
-
+println( "" )
 println( "Q: " & question )
 println( "A: " & answer )
+println( "" )

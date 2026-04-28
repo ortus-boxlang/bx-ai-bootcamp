@@ -1,0 +1,47 @@
+// rag-context.bxs
+function searchDocuments( query ) {
+    // Simulate vector search
+    return [
+        {
+            content: "BoxLang is a modern dynamic JVM language.",
+            source: "docs/intro.md",
+            score: 0.95
+        },
+        {
+            content: "BoxLang supports both dynamic and static typing.",
+            source: "docs/types.md",
+            score: 0.89
+        },
+        {
+            content: "Install with: box install boxlang",
+            source: "docs/install.md",
+            score: 0.82
+        }
+    ]
+}
+
+// User asks a question
+userQuestion = "How do I install BoxLang?"
+
+// Retrieve relevant documents
+docs = searchDocuments( userQuestion )
+
+// Create message with RAG context
+message = aiMessage()
+    .system( "
+        Answer using ONLY the provided context.
+        If the answer isn't in the context, say you don't know.
+
+        Context: ${context}
+    " )
+    .user( userQuestion )
+    .setContext({
+        query: userQuestion,
+        documents: docs.map( d => d.content ),
+        sources: docs.map( d => d.source ),
+        relevanceScores: docs.map( d => d.score )
+    })
+
+response = aiChat( message.render() )
+println( response )
+// Output: "To install BoxLang, use: box install boxlang"

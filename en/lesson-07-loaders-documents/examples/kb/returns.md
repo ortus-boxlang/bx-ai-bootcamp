@@ -1,0 +1,1 @@
+Returns\nCustomers can return items within 30 days.

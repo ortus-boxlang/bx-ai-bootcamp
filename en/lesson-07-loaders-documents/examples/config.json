@@ -1,0 +1,15 @@
+{
+    "entry": "./src/index.js",
+    "output": {
+        "filename": "bundle.js",
+        "path": "dirname/dist"
+    },
+    "module": {
+        "rules": [
+        {
+            "test": "/.txt$/",
+            "use": "raw-loader"
+        }
+        ]
+    }
+}

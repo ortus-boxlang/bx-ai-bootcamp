@@ -1,0 +1,23 @@
+itemTemplate={name:"", quantity:0};
+orderTemplate = {orderId:"", customerName:"", total:0, status:"",items:[]}
+order = aiChat(
+   "
+    Order ##12345 for Jane Smith
+    Total: $156.99
+    items: Widget (x2), Gadget (x1)
+    Status: Shipped
+    ",
+    {},
+   {
+        "returnFormat":{
+            "order":orderTemplate,
+            "items":[itemTemplate]
+        }
+   }
+)
+itemDisplay = order.items.map((item)=>{
+    return "#item.name# (#item.quantity#)"
+})
+println("");
+println( "Order #order.order.orderId# - $#order.order.total# for #order.items.len()# items: #itemDisplay.tolist()#" );
+println("");

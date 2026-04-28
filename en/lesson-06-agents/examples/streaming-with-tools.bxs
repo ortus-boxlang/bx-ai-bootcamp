@@ -1,0 +1,38 @@
+weatherTool = aiTool(
+    "get_weather",
+    "Get current weather",
+    ( args ) => {
+        // Simulate API call
+        return "Miami: 78°F, Sunny"
+    }
+).describeLocation( "City name" )
+
+agent = aiAgent(
+    name: "WeatherBot",
+    description: "Weather assistant",
+    instructions: "Help users check weather",
+    tools: [ weatherTool ]
+)
+
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() > 1 && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
+println( "Streaming response with tool calls:" )
+println()
+
+agent.stream(
+    onChunk: ( chunk ) => {
+        if( chunk.keyExists( "toolCalls" ) ) {
+            println( "Tool call detected in chunk:" )
+            println( chunk.toolCalls )
+            println( "[Tool: #chunk.toolCalls[1].name#]" )
+        } else {
+            print( cleanChunk(chunk) )
+        }
+    },
+    input: "What's the weather in Miami?"
+)
+
+println()

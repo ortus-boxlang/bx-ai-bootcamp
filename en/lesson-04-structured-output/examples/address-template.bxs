@@ -1,0 +1,22 @@
+addressTemplate = {
+    "street": "",
+    "city": "",
+    "state": "",
+    "zip": "",
+    "country": ""
+}
+
+address = aiChat(
+    "Parse: 123 Main St, Boston, MA 02101, USA",
+    {},
+    { returnFormat: addressTemplate }
+)
+
+println( "─".repeat( 30 ) )
+println( "Parsed Address:" )
+println( "Street: #address.street#" )
+println( "City: #address.city#" )
+println( "State: #address.state#" )
+println( "Zip: #address.zip#" )
+println( "Country: #address.country#" )
+println("")

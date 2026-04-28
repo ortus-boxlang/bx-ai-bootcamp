@@ -1033,10 +1033,10 @@ habilidadTono = aiSkill(
 )
 
 // Habilidad basada en archivo
-habilidadBL = aiSkill( "/.ai/skills/boxlang-expert/SKILL.md" )
+habilidadBL = aiSkill( "/.agents/skills/boxlang-expert/SKILL.md" )
 
 // Escaneo de directorio
-todasHabilidades = aiSkill( "/.ai/skills" )
+todasHabilidades = aiSkill( "/.agents/skills" )
 ```
 
 ### Uso en Agentes

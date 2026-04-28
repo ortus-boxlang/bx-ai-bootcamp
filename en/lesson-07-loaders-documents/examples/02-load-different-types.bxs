@@ -1,0 +1,18 @@
+// 02-load-different-types.bxs
+
+// Load a markdown file
+mdDocs = aiDocuments( expandPath("./demo.md"), { type: "markdown" } ).load()
+println( "Loaded #arrayLen( mdDocs )# markdown document(s)" )
+
+// Load a CSV file
+csvDocs = aiDocuments( expandPath("./attendees.csv"), { type: "csv" } ).load()
+println( "Loaded #arrayLen( csvDocs )# CSV document(s)" )
+
+// Load JSON
+jsonDocs = aiDocuments( expandPath("./config.json"), { type: "json" } ).load()
+println( "Loaded #arrayLen( jsonDocs )# JSON document(s)" )
+
+// Each CSV row and JSON object becomes a separate document
+for ( doc in csvDocs ) {
+    println( "CSV Row: #doc.content#" )
+}

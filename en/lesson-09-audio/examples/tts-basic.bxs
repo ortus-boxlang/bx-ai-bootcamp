@@ -79,7 +79,8 @@ response = aiSpeak(
     options: { provider: "openai" }
 )
 
-println( "Content type : #response.getContentType()#" )    // "audio/mpeg"
+println(response);
+println( "Content type : #response.getMimeType()#" )    // "audio/mpeg"
 println( "Audio size   : #response.getAudioData().length# bytes" )
 
 // Save via the response object

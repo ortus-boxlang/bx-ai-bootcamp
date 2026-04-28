@@ -59,7 +59,7 @@ requestLogger = new LoggingMiddleware(
 
 flightRecorder = new FlightRecorderMiddleware(
     mode       : "record",
-    fixturePath: "/.ai/flight-recorder/middleware-agent.json"
+    fixturePath: "/.agents/flight-recorder/middleware-agent.json"
 )
 
 orderAgent = aiAgent(

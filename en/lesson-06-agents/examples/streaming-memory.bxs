@@ -1,0 +1,32 @@
+// streaming-memory.bxs
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() > 1 && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
+
+agent = aiAgent(
+    name: "MemoryBot",
+    description: "Remembers conversation",
+    instructions: "Be friendly and remember context",
+    memory: aiMemory( memory:"window", config: { maxMessages: 20 } )
+)
+
+// First message
+println( "You: My name is Alex" )
+print( "AI: " )
+agent.stream(
+    onChunk: ( chunk ) => print( cleanChunk(chunk) ),
+    input: "My name is Alex"
+)
+println()
+println()
+
+// Second message (remembers first)
+println( "You: What's my name?" )
+print( "AI: " )
+agent.stream(
+    onChunk: ( chunk ) => print( cleanChunk(chunk) ),
+    input: "What's my name?"
+)
+println()

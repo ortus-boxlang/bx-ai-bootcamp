@@ -77,6 +77,10 @@ In the /config/boxlang.json folder, change the modules.bxai.settings.provider se
 
 ---
 
+## 📝 Install CommandBox or NPX
+
+For more information about CommandBox see https://www.ortussolutions.com/products/commandbox. After installaion also install the Coldbox-cli by running `install coldbox-cli@be` from the CommandBox terminal.
+
 ## 📋 About This Bootcamp
 
 This intensive, hands-on course takes you from zero AI experience to building intelligent applications with BoxLang in just 8-9 hours (8 lessons).

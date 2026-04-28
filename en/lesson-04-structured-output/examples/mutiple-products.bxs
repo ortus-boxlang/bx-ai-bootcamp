@@ -1,0 +1,22 @@
+// Extract multiple products
+products = aiChat(
+    "
+    Parse products:
+    - iPhone 15: $999
+    - AirPods Pro: $249
+    - MacBook Air: $1299
+    ",
+    {},
+    { returnFormat: [ new Product() ] }
+)
+
+println( "" )
+println( "" )
+
+total = 0
+for( product in products ) {
+    println( "#product.getName()#: $#product.getPrice()#" )
+    total += product.getPrice()
+}
+println( "─".repeat( 30 ) )
+println( "Total: $#total#" )

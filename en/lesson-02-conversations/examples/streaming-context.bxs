@@ -1,0 +1,18 @@
+// streaming-context.bxs
+message = aiMessage()
+    .system( "User info: ${context}. Be helpful and personalized." )
+    .setContext({
+        name: "Alex",
+        preferences: { tone: "friendly" }
+    })
+    .user( "Tell me a joke" )
+
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
+aiChatStream(
+    callback= ( chunk ) =>  print( cleanChunk(chunk)),
+    messages= message.render()
+)

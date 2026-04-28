@@ -1,0 +1,22 @@
+
+// Create a large sample document
+largeContent = repeatString( "BoxLang is a powerful JVM language. ", 500 )
+fileWrite( expandPath("./large-doc.txt"), largeContent )
+
+// Load WITHOUT chunking
+docsNoChunk = aiDocuments( expandPath("./large-doc.txt") ).load()
+println( "Without chunking: #arrayLen( docsNoChunk )# document(s)" )
+println( "Content length: #len( docsNoChunk[ 1 ].content )#" )
+
+// Load WITH chunking
+docsChunked = aiDocuments( expandPath("./large-doc.txt") )
+    .chunkSize( 200 )
+    .overlap( 20 )
+    .load()
+
+println( "\nWith chunking: #arrayLen( docsChunked )# chunk(s)" )
+
+// Show each chunk
+for ( i = 1; i <= arrayLen( docsChunked ); i++ ) {
+    println( "Chunk #i#: #len( docsChunked[ i ].content )# chars" )
+}

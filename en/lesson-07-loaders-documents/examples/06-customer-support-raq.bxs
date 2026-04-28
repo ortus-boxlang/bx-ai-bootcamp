@@ -1,0 +1,42 @@
+
+// Create comprehensive support knowledge base
+if(!directoryExists( expandpath("kb") )) {
+    directoryCreate( "kb" )
+}
+fileWrite( "kb/returns.md", "Returns\nCustomers can return items within 30 days." )
+fileWrite( "kb/shipping.md", "Shipping\nWe offer free shipping on orders over $50." )
+fileWrite( "kb/warranty.md", "Warranty\nAll products have a 1-year warranty." )
+
+// Setup vector memory
+memory = aiMemory(
+    memory: "chroma",
+    config: {
+        collectionName: "customer-support",
+        embeddingProvider: "ollama"
+    }
+)
+
+// Ingest knowledge base
+result = aiDocuments( "kb" )
+    .recursive()
+    .extensions( [ "md" ] )
+    .toMemory( memory, { chunkSize: 300 } )
+
+println( "Knowledge base ready: #result.stored# chunks indexed" )
+
+// Create AI agent with RAG
+supportAgent = aiAgent(
+    memory: memory
+).withInstructions( "You are a helpful customer support agent. Use the knowledge base to answer questions accurately." )
+
+// Handle customer questions
+questions = [
+    "What is your return policy?",
+    "Do you offer free shipping?",
+    "How long is the warranty?"
+]
+
+for ( question in questions ) {
+    println( "\nQ: #question#" )
+    println( "A: #supportAgent.run( question )#" )
+}

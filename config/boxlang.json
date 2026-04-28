@@ -3,7 +3,7 @@
         "bxai" :{
             "settings" : {
                 // The default provider LLM AI: openai, deepseek, etc
-                "provider" : "openrouter",
+                "provider" : "openai",
                 // The default request params to use when calling a provider, any provider
                 // Ex: { temperature: 0.5, max_tokens: 100, model: "gpt-3.5-turbo" }
                 // gpt-oss-120b
@@ -29,6 +29,11 @@
 						"params": {
 							"model": "claude-sonnet-4-5"
 						}
+					},
+                    "ollama" : {
+						"params": {
+							"model": "qwen3:0.6b"
+						}
 					}
                 },
                 // The default timeout of the ai requests
@@ -44,7 +49,7 @@
                 // The default return format of the AI response: single, all, raw
                 "returnFormat" : "single",
                 // Skills: directory to auto-load SKILL.md files from at startup
-                "skillsDirectory" : "/.ai/skills",
+                "skillsDirectory" : "/.agents/skills",
                 // If true, skills are automatically loaded from skillsDirectory on startup
                 "autoLoadSkills" : true,
                 // Audio settings for aiSpeak(), aiTranscribe(), aiTranslate()

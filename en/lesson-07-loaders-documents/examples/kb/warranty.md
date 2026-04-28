@@ -1,0 +1,1 @@
+Warranty\nAll products have a 1-year warranty.

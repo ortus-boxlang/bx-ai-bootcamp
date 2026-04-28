@@ -1,0 +1,21 @@
+// 01-load-text-file.bxs
+
+// Load the document
+docs = aiDocuments( expandPath("./knowledge.txt") ).load()
+
+println( "Loaded #arrayLen( docs )# document(s)" )
+
+// Access document properties
+doc = docs[ 1 ]
+println( "Content: #doc.content#" )
+println( "Source: #doc.metadata.source#" )
+
+// Use with AI
+result = aiChat(
+    "Based on this context: #doc.content#\n\nWhat is BoxLang?",
+    {},
+    { provider: "openai" }
+)
+
+println( "\nAI Response:" )
+println( result )
