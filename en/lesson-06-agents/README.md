@@ -280,19 +280,19 @@ supportAgent.run( "I have a billing question" )
 salesAgent.run( "Tell me about enterprise pricing" )
 technicalAgent.run( "How do I configure the API?" )
 
-println("Suppport Agent asks: What were we dscussing?")
+println("Suppport Agent asks: What were we discussing?")
 // Conversations don't mix
 println( supportAgent.run( "What were we discussing?" ) )
 // Output: "We were discussing your billing question"
 
 
 println("______________________________________________")
-println("Sales Agent asks: What were we dscussing?")
+println("Sales Agent asks: What were we discussing?")
 println( salesAgent.run( "What were we discussing?" ) )
 // Output: "We were discussing enterprise pricing"
 
 println("______________________________________________")
-println("Technical Agent asks: What were we dscussing?")
+println("Technical Agent asks: What were we discussing?")
 println( technicalAgent.run( "What were we discussing?" ) )
 // Output: "We were discussing enterprise pricing"
 ```
