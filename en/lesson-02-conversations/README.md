@@ -498,7 +498,7 @@ println( response )
 │                    CONTEXT BEST PRACTICES                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ✅ DO:                           ❌ DON'T:                     │
+│  ✅ DO:                           ❌ DON'T:                    │
 │  ─────                            ────────                      │
 │  • Use IDs, not sensitive data    • Send passwords              │
 │  • Keep context lightweight       • Send PII unnecessarily      │
