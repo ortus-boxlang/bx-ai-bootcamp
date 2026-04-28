@@ -1,0 +1,22 @@
+// app-state-context.bxs
+appState = {
+    currentPage: "dashboard",
+    userStats: {
+        loginCount: 42,
+        lastLogin: "2025-12-05",
+        tasksCompleted: 15
+    },
+    features: {
+        betaAccess: true,
+        darkMode: true,
+        notifications: false
+    }
+}
+
+message = aiMessage()
+    .system( "You are a helpful app assistant. App state: ${context}" )
+    .setContext( appState )
+    .user( "What have I been up to?" )
+
+response = aiChat( message.render() )
+println( response )

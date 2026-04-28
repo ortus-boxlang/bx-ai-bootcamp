@@ -498,7 +498,7 @@ println( response )
 │                    CONTEXT BEST PRACTICES                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ✅ DO:                           ❌ DON'T:                    │
+│  ✅ DO:                           ❌ DON'T:                     │
 │  ─────                            ────────                      │
 │  • Use IDs, not sensitive data    • Send passwords              │
 │  • Keep context lightweight       • Send PII unnecessarily      │
@@ -557,7 +557,7 @@ function cleanChunk( chunk ) {
 }
 
 aiChatStream(
-    callback: ( chunk ) => print( cleanChunk(chunk) ),
+    onChunk: ( chunk ) => print( cleanChunk(chunk) ),
     messages: "Write a haiku about programming"
 )
 
@@ -590,7 +590,7 @@ print( "AI: " )
 fullResponse = ""
 
 aiChatStream(
-    callback: ( chunk ) => {
+    onChunk: ( chunk ) => {
         var cc = cleanChunk(chunk);
         print( cc )
         fullResponse &= cc
@@ -631,7 +631,7 @@ println( "AI finished: " & result )
 │                  RESPONSE TYPE COMPARISON                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  📄 aiChat()          ⚡ aiChatStream()      🔄 aiChatAsync()  │
+│  📄 aiChat()          ⚡ aiChatStream()      🔄 aiChatAsync()   │
 │  ────────────         ────────────────       ───────────────    │
 │  • Waits for all      • Real-time chunks     • Non-blocking     │
 │  • Simple to use      • Progressive display  • Returns Future   │
@@ -648,7 +648,7 @@ answer = aiChat( "Quick question" )
 
 // Web UI/Chat: Streaming
 aiChatStream(
-    callback: ( chunk ) => writeOutput( chunk.content ),
+    onChunk: ( chunk ) => writeOutput( chunk.content ),
     messages: "User question"
 )
 
@@ -857,7 +857,7 @@ response = aiChat( message.render() )
 
 // Streaming
 aiChatStream(
-    callback: ( chunk ) => print( chunk.content ),
+    onChunk: ( chunk ) => print( chunk.content ),
     messages: "Tell me a story"
 )
 

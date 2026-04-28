@@ -101,6 +101,8 @@ class {
 		// 5. Copy language assets into bootcamp/
 		copyLanguageAssets( lang )
 
+		println( "For the section later in the course on skills, you are also going to want CommandBox ( https://www.ortussolutions.com/products/commandbox ) installed as well as the ColdBox cli by running `install coldbox-cli@be`." )
+
 		println( "✅ Setup complete! Your bootcamp is ready." )
 		println( "   📂 Open: bootcamp/README.md to get started." )
 		println( "" )

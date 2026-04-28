@@ -1,5 +1,7 @@
 # Lesson 8: MCP Servers and Clients
 
+[Home](../README.md)
+
 **Duration: 60 minutes**
 
 This lesson teaches the practical MCP workflow in BoxLang AI without extra complexity.
@@ -18,8 +20,8 @@ This lesson teaches the practical MCP workflow in BoxLang AI without extra compl
 
 MCP is a standard protocol for AI tools.
 
-- `MCP()` is your client (consume remote tools)
-- `MCPServer()` is your server (publish local tools)
+- `MCP()` is your client ( consume remote tools )
+- `MCPServer()` is your server ( publish local tools )
 
 Think: JSON-RPC tool calls over HTTP/STDIO.
 
@@ -227,3 +229,5 @@ mcpSrv = MCPServer( "secureServer" )
 - https://ai.ortusbooks.com/advanced/mcp-client
 - https://ai.ortusbooks.com/advanced/mcp-server
 - https://modelcontextprotocol.io/
+
+👉 **[Continue to Lesson 9: Audio](../lesson-09-audio/README.md)**

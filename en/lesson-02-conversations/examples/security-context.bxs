@@ -1,0 +1,32 @@
+// security-context.bxs
+function createSecureMessage( userSession ) {
+    return aiMessage()
+        .system( "
+            You are a secure assistant.
+            User context: ${context}
+            Only show data this user can access.
+        " )
+        .setContext({
+            userId: userSession.userId,
+            tenantId: userSession.tenantId,
+            role: userSession.role,
+            permissions: userSession.permissions,
+            subscriptionTier: userSession.subscription.tier
+        })
+}
+
+// Use it
+userSession = {
+    userId: "user-123",
+    tenantId: "company-abc",
+    role: "manager",
+    permissions: ["read", "write", "approve"],
+    subscription: { tier: "premium" }
+}
+
+message = createSecureMessage( userSession )
+    .user( "What can I do?" )
+
+response = aiChat( message.render() )
+println( response )
+// AI sees: User 123 from company-abc, manager role with read/write/approve permissions and a premium tier subscription

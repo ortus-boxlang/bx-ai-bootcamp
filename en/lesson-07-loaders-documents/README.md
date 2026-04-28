@@ -1,5 +1,7 @@
 # Lesson 7: Loaders & Documents
 
+[Home](../README.md)
+
 **⏱️ Duration: 60 minutes**
 
 Welcome to document loaders! In this lesson, you'll learn how to import content from various sources (files, directories, URLs, databases) and prepare it for AI processing, including building a simple RAG (Retrieval-Augmented Generation) system.
@@ -25,10 +27,10 @@ A document loader imports content from external sources and converts it into a s
 │                    DOCUMENT LOADING FLOW                        │
 └─────────────────────────────────────────────────────────────────┘
 
-  ┌─────────┐      ┌─────────┐      ┌─────────┐      ┌─────────┐
-  │ Source  │─────▶│ Loader  │─────▶│Document │─────▶│   AI    │
+  ┌─────────┐      ┌─────────┐      ┌─────────┐      ┌──────────┐
+  │ Source  │─────▶│ Loader  │─────▶│Document │─────▶│   AI     │
   │ (Files) │      │         │      │ Objects │      │Processing│
-  └─────────┘      └─────────┘      └─────────┘      └─────────┘
+  └─────────┘      └─────────┘      └─────────┘      └──────────┘
        │                                  │
        ▼                                  ▼
   • Text files                      • Standardized format
@@ -86,6 +88,7 @@ docs = aiDocuments( "https://example.com/page.html" ).load()
 ### Example 1: Loading a Text File
 
 **Create a sample document (`knowledge.txt`):**
+
 ```
 BoxLang is a modern dynamic JVM language.
 It runs on the Java Virtual Machine.
@@ -93,11 +96,12 @@ BoxLang supports both object-oriented and functional programming.
 ```
 
 **Load and use it:**
+
 ```javascript
 // 01-load-text-file.bxs
 
 // Load the document
-docs = aiDocuments( "knowledge.txt" ).load()
+docs = aiDocuments( expandPath("./knowledge.txt") ).load()
 
 println( "Loaded #arrayLen( docs )# document(s)" )
 
@@ -118,6 +122,7 @@ println( result )
 ```
 
 **Run it:**
+
 ```bash
 boxlang 01-load-text-file.bxs
 # Loaded 1 document(s)
@@ -154,12 +159,12 @@ for ( doc in csvDocs ) {
 **Task:** Load a markdown file and ask AI to summarize it.
 
 **Steps:**
+
 1. Create a markdown file with some content (recipe, tutorial, notes)
 2. Load it using `aiDocuments()`
 3. Pass the content to `aiChat()` for summarization
 4. Print the summary
 
-**Starter code in `labs/lab-01-load-and-summarize.bxs`**
 
 ---
 
@@ -196,6 +201,7 @@ knowledge-base/
 ```
 
 **Load everything:**
+
 ```javascript
 // 03-load-directory.bxs
 
@@ -242,6 +248,7 @@ largeDocs = docs.filter( doc => len( doc.content ) > 500 )
 ### Why Chunking?
 
 Large documents need to be split into smaller chunks because:
+
 - ✅ AI models have token limits
 - ✅ Embeddings work better on focused content
 - ✅ More precise retrieval in RAG systems
@@ -293,15 +300,15 @@ docs = aiDocuments( "/large-doc.txt", {
 
 // Create a large sample document
 largeContent = repeatString( "BoxLang is a powerful JVM language. ", 100 )
-fileWrite( "large-doc.txt", largeContent )
+fileWrite( expandPath("./large-doc.txt"), largeContent )
 
 // Load WITHOUT chunking
-docsNoChunk = aiDocuments( "large-doc.txt" ).load()
+docsNoChunk = aiDocuments( expandPath("./large-doc.txt") ).load()
 println( "Without chunking: #arrayLen( docsNoChunk )# document(s)" )
 println( "Content length: #len( docsNoChunk[ 1 ].content )#" )
 
 // Load WITH chunking
-docsChunked = aiDocuments( "large-doc.txt" )
+docsChunked = aiDocuments( expandPath("./large-doc.txt") )
     .chunkSize( 200 )
     .overlap( 20 )
     .load()
@@ -315,6 +322,7 @@ for ( i = 1; i <= arrayLen( docsChunked ); i++ ) {
 ```
 
 **Output:**
+
 ```
 Without chunking: 1 document(s)
 Content length: 3700
@@ -332,6 +340,7 @@ Chunk 2: 200 chars
 ### What is RAG?
 
 **RAG (Retrieval-Augmented Generation)** combines:
+
 1. **Retrieval** - Find relevant documents from a knowledge base
 2. **Augmentation** - Add those documents to the AI prompt
 3. **Generation** - AI generates a response using the context
@@ -443,12 +452,11 @@ println( "\n" & askRAG( "What is Product B used for?" ) )
 **Task:** Create a RAG system for a specific domain (recipes, code snippets, company docs).
 
 **Requirements:**
+
 1. Create 3-5 text/markdown files with related content
 2. Load them into vector memory with `toMemory()`
 3. Create a `queryKnowledge()` function that retrieves and uses context
 4. Ask at least 3 different questions
-
-**Starter code in `labs/lab-02-build-rag-system.bxs`**
 
 ---
 
@@ -566,6 +574,7 @@ for ( question in questions ) {
 ### Next Steps
 
 Now that you can load and process documents, you're ready for:
+
 - **Lesson 8** - MCP Servers & Clients
 - **Advanced Topics** - Custom loaders, transformations, multi-memory systems
 
@@ -581,4 +590,4 @@ Now that you can load and process documents, you're ready for:
 
 **🎉 Congratulations!** You can now build RAG systems with BoxLang AI!
 
-👉 **[Continue to Lesson 8: MCP Servers & Clients](../lesson-08-mcp-servers-clients/)**
+👉 **[Continue to Lesson 8: MCP Servers & Clients](../lesson-08-mcp-servers-clients/README.md)**

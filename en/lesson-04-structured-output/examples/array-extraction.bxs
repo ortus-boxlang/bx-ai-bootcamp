@@ -27,8 +27,10 @@ println( "📋 Extracted Tasks:" )
 println( "─".repeat( 40 ) )
 
 for( task in tasks ) {
-    status = task.done ? "✅" : "⬜"
+    status = task.done ? "✅" : "⬜";
+    println( "" )
     println( "#status# #task.title# [#task.priority#]" )
+    println( "" )
 }
 
 println()

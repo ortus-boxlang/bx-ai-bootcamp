@@ -1,0 +1,1 @@
+Shipping\nWe offer free shipping on orders over $50.

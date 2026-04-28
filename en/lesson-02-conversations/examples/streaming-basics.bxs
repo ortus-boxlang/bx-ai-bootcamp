@@ -1,0 +1,14 @@
+// streaming-basic.bxs
+println( "AI: " )
+
+function cleanChunk( chunk ) {
+    // Defensive Coding for streaming responses - check if the expected structure exists before accessing it
+    return chunk.keyExists("choices") && chunk.choices.len() && chunk.choices[1].keyExists("delta") && chunk.choices[1].delta.keyExists("content") ? chunk.choices[1].delta.content : "";
+}
+
+aiChatStream(
+    callback: ( chunk ) => print( cleanChunk(chunk) ),
+    messages: "Write a haiku about programming"
+)
+
+println()  // New line after stream completes

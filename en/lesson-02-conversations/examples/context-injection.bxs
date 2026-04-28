@@ -1,0 +1,12 @@
+context = "
+Today's date: #now().format( 'yyyy-MM-dd' )#
+User: Premium member
+Available products: BoxLang Pro, BoxLang Enterprise, BoxLang Cloud
+"
+
+conversation = aiMessage()
+    .system( "You are a sales assistant. Use this context: " & context )
+    .user( "What products do you have?" )
+
+answer = aiChat( conversation )
+println( answer )

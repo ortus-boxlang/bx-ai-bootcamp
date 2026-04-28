@@ -1,0 +1,7 @@
+class {
+    property name="orderId" type="string";
+    property name="customerName" type="string";
+    property name="total" type="numeric";
+    property name="items" type="array";
+    property name="status" type="string";
+}

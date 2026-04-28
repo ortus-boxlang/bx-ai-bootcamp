@@ -1,0 +1,43 @@
+// multi-conversation.bxs
+function createUserAgent( userId, conversationId = "default" ) {
+    return aiAgent(
+        name: "PersonalAssistant",
+        description: "A personal AI assistant",
+        instructions: "Be helpful and remember user preferences",
+        memory: aiMemory(
+            memory:"window",
+            key: createUUID(),
+            userId: userId,                // Isolates by user
+            conversationId: conversationId, // Multiple chats per user
+            config: { maxMessages: 20 }
+        )
+    )
+}
+
+userId = "user-123"
+
+// User has multiple conversation threads
+supportAgent = createUserAgent( userId, "support-chat" )
+salesAgent = createUserAgent( userId, "sales-inquiry" )
+technicalAgent = createUserAgent( userId, "tech-help" )
+
+// Each conversation is isolated
+supportAgent.run( "I have a billing question" )
+salesAgent.run( "Tell me about enterprise pricing" )
+technicalAgent.run( "How do I configure the API?" )
+
+println("Suppport Agent asks: What were we dscussing?")
+// Conversations don't mix
+println( supportAgent.run( "What were we discussing?" ) )
+// Output: "We were discussing your billing question"
+
+
+println("______________________________________________")
+println("Sales Agent asks: What were we dscussing?")
+println( salesAgent.run( "What were we discussing?" ) )
+// Output: "We were discussing enterprise pricing"
+
+println("______________________________________________")
+println("Technical Agent asks: What were we dscussing?")
+println( technicalAgent.run( "What were we discussing?" ) )
+// Output: "We were discussing enterprise pricing"

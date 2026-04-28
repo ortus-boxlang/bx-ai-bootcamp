@@ -1,0 +1,12 @@
+println( "Starting AI request in background..." )
+
+// Returns a Future immediately
+future = aiChatAsync( "Write a paragraph about AI" )
+
+println( "Doing other work while AI thinks..." )
+sleep( 1000 )
+println( "Still working..." )
+
+// Get result when ready (blocks if not complete)
+result = future.get()
+println( "AI finished: " & result )

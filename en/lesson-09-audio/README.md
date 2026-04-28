@@ -1,5 +1,7 @@
 # Lesson 9: Audio AI — Speech, Transcription & Translation
 
+[Home](../README.md)
+
 **⏱️ Duration: 60 minutes**
 
 In this lesson you'll add **voice capabilities** to your BoxLang AI applications. The bx-ai module ships three audio BIFs: `aiSpeak()` for text-to-speech, `aiTranscribe()` for speech-to-text, and `aiTranslate()` for audio-to-English translation.
@@ -102,7 +104,7 @@ response = aiSpeak(
     options: { provider: "openai" }
 )
 
-println( response.getContentType() )          // "audio/mpeg"
+println( response.getMimeType() )          // "audio/mpeg"
 println( response.getAudioData().length )     // bytes
 
 response.saveToFile( expandPath( "./data/alloy.mp3" ) )

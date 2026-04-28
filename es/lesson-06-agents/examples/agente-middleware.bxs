@@ -59,7 +59,7 @@ registrador = new LoggingMiddleware(
 
 grabadorVuelo = new FlightRecorderMiddleware(
     mode       : "record",
-    fixturePath: "/.ai/flight-recorder/agente-middleware.json"
+    fixturePath: "/.agents/flight-recorder/agente-middleware.json"
 )
 
 agentePedidos = aiAgent(

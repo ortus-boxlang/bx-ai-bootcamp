@@ -331,7 +331,6 @@ Stuck? Here's where to get help:
 
 | Resource | Link |
 |----------|------|
-| Full Course | [Full Course](../../course/) |
 | Full Documentation | [docs/](https://ai.ortusbooks.com/) |
 | Code Examples | [examples/](https://github.com/ortus-boxlang/bx-ai/tree/development/examples) |
 | GitHub Issues | [Report a bug](https://github.com/ortus-boxlang/bx-ai/issues) |

@@ -81,6 +81,9 @@ template = {
     "email": ""
 }
 
+println( "Asking AI to extract structured data using template..." );
+println( "Sending this message: `Extract person info: John Doe is 30 years old, email john@example.com`")
+
 // Ask AI to extract into this structure
 // Pass the template as returnFormat so the AI populates it directly
 result = aiChat(

@@ -22,6 +22,7 @@ src/test/resources/modules/**
 testbox/**
 tests/results
 derby.log
+.agents
 
 ### Ollama Data ###
 .ollama/
